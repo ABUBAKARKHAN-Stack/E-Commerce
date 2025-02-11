@@ -3,5 +3,9 @@ export class ApiError<E> {
         public statusCode: number,
         public message: string,
         public error?: E,
-    ) { }
+    ) {
+
+    }
 }
+
+

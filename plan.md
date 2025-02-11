@@ -7,7 +7,7 @@ This e-commerce platform is a full-fledged **MERN stack** application using a **
 - **Frontend:** React.js / Next.js (TypeScript, Tailwind CSS)
 - **Backend:** Node.js (Express, TypeScript)
 - **Database:** MongoDB
-- **Authentication:** Clerk
+- **Authentication:** Clerk for frotnend
 - **API Gateway:** Express/Fastify
 - **Communication:** RabbitMQ / Kafka
 - **Payment Integration:** Stripe / PayPal
@@ -36,7 +36,8 @@ docker-compose up --build
 ```
 /ecommerce-platform
 │── /backend
-│   ├── /auth-service (Clerk)
+│   ├── /user-service
+│   ├── /admin-service
 │   ├── /product-service
 │   ├── /order-service
 │   ├── /payment-service
@@ -55,9 +56,8 @@ docker-compose up --build
 
 ## **3. Microservices Breakdown**
 
-### **Auth Service (Clerk)**
+### **Auth Service **
 - Handles user registration, login, and session management.
-- Integrates Clerk for OAuth, passwordless, and social logins.
 - Provides authentication middleware for API requests.
 
 ### **Product Service**
@@ -128,6 +128,5 @@ docker-compose up --build
 - **Day 20:** Deploy the application to cloud platforms (AWS, Vercel, etc.).
 - **Day 21:** Conduct final testing and project review.
 
----
-This README provides a **structured roadmap** for building the final mega project. Let me know if you need any modifications! 🚀
+
 

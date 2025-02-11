@@ -14,14 +14,15 @@ const userSchema = new mongoose_1.default.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     },
     password: {
         type: String,
         required: true
     },
     phone: {
-        type: Number,
+        type: String,
         required: true,
         unique: true
     },
@@ -32,11 +33,23 @@ const userSchema = new mongoose_1.default.Schema({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    isActive: {
+        type: Boolean,
+        default: false
     }
+}, {
+    timestamps: true
 });
 userSchema.pre("save", async function (next) {
+    if (!this.isModified("password") || !this.password)
+        return next();
     const salt = await bcrypt_1.default.genSalt(10);
     this.password = await bcrypt_1.default.hash(this.password, salt);
     next();
 });
+userSchema.methods.comparePassword = async function (password) {
+    const user = this;
+    return await bcrypt_1.default.compare(password, user.password);
+};
 exports.userModel = mongoose_1.default.model("user", userSchema);

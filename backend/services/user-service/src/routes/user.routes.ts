@@ -1,10 +1,20 @@
 import { Router } from 'express'
-import { createUser , loginUser , logoutUser } from '../controllers/user.controller'
+import { createUser, getUser, loginUser, verifyUser, forgotPassword, resetPassword, logoutUser, updateUser, updateUserPassword, deleteUser } from '../controllers/user.controller'
+import authCheck from '../middlewares/auth.middleware';
+import { verifyEmailMiddleware } from '../middlewares/verifyEmail.middleware';
+import { resetPasswordMiddleware } from '../middlewares/resetPassword.middleware';
 
 const router = Router();
 
-router.post('/create', createUser as any)
-router.post('/login', loginUser as any )
-router.get('/logout', logoutUser as any)
+router.post('/create', createUser)
+router.post('/login', loginUser)
+router.get('/verify/:email/:token', verifyEmailMiddleware, verifyUser)
+router.post('/forgot-password', forgotPassword)
+router.post('/reset-password', resetPasswordMiddleware, resetPassword)
+router.get('/get-profile', authCheck, getUser)
+router.patch('/update/profile', authCheck, updateUser)
+router.patch('/update/password', authCheck, updateUserPassword)
+router.get('/logout', authCheck, logoutUser)
+router.delete('/:id/delete', authCheck, deleteUser)
 
 export default router

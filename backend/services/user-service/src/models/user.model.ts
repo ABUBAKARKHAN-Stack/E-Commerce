@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { User } from "../types/user.types";
+import { IUser } from "../types/main.types";
 import bcrypt from 'bcrypt';
 
 
-const userSchema = new mongoose.Schema<User>({
+const userSchema = new mongoose.Schema<IUser>({
     name: {
         type: String,
         required: true
@@ -11,14 +11,15 @@ const userSchema = new mongoose.Schema<User>({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/    
     },
     password: {
         type: String,
         required: true
     },
     phone: {
-        type: Number,
+        type: String,
         required: true,
         unique: true
     },
@@ -29,13 +30,26 @@ const userSchema = new mongoose.Schema<User>({
     isVerified: {
         type: Boolean,
         default: false
+    },
+    isActive: {
+        type: Boolean,
+        default: false
     }
 
+
+}, {
+    timestamps: true
 })
 userSchema.pre("save", async function (next) {
+    if (!this.isModified("password") || !this.password) return next();
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt)
     next();
 })
 
-export const userModel = mongoose.model<User>("user", userSchema)
+userSchema.methods.comparePassword = async function (password: string) {
+    const user = this as IUser;
+    return await bcrypt.compare(password, user.password)
+}
+
+export const userModel = mongoose.model<IUser>("user", userSchema)

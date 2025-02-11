@@ -15,10 +15,13 @@ app.use(cookieparser())
 
 // Importing routes
 import router from './routes/user.routes';
+import errorHandler from './middlewares/errorHandler.middleware';
 
 app.use("/user", router);
 
 const PORT = process.env.PORT || 3001;
+
+app.use(errorHandler);
 
 connectDb()
     .then(() => {
