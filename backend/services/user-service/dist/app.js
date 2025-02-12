@@ -40,6 +40,7 @@ const express_1 = __importStar(require("express"));
 require("dotenv/config");
 const connectDb_1 = require("./config/connectDb");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const env_1 = require("./config/env");
 const app = (0, express_1.default)();
 app.use((0, express_1.json)({
     limit: '50mb'
@@ -52,7 +53,7 @@ app.use((0, cookie_parser_1.default)());
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const errorHandler_middleware_1 = __importDefault(require("./middlewares/errorHandler.middleware"));
 app.use("/user", user_routes_1.default);
-const PORT = process.env.PORT || 3001;
+const PORT = env_1.env.PORT || 3001;
 app.use(errorHandler_middleware_1.default);
 (0, connectDb_1.connectDb)()
     .then(() => {

@@ -9,7 +9,6 @@ const transport = nodemailer.createTransport({
         pass: env.EMAIL_PASS,
     },
 });
-console.log(env);
 
 
 export const sendEmail = async (

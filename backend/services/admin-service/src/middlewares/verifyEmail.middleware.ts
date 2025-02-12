@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 import { ApiError } from '../utils/ApiError'
-import { userModel } from '../models/user.model'
+import { adminModel } from '../models/admin.model'
 import asyncHandler from 'express-async-handler'
 import { JwtUpdtedPayload } from '../types/main.types'
 import { env } from '../config/env'
@@ -15,12 +15,12 @@ export const verifyEmailMiddleware = asyncHandler(async (req: Request, res: Resp
         throw new ApiError(500, "JWT secret is not configured");
     }
     const decodedToken = jwt.verify(token, env.JWT_SECRET) as JwtUpdtedPayload
-    const user = await userModel.findOne({
+    const admin = await adminModel.findOne({
         email: decodedToken.email
     })
-    if (!user) {
-        throw new ApiError(400, "User not found")
+    if (!admin) {
+        throw new ApiError(400, "Admin not found")
     }
-    res.locals.user = user;
+    res.locals.admin = admin;
     next();
 })

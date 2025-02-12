@@ -26,7 +26,7 @@ const errorHandler = (
         const duplicateField = Object.keys((err as any).keyValue)[0] || "field"
         res
             .status(409)
-            .json(new ApiError(409, `User with the same ${duplicateField} already exists.`));
+            .json(new ApiError(409, `Admin with the same ${duplicateField} already exists.`));
         return;
     }
 

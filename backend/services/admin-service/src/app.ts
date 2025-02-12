@@ -15,22 +15,22 @@ app.use(urlencoded({
 app.use(cookieparser())
 
 // Importing routes
-import router from './routes/user.routes';
+import router from './routes/admin.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
 
-app.use("/user", router);
+app.use("/admin", router);
 
-const PORT = env.PORT || 3001;
+const PORT = env.PORT || 3002;
 
 app.use(errorHandler);
 
 connectDb()
     .then(() => {
         app.listen(PORT, () => {
-            console.log(`User service is running on port ${PORT}`);
+            console.log(`Admin service is running on port ${PORT}`);
         })
     })
     .catch((error) => {
-        console.log("Error connecting to user database :: ", error);
+        console.log("Error connecting to Admin database :: ", error);
     })
 

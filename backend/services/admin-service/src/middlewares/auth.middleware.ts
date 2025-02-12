@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ApiError } from '../utils/index';
 import jwt from 'jsonwebtoken';
-import { userModel } from '../models/user.model';
+import { adminModel } from '../models/admin.model';
 import { JwtUpdtedPayload } from '../types/main.types';
 import asyncHandler from 'express-async-handler';
 import { env } from '../config/env';
@@ -21,13 +21,13 @@ const authCheck = asyncHandler(async (req: Request, res: Response, next: NextFun
 
     //* Verify and decode JWT
     const decodedToken = jwt.verify(token, env.JWT_SECRET) as JwtUpdtedPayload;
+  
+    //* Fetch Admin from DB
+    const admin = await adminModel.findById(decodedToken.adminId);
+    if (!admin) throw new ApiError(401, "Unauthorized: admin not found");
 
-    //* Fetch user from DB
-    const user = await userModel.findById(decodedToken.userId);
-    if (!user) throw new ApiError(401, "Unauthorized: User not found");
-
-    //* Store user in response locals
-    res.locals.user = user;
+    //* Store Admin in response locals
+    res.locals.admin = admin;
     next();
 
 })
