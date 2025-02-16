@@ -1,8 +1,8 @@
 import { adminModel } from '../models/admin.model'
 import { Request, Response } from 'express'
 import { CreateAdmin, LoginAdmin, UpdatePassword, UpdateAdmin } from '../types/main.types'
-import { ApiError, ApiResponse, generateToken , sendEmail } from '../utils/index'
-import { existing , emailTemplate } from '../helper/index'
+import { ApiError, ApiResponse, generateToken, sendEmail } from '../utils/index'
+import { existing, emailTemplate } from '../helper/index'
 import asyncHandler from 'express-async-handler'
 import validator from 'validator'
 
@@ -56,14 +56,14 @@ const createAdmin = asyncHandler(async (req: Request, res: Response) => {
     }
 
     res
-    .status(201)
-    .json(new ApiResponse(201, "Admin Created Successfully", admin));
+        .status(201)
+        .json(new ApiResponse(201, "Admin Created Successfully", admin));
 });
 
 //? Login a Admin
 const loginAdmin = asyncHandler(async (req: Request, res: Response) => {
     const { email, phone, password }: LoginAdmin = req.body
-    
+
     if (!email && !phone) {
         throw new ApiError(400, "Email or phone is required")
     }
@@ -121,7 +121,7 @@ const loginAdmin = asyncHandler(async (req: Request, res: Response) => {
     res
         .status(200)
         .setHeader("Authorization", `Bearer ${token}`)
-        .cookie("token", token, {
+        .cookie("adminToken", token, {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 7,
             sameSite: "none",
@@ -300,7 +300,7 @@ const updateAdminPassword = asyncHandler(async (req: Request, res: Response) => 
 
 //? Logout a Admin
 const logoutAdmin = asyncHandler(async (req: Request, res: Response) => {
-    if (!req.cookies.token) {
+    if (!req.cookies.adminToken) {
         throw new ApiError(400, "Admin is not logged in");
     }
     const admin = await adminModel.findById(res.locals.admin._id)
@@ -311,7 +311,7 @@ const logoutAdmin = asyncHandler(async (req: Request, res: Response) => {
     await admin.save()
     res
         .status(200)
-        .clearCookie("token", {
+        .clearCookie("adminToken", {
             httpOnly: true,
             sameSite: "none",
             secure: true
@@ -325,17 +325,17 @@ const deleteAdmin = asyncHandler(async (req: Request, res: Response) => {
     if (!id) {
         throw new ApiError(400, "Admin ID is required")
     }
-    if (res.locals.Admin._id.toString() !== id) {
+    if (res.locals.admin._id.toString() !== id) {
         throw new ApiError(403, "Forbidden: You can't delete this Admin");
     }
 
-    const Admin = await adminModel.findByIdAndDelete(res.locals.Admin._id)
-    if (!Admin) {
+    const admin = await adminModel.findByIdAndDelete(res.locals.admin._id)
+    if (!admin) {
         throw new ApiError(400, "Admin not found")
     }
     res
         .status(200)
-        .clearCookie("token", {
+        .clearCookie("adminToken", {
             httpOnly: true,
             sameSite: "strict",
             secure: true

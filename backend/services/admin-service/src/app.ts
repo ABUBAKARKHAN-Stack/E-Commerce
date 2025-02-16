@@ -18,7 +18,10 @@ app.use(cookieparser())
 import router from './routes/admin.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
 
-app.use("/admin", router);
+app.get("/" , (req, res) => {
+    res.send("Welcome to Admin service");
+});
+app.use("/", router);
 
 const PORT = env.PORT || 3002;
 

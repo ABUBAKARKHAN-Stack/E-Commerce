@@ -52,7 +52,7 @@ app.use((0, cookie_parser_1.default)());
 // Importing routes
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
 const errorHandler_middleware_1 = __importDefault(require("./middlewares/errorHandler.middleware"));
-app.use("/user", user_routes_1.default);
+app.use("/", user_routes_1.default);
 const PORT = env_1.env.PORT || 3001;
 app.use(errorHandler_middleware_1.default);
 (0, connectDb_1.connectDb)()

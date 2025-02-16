@@ -98,7 +98,7 @@ const loginUser = (0, express_async_handler_1.default)(async (req, res) => {
     res
         .status(200)
         .setHeader("Authorization", `Bearer ${token}`)
-        .cookie("token", token, {
+        .cookie("userToken", token, {
         httpOnly: true,
         maxAge: 1000 * 60 * 60 * 24 * 7,
         sameSite: "none",
@@ -173,6 +173,16 @@ const resetPassword = (0, express_async_handler_1.default)(async (req, res) => {
     })) {
         throw new index_1.ApiError(400, "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 symbol");
     }
+    if (password) {
+        const { user } = res.locals;
+        if (!user) {
+            throw new index_1.ApiError(400, "User not found");
+        }
+        const isSame = await user.comparePassword(password);
+        if (isSame) {
+            throw new index_1.ApiError(400, "New password cannot be same as old password");
+        }
+    }
     const { user } = res.locals;
     user.password = password;
     await user.save();
@@ -207,6 +217,16 @@ const updateUser = (0, express_async_handler_1.default)(async (req, res) => {
     }
     if (phone) {
         await (0, index_2.existing)(phone, userId);
+    }
+    if (email) {
+        if (!validator_1.default.isEmail(email)) {
+            throw new index_1.ApiError(400, "Invalid email");
+        }
+    }
+    if (phone) {
+        if (!validator_1.default.isMobilePhone(phone, "en-PK")) {
+            throw new index_1.ApiError(400, "Invalid phone number");
+        }
     }
     const updatedUser = await user_model_1.userModel.findByIdAndUpdate(userId, {
         name,

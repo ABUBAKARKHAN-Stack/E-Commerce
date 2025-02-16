@@ -63,7 +63,7 @@ The platform will be built using multiple microservices:
 - **Day 7**: Build **Payment Service** (Stripe/PayPal integration).
 
 ### **Week 2: Frontend Development & Integration**
-- **Day 8**: Set up **Next.js/React frontend** with Tailwind CSS.
+- **Day 8**: Set up **React frontend** with ShadeCN UI.
 - **Day 9**: Implement **authentication flow** using **Clerk**.
 - **Day 10**: Integrate frontend with **Product Service** (displaying products).
 - **Day 11**: Develop **cart functionality** and integrate **checkout process**.

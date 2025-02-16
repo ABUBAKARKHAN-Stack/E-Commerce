@@ -1,0 +1,22 @@
+import { Router } from "express";
+import {
+    createProduct,
+    getAllProducts,
+    getProduct,
+    updateProduct,
+    addThumbnail,
+    deleteProduct
+} from "../controllers/adminProduct.controller";
+import { upload } from "../config/multer.config";
+import { adminAuth } from '../middlewares/auth.middlewares'
+
+const router = Router();
+//* Admin Routes
+router.post("/create", adminAuth, upload.single("thumbnail"), createProduct)
+router.get("/all", adminAuth, getAllProducts)
+router.get("/:id", adminAuth, getProduct)
+router.post("/add-thumbnail/:id", adminAuth, upload.single("thumbnail"), addThumbnail)
+router.put("/update/:id", adminAuth, updateProduct)
+router.delete("/delete/:id", adminAuth, deleteProduct)
+
+export default router;

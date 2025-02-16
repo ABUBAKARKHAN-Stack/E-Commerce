@@ -18,7 +18,7 @@ app.use(cookieparser())
 import router from './routes/user.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
 
-app.use("/user", router);
+app.use("/", router);
 
 const PORT = env.PORT || 3001;
 
