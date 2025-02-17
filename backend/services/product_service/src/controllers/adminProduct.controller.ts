@@ -1,8 +1,8 @@
 import productModel from "../models/product.model";
-import { ApiResponse, ApiError } from '../utils/index'
+import { ApiResponse, ApiError, publishEvent } from '../utils/index'
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from 'express'
-import { CreateProduct } from "../types/main.types";
+import { CreateProduct, IProduct } from "../types/main.types";
 import { uploadOnCloudinary, deleteOnCloudinary, thumbnailForProduct } from '../config/cloudinary.config'
 
 const createProduct = expressAsyncHandler(async (req: Request, res: Response) => {
@@ -28,6 +28,14 @@ const createProduct = expressAsyncHandler(async (req: Request, res: Response) =>
     if (!product) {
         throw new ApiError(400, "Product not created")
     }
+
+    try {
+        await publishEvent<IProduct>("product-creation", "created_product", product)
+    } catch (error) {
+        console.error('Error publishing product created event:', error);
+        throw new ApiError(500, "Error publishing product created event");
+    }
+
     res
         .status(201)
         .json(new ApiResponse(201, "Product created successfully", product))
@@ -56,8 +64,8 @@ const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
 
 const updateProduct = expressAsyncHandler(async (req: Request, res: Response) => {
     const { name, description, price, quantity, category } = req.body
-    console.log(req.cookies , req.headers);
-    
+    console.log(req.cookies, req.headers);
+
     if (!name && !description && !price && !quantity && !category) {
         throw new ApiError(400, "At least one field is required")
     }
@@ -122,11 +130,24 @@ const deleteProduct = expressAsyncHandler(async (req: Request, res: Response) =>
         throw new ApiError(404, "Product not found")
     }
     try {
-        await deleteOnCloudinary(product.thumbnail.split("?")[0])
+        if (product.thumbnails.length > 0) {
+            for (const thumbnail of product.thumbnails) {
+                const publicId = thumbnail.split("/").pop()?.split("?")[0]
+                await deleteOnCloudinary(publicId!)
+            }
+        }
     } catch (error) {
         throw new ApiError(500, "Failed to delete thumbnail from cloudinary", error)
     }
     await product.deleteOne()
+
+    try {
+        await publishEvent<IProduct>("product-deletion", "deleted_product", product)
+    } catch (error) {
+        console.log("Error publishing product deletion event:", error);
+        throw new ApiError(500, "Error publishing product deletion event");
+    }
+
     res
         .status(200)
         .json(new ApiResponse(200, "Product deleted successfully", product))

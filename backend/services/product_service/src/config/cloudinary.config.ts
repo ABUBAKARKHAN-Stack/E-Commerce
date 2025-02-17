@@ -23,7 +23,7 @@ const uploadOnCloudinary = async (filePath: string): Promise<UploadApiResponse> 
 const deleteOnCloudinary = async (publicId: string) => {
     try {
         await cloudinary.uploader.destroy(publicId)
-        console.log("Image Deleted From Cloudinary With Public ID", publicId);
+        console.log("Image Deleted From Cloudinary With Public ID:", publicId);
     } catch (err) {
         throw new ApiError(500, "Failed to delete on cloudinary")
     }

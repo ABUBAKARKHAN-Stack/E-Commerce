@@ -1,5 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import express from 'express';
 import proxy from 'express-http-proxy'
 import { env } from './config/env';
 import cookieParser from 'cookie-parser';

@@ -3,6 +3,7 @@ import 'dotenv/config'
 import { connectDb } from './config/connectDb';
 import cookieparser from 'cookie-parser'
 import { env } from './config/env';
+import { productEventsConsumer } from './utils/kafka';
 
 const app = express();
 app.use(json({
@@ -18,11 +19,16 @@ app.use(cookieparser())
 import router from './routes/admin.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
 
-app.get("/" , (req, res) => {
-    res.send("Welcome to Admin service");
-});
 app.use("/", router);
 
+productEventsConsumer()
+    .then(() => {
+        console.log("Kafka consumer started successfully");
+    })
+    .catch((error) => {
+        console.log("Error starting Kafka consumer :: ", error);
+    })
+    
 const PORT = env.PORT || 3002;
 
 app.use(errorHandler);

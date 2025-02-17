@@ -7,7 +7,7 @@ async function sendToken(topic: string, message: any) {
         topic: topic,
         messages: [
             { value: JSON.stringify(message) }
-        ]
+         ]
     })
     await producer.disconnect()
-}
+} 

@@ -104,12 +104,12 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "User already logged in")
     }
 
-    const token = generateToken({
+    const token = generateToken({ 
         userId: user._id,
     }, "1d")
 
     user.isActive = true
-    await user.save();
+    await user.save(); 
 
 
     res

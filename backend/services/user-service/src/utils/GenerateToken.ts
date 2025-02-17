@@ -3,7 +3,7 @@ import { env } from '../config/env';
 
 export function generateToken(payload: Record<string, unknown>, expiry: string): string {
     const secret = env.JWT_SECRET;
-
+ 
     if (!secret) {
         throw new Error('JWT SECRET is not defined')
     }
