@@ -11,12 +11,12 @@ import { upload } from "../config/multer.config";
 import { adminAuth } from '../middlewares/auth.middlewares'
 
 const router = Router();
+
 //* Admin Routes For Product
 router.post("/create", adminAuth, upload.single("thumbnail"), createProduct)
-router.get("/all", getAllProducts)
-router.get("/:id", getProduct)
 router.post("/add-thumbnail/:id", adminAuth, upload.single("thumbnail"), addThumbnail)
 router.put("/update/:id", adminAuth, updateProduct)
 router.delete("/delete/:id", adminAuth, deleteProduct)
+
 
 export default router;

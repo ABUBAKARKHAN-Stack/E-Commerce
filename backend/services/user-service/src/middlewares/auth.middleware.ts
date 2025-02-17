@@ -16,7 +16,7 @@ const authCheck = asyncHandler(async (req: Request, res: Response, next: NextFun
     }
 
     //* Extract token from cookies or authorization header
-    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    const token = req.cookies.userToken || req.headers.authorization?.split(" ")[1];
     if (!token) throw new ApiError(401, "Unauthorized: No token provided");
 
     //* Verify and decode JWT

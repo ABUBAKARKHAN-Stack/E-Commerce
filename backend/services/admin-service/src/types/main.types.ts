@@ -13,7 +13,7 @@ interface IAdmin extends Document {
     totalSales: number;
     products: [];
     role: string;
-    usersCount: number;
+    usersCount: [];
     comparePassword: (password: string) => Promise<boolean>;
 }
 

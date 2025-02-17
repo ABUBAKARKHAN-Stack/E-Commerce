@@ -1,6 +1,6 @@
 import { Kafka } from "kafkajs";
 
 export const kafka = new Kafka({
-    clientId: "e-com/users",
-    brokers: ["localhost:9092"],
+    clientId: "user-service",
+    brokers: ["192.168.0.100:9092"],
 });

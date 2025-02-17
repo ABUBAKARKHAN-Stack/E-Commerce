@@ -1,4 +1,3 @@
-import { IProduct } from "../types/main.types";
 import kafka from "../config/kafka.config";
 import { ApiError } from "./ApiError";
 
@@ -29,5 +28,5 @@ const publishEvent = async <Data>(topicName: string, messageKey: string, value: 
 }
 
 export {
-    publishEvent,
+    publishEvent
 }

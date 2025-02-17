@@ -17,7 +17,9 @@ const PORT = process.env.PORT || 3003;
 
 //* Import Routes
 import adminProductRoutes from './routes/adminProduct.routes'
-app.use('/', adminProductRoutes)
+import userProductRoutes from './routes/userProduct.routes'
+app.use('/admin', adminProductRoutes)
+app.use('/', userProductRoutes)
 
 //* Error Handler
 app.use(errorHandler);

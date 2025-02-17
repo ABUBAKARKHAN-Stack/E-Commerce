@@ -44,14 +44,16 @@ const adminSchema = new Schema<IAdmin>(
       type: Number,
       default: 0,
     },
-    usersCount: {
-      type: Number,
-      default: 0,
-    },
+    usersCount: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
+      }
+    ],
     products: [
       {
-        type: mongoose.Types.ObjectId,
-        ref: "Products",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "products",
       },
     ],
   },
@@ -87,4 +89,4 @@ adminSchema.methods.comparePassword = async function (password: string) {
 };
 
 // Create the model
-export const adminModel = mongoose.model<IAdmin , AdminExtendedModel>("Admin", adminSchema);
+export const adminModel = mongoose.model<IAdmin, AdminExtendedModel>("Admin", adminSchema);

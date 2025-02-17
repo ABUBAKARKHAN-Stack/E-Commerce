@@ -1,7 +1,7 @@
 import { userModel } from '../models/user.model'
 import { Request, Response } from 'express'
-import { CreateUser, LoginUser, UpdatePassword, UpdateUser } from '../types/main.types'
-import { ApiError, ApiResponse, generateToken, sendEmail } from '../utils/index'
+import { CreateUser, IUser, LoginUser, UpdatePassword, UpdateUser } from '../types/main.types'
+import { ApiError, ApiResponse, generateToken, sendEmail, publishEvent } from '../utils/index'
 import { existing, emailTemplate } from '../helpers/index'
 import asyncHandler from 'express-async-handler'
 import validator from 'validator'
@@ -48,6 +48,12 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
     if (!user) {
         throw new ApiError(400, "User not created")
+    }
+    try {
+        await publishEvent<IUser>("user-creation", "user-created", user)
+    } catch (error) {
+        console.log("Error publishing event:", error);
+        throw new ApiError(500, "Error publishing event");
     }
     res
         .status(201)
@@ -104,12 +110,12 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "User already logged in")
     }
 
-    const token = generateToken({ 
+    const token = generateToken({
         userId: user._id,
     }, "1d")
 
     user.isActive = true
-    await user.save(); 
+    await user.save();
 
 
     res
@@ -319,7 +325,7 @@ const updateUserPassword = asyncHandler(async (req: Request, res: Response) => {
 
 //? Logout a user
 const logoutUser = asyncHandler(async (req: Request, res: Response) => {
-    if (!req.cookies.token) {
+    if (!req.cookies.userToken) {
         throw new ApiError(400, "User is not logged in");
     }
     const user = await userModel.findById(res.locals.user._id)
@@ -330,7 +336,7 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     await user.save()
     res
         .status(200)
-        .clearCookie("token", {
+        .clearCookie("userToken", {
             httpOnly: true,
             sameSite: "none",
             secure: true
@@ -352,9 +358,15 @@ const deleteUser = asyncHandler(async (req: Request, res: Response) => {
     if (!user) {
         throw new ApiError(400, "User not found")
     }
+    try {
+        await publishEvent<IUser>("user-deletion" , "user-deleted" , user)
+    } catch (error) {
+          console.log("Error publishing event:", error);
+          throw new ApiError(500, "Error publishing event");   
+    }
     res
         .status(200)
-        .clearCookie("token", {
+        .clearCookie("userToken", {
             httpOnly: true,
             sameSite: "strict",
             secure: true
