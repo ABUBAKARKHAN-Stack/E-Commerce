@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { connectDb } from './config/connectDb';
 import cookieparser from 'cookie-parser'
 import { env } from './config/env';
-
+import { consumeCartEvent } from './utils';
 const app = express();
 app.use(json({
     limit: '50mb'
@@ -11,30 +11,26 @@ app.use(json({
 app.use(urlencoded({
     extended: true
 }));
-
+ 
 app.use(cookieparser())
 
-//* Importing  user routes
-import userRoutes from './routes/user.routes';
-import errorHandler from './middlewares/errorHandler.middleware';
-import { cartEventConsumer } from './utils/kafka';
+import orderRoutes from './routes/order.routes';
+app.use('/', orderRoutes);
 
-app.use("/", userRoutes);
-
-//* Importing  cart routes
-import cartRoutes from './routes/cart.routes';
-app.use("/", cartRoutes);
-Promise.all([
-    cartEventConsumer()
-])
-    .then(() => {
-        console.log("All consumers are running");
-    })
-    .catch((error) => {
-        console.log("Error while running consumers :: ", error);
-    })
 
 const PORT = env.PORT || 3001;
+
+Promise.all([
+    consumeCartEvent()
+])
+    .then(() => {
+        console.log("Connected to Kafka");        
+    })
+    .catch((error) => {
+        console.log("Error connecting to Kafka :: ", error);
+    })
+
+import errorHandler from './middlewares/errorHandler.middleware';
 
 app.use(errorHandler);
 

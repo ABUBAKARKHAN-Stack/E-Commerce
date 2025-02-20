@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 interface IUser extends Document {
     name: string;
@@ -12,6 +12,21 @@ interface IUser extends Document {
     comparePassword: (password: string) => Promise<boolean>;
     hashedPassword: (password: string) => Promise<string>;
 }
+
+interface ICartProduct extends Document {
+    productId: string;
+    name: string;
+    price: number;
+    quantity: number;
+    thumbnail: string;
+}
+
+interface ICart extends Document {
+    user: mongoose.Schema.Types.ObjectId;
+    products: ICartProduct[],
+    totalAmount: number;
+}
+
 interface JwtUpdtedPayload extends JwtPayload {
     userId?: string;
     email?: string;
@@ -45,6 +60,8 @@ interface UpdatePassword {
 
 export {
     IUser,
+    ICart,
+    ICartProduct,
     JwtUpdtedPayload,
     CreateUser,
     LoginUser,

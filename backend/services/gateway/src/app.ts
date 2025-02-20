@@ -27,6 +27,7 @@ app.use('/product', (req, res, next) => {
         parseReqBody: !isFileUpload, // Disable parsing only if it's a file upload
     })(req, res, next);
 });
+app.use('/order', proxy(env.ORDER_SERVICE_URL));
 
  
 

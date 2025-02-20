@@ -17,7 +17,7 @@ const productSchema = new Schema<IProduct>({
     },
     quantity: {
         type: Number,
-        required: true
+        required: true,
     },
     category: {
         type: String,

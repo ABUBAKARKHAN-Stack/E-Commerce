@@ -4,4 +4,5 @@ export const env = {
   USER_SERVICE_URL: process.env.USER_SERVICE_URL || 'http://localhost:3001',
   ADMIN_SERVICE_URL: process.env.ADMIN_SERVICE_URL || 'http://localhost:3002',
   PRODUCT_SERVICE_URL: process.env.PRODUCT_SERVICE_URL || 'http://localhost:3003',
+  ORDER_SERVICE_URL: process.env.ORDER_SERVICE_URL || 'http://localhost:3004',
 }
