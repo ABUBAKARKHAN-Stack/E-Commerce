@@ -48,8 +48,8 @@ const SignUpComponent = () => {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Form  {...form}>
+            <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
                 <FormField
                     control={form.control}
                     name="username"

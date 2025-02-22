@@ -1,9 +1,12 @@
 import { SignUpComponent } from '@/components/reusable'
-import React from 'react'
+import Layout from '@/components/reusable/layout/Layout'
+
 
 const SignUpPage = () => {
   return (
+    <Layout>
       <SignUpComponent />
+    </Layout>
   )
 }
 

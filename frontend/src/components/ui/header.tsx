@@ -32,7 +32,7 @@ const Header: FC = () => {
             <NavigationMenuLink asChild key={href}>
               <Link
                 to={href.toLowerCase()}
-                className="relative ease-linear font-medium dark:text-white text-[#0056BF] transition-all duration-300
+                className="relative hover:scale-105 ease-linear font-medium dark:text-white text-[#0056BF] transition-all duration-300
                 after:content-[''] after:absolute after:left-1/2 after:bottom-[5px] after:w-0 after:h-[2px]
                 after:bg-gradient-to-r after:from-[#F15136] after:via-[#FBA740] after:to-[#A3302A]
                 after:transition-all after:duration-300 after:ease-in-out after:-translate-x-1/2
@@ -70,13 +70,13 @@ const Header: FC = () => {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-4 bg-[#1B1B1F]/40 backdrop-blur-2xl text-white">
-           
+
             <div className="flex flex-col mt-20 gap-4">
               {navItems.map(({ label, href }) => (
                 <Link
                   key={href}
                   to={href}
-                  className="text-lg w-fit font-semibold transition-colors duration-300 hover:text-[#F76D3A]"
+                  className="text-lg w-fit font-semibold transition-colors hover:scale-[1.03] duration-300 hover:text-[#F76D3A]"
                 >
                   {label}
                 </Link>
