@@ -1,15 +1,20 @@
-import React, { FC } from 'react'
+import React, { forwardRef } from 'react';
 
 type Props = {
-    children: React.ReactNode
-}
+    children: React.ReactNode;
+    className?: string;
+};
 
-const Layout: FC<Props> = ({ children }) => {
+// Use forwardRef to pass the ref to the main element
+const Layout = forwardRef<HTMLElement, Props>(({ children, className }, ref) => {
     return (
-        <main className='w-full block p-4 h-full max-w-6xl mx-auto'>
+        <main ref={ref} className={`w-full  p-4 h-full max-w-[500px] xsm:max-w-xl  sm:max-w-2xl md:max-w-3xl lg:max-w-[1100px] mx-auto ${className || ''}`}>
             {children}
         </main>
-    )
-}
+    );
+});
 
-export default Layout
+// Set display name for debugging purposes
+Layout.displayName = 'Layout';
+
+export default Layout;

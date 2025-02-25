@@ -33,7 +33,7 @@ interface JwtUpdtedPayload extends JwtPayload {
 }
 
 interface CreateUser {
-    name: string;
+    username: string;
     email: string;
     password: string;
     phone: string;

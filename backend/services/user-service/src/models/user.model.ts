@@ -25,8 +25,8 @@ const userSchema = new mongoose.Schema<IUser>({
     },
     address: {
         type: String,
-        required: true
-    },
+        default: ""
+     },
     isVerified: {
         type: Boolean,
         default: false

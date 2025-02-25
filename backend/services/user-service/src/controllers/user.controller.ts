@@ -11,9 +11,9 @@ import validator from 'validator'
 
 //? Create a new user
 const createUser = asyncHandler(async (req: Request, res: Response) => {
-    const { name, email, password, phone, address }: CreateUser = req.body
+    const { username, email, password, phone }: CreateUser = req.body
 
-    if (!name || !email || !password || !phone || !address) {
+    if (!username || !email || !password || !phone) {
         throw new ApiError(400, "All fields are required")
     }
     if (!validator.isStrongPassword(password, {
@@ -25,8 +25,8 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     })) {
         throw new ApiError(400, "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 symbol")
     }
-    if (!validator.isLength(name, { min: 3, max: 30 })) {
-        throw new ApiError(400, "Name must be between 3 and 30 characters")
+    if (!validator.isLength(username, { min: 3, max: 30 })) {
+        throw new ApiError(400, "Username must be between 3 and 30 characters")
     }
     if (!validator.isEmail(email)) {
         throw new ApiError(400, "Invalid email")
@@ -34,30 +34,25 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     if (!validator.isMobilePhone(phone, "en-PK")) {
         throw new ApiError(400, "Invalid phone number")
     }
-    if (!validator.isLength(address, { min: 10, max: 100 })) {
-        throw new ApiError(400, "Address must be between 10 and 100 characters")
-    }
-
     const user = await userModel.create({
-        name,
+        name: username,
         email,
         password,
         phone,
-        address
     })
 
     if (!user) {
         throw new ApiError(400, "User not created")
     }
-    try {
-        await publishEvent<IUser>("user-creation", "user-created", user)
-    } catch (error) {
-        console.log("Error publishing event:", error);
-        throw new ApiError(500, "Error publishing event");
-    }
+    // try {
+    //     await publishEvent<IUser>("user-creation", "user-created", user)
+    // } catch (error) {
+    //     console.log("Error publishing event:", error);
+    //     throw new ApiError(500, "Error publishing event");
+    // }
     res
         .status(201)
-        .json(new ApiResponse(201, "User Created Successfully", user))
+        .json(new ApiResponse(201, "User Registered Successfully.", user))
 })
 
 //? Login a user
@@ -93,17 +88,21 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     if (!user.isVerified) {
-        const token = generateToken({
-            email: user.email,
-        }, "15m")
-        await sendEmail(
-            'E-Commerce Sign In Verification',
-            user.email,
-            'Email Verification',
-            emailTemplate("Email Verification", user.email, token)
-        );
-        throw new ApiError(400, "Your account is not verified. A verification link has been sent to your email. Please verify your email to proceed.");
-    }
+     
+            const token = generateToken({
+                email: user.email,
+            }, "10m")
+            await sendEmail(
+                'E-Commerce Sign In Verification',
+                user.email,
+                'Email Verification',
+                emailTemplate("Email Verification", user.email, token)
+            );
+        
+            throw new ApiError(400, "Your account is not verified. We've sent a verification link to your email. Please check your inbox and verify your email to continue.");
+        
+
+        }
 
 
     if (user.isActive) {
@@ -122,7 +121,7 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         .status(200)
         .setHeader("Authorization", `Bearer ${token}`)
         .cookie("userToken", token, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: 1000 * 60 * 60 * 24 * 7,
             sameSite: "none",
             secure: true
@@ -359,10 +358,10 @@ const deleteUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "User not found")
     }
     try {
-        await publishEvent<IUser>("user-deletion" , "user-deleted" , user)
+        await publishEvent<IUser>("user-deletion", "user-deleted", user)
     } catch (error) {
-          console.log("Error publishing event:", error);
-          throw new ApiError(500, "Error publishing event");   
+        console.log("Error publishing event:", error);
+        throw new ApiError(500, "Error publishing event");
     }
     res
         .status(200)

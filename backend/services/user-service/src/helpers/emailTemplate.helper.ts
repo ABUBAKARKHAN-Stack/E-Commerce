@@ -75,7 +75,7 @@ export const emailTemplate = (purpose: string, email: string, token: string) => 
           <p>Hello <span class="highlight">${email}</span>,</p>
           <p>Thank you for registering with us. To complete your ${purpose.toLowerCase().includes("email") ? "email verification" : "password reset"}, please click the button below:</p>
           
-          <a href="http://localhost:3005/user${purpose.toLowerCase().includes("email") ? `/verify/${email}/${token}` : `/reset-password?email=${email}&token=${token}`}" class="verify-btn">
+          <a href="http://localhost:5173/user${purpose.toLowerCase().includes("email") ? `/verify/${email}/${token}` : `/reset-password?email=${email}&token=${token}`}" class="verify-btn">
             ${purpose.toLowerCase().includes("email") ? "Verify Email" : "Reset Password"}
           </a>
           

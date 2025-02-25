@@ -4,6 +4,7 @@ import { cva } from "class-variance-authority"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { NavLink, NavLinkProps } from "react-router-dom"
 
 function NavigationMenu({
   className,
@@ -121,20 +122,30 @@ function NavigationMenuViewport({
   )
 }
 
-function NavigationMenuLink({
-  className,
-  ...props
-}: React.ComponentProps<typeof NavigationMenuPrimitive.Link>) {
+interface NavigationMenuLinkProps extends NavLinkProps {
+  to: string;
+}
+
+function NavigationMenuLink({ className, to, ...props }: NavigationMenuLinkProps) {
   return (
-    <NavigationMenuPrimitive.Link
-      data-slot="navigation-menu-link"
-      className={cn(
-        "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground ring-ring/10 dark:ring-ring/20 dark:outline-ring/40 outline-ring/50 [&_svg:not([class*='text-'])]:text-muted-foreground flex flex-col gap-1 rounded-sm p-2 text-sm transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4",
-        className
-      )}
+    <NavLink
+      to={to.toLowerCase()}
+      className={({ isActive }) =>
+        cn(
+          "relative font-semibold text-sm transition-all duration-300 ease-in-out",
+          "hover:scale-[1.02] hover:text-accent-foreground",
+          "focus:text-accent-foreground focus-visible:ring-4 focus-visible:outline-1",
+          "dark:text-white",
+          "after:content-[''] after:absolute after:left-1/2 after:bottom-[-2px] after:w-0 after:h-[2px]",
+          "after:bg-gradient-to-r dark:after:from-[#F15136] dark:after:via-[#FBA740] dark:after:to-[#A3302A] after:from-cyan-700 after:via-cyan-500 after:to-cyan-600",
+          "after:transition-all after:duration-300 after:ease-in-out after:-translate-x-1/2",
+          isActive ? "after:w-4/5 text-accent-foreground" : "hover:after:w-4/5",
+          className
+        )
+      }
       {...props}
     />
-  )
+  );
 }
 
 function NavigationMenuIndicator({

@@ -3,7 +3,7 @@ import * as SheetPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Link } from "react-router-dom"
+import { Logo } from "../reusable"
 
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
@@ -73,15 +73,9 @@ function SheetContent({
         {children}
         <SheetPrimitive.Close className=" w-[95%]  left-2.5 pr-4 mx-auto bg-gay-50 focus:ring-ring  absolute top-4 right-4 rounded-xs border-b-2">
           <div className="flex w-full justify-between items-center flex-row-reverse">
-            <XIcon className="size-4 ring-2 rounded-2xl p-0.5  data-[state=open]:bg-secondary transition-opacity opacity-30 cursor-pointer hover:opacity-100" />
+            <XIcon className="size-5 ring-2 rounded-2xl p-0.5  data-[state=open]:bg-secondary transition-opacity opacity-30 cursor-pointer hover:opacity-100" />
             <span className="sr-only">Close</span>
-            <Link to="/" className="-ml-1 w-full cursor-default">
-              <img
-                src="./shopnex.webp"
-                alt="ShopNex Logo"
-                className="w-36 dark:invert-0 invert shadow-logo cursor-pointer"
-              />
-            </Link>
+            <Logo />
           </div>
         </SheetPrimitive.Close>
 
