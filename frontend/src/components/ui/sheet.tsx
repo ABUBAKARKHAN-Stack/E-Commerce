@@ -35,7 +35,7 @@ function SheetOverlay({
     <SheetPrimitive.Overlay
       data-slot="sheet-overlay"
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-[#1B1B1F]/40 backdrop-blur-xs",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-[#FAFAFA]/40 dark:bg-[#1B1B1F]/40 backdrop-blur-xs",
         className
       )}
       {...props}
@@ -45,11 +45,13 @@ function SheetOverlay({
 
 function SheetContent({
   className,
+  isForNav = false,
   children,
   side = "right",
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
-  side?: "top" | "right" | "bottom" | "left"
+  side?: "top" | "right" | "bottom" | "left";
+  isForNav?: boolean
 }) {
   return (
     <SheetPortal>
@@ -71,12 +73,12 @@ function SheetContent({
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className=" w-[95%]  left-2.5 pr-4 mx-auto bg-gay-50 focus:ring-ring  absolute top-4 right-4 rounded-xs border-b-2">
-          <div className="flex w-full justify-between items-center flex-row-reverse">
-            <XIcon className="size-5 ring-2 rounded-2xl p-0.5  data-[state=open]:bg-secondary transition-opacity opacity-30 cursor-pointer hover:opacity-100" />
+        <SheetPrimitive.Close className={`w-[95%] left-2.5 pr-4 mx-auto focus:ring-ring  absolute top-4 right-4 rounded-xs ${isForNav && "border-b-2"}`}>
+          {isForNav && <div className="flex w-full justify-between items-center flex-row-reverse">
+            <XIcon className="size-5 ring-2 rounded-2xl p-0.5 dark:text-[#FAFAFA] text-[#18181b] data-[state=open]:bg-secondary transition-opacity opacity-80 cursor-pointer hover:opacity-100" />
             <span className="sr-only">Close</span>
             <Logo />
-          </div>
+          </div>}
         </SheetPrimitive.Close>
 
       </SheetPrimitive.Content>

@@ -18,7 +18,7 @@ const SignInMain = () => {
 
                 {/* Signin Form */}
                 <div className="w-full px-1.5 max-w-[95%] xs:max-w-[92%] mt-6 mb-6">
-                    <SignInForm />
+                    <SignInForm isAdmin={false} />
                 </div>
 
                 {/* Sign-in Redirect */}

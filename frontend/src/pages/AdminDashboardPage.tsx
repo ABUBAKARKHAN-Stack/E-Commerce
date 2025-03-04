@@ -1,8 +1,12 @@
-import React from 'react'
+import { ThemeToggler } from "@/components/reusable"
+import {AdminDashboardMain} from "@/components/main"
 
 const AdminDashboardPage = () => {
   return (
-    <div>AdminDashboardPage</div>
+    <>
+      <ThemeToggler />
+      <AdminDashboardMain />
+    </>
   )
 }
 

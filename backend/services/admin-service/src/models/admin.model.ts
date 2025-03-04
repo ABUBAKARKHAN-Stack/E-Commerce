@@ -5,7 +5,7 @@ import { ApiError } from "../utils";
 
 const adminSchema = new Schema<IAdmin>(
   {
-    name: {
+    username: {
       type: String,
       required: true,
     },
@@ -22,14 +22,6 @@ const adminSchema = new Schema<IAdmin>(
       type: String,
       required: true,
       unique: true,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
-    isActive: {
-      type: Boolean,
-      default: false,
     },
     isVerified: {
       type: Boolean,

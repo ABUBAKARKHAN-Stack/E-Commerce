@@ -3,12 +3,10 @@ import { Document, Model } from "mongoose";
 
 
 interface IAdmin extends Document {
-    name: string;
+    username: string;
     email: string;
     password: string;
     phone: string;
-    address: string;
-    isActive: boolean;
     isVerified: boolean;
     totalSales: number;
     products: [];
@@ -28,11 +26,10 @@ interface JwtUpdtedPayload extends JwtPayload {
 }
 
 interface CreateAdmin {
-    name: string;
+    username: string;
     email: string;
     password: string;
     phone: string;
-    address: string;
 }
 
 interface LoginAdmin {

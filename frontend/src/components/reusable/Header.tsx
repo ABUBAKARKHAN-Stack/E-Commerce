@@ -1,38 +1,45 @@
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuList, NavigationMenuLink } from "@/components/ui/navigation-menu";
-import { FC } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { ShoppingCart, Menu, LogOut } from "lucide-react";
+import { FC, useEffect, useRef, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { ShoppingCart, Menu, LogOutIcon, UserIcon, LayoutDashboardIcon } from "lucide-react";
 import { Layout, Logo } from "@/components/reusable";
-import { useUserContext } from "@/context/userContext";
-import { logoutUser } from "@/API/userApi";
+import { DropdownItem, DropdownItems, DropdownMain } from '@/components/ui/dropdown-menu'
+import { useAuthContext } from "@/context/authContext";
+
 
 const Header: FC = () => {
   const navItems = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/products" },
     { label: "About", href: "/about" },
-    { label: "Orders", href: "/orders" },
     { label: "Contact", href: "/contact" },
   ];
 
-  const { user } = useUserContext();
+  const { user, role, logout } = useAuthContext();
   const navigate = useNavigate();
+  const [isDropDownOpen, setIsDropDownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = async () => {
-    try {
-      const res = await logoutUser();
-      console.log(res);
-      if (res.data.success) {
-        navigate("/sign-in");
-      }
+  const openDropDown = () => {
+    setIsDropDownOpen((prev) => !prev)
+  }
 
-    } catch (error) {
-      console.log(error);
-
-    }
+  const handleLogout = () => {
+    logout(navigate);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropDownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className=" h-20 w-full border-b-2 items-center dark:bg-[#1B1B1F] shadow-lg">
@@ -53,41 +60,54 @@ const Header: FC = () => {
         {/* Right Section: Cart, Sign In, Mobile Menu */}
         <div className="flex items-center space-x-4">
           {/* Cart Icon with Badge */}
-          <NavLink to="/cart" className="relative">
-            {({ isActive }) => (
-              <>
-                <ShoppingCart
-                  className="h-6 w-6 transition-colors duration-300 hover:text-cyan-600  dark:hover:text-[#F76D3A]
+          <NavLink to="/cart" className="relative hidden md:block">
+            <>
+              <ShoppingCart
+                className="h-6 w-6 transition-colors duration-300 hover:text-cyan-600  dark:hover:text-[#F76D3A]
                     "
-                />
-                <span className="absolute -top-2 -right-2 text-[10px] bg-red-500 text-white font-bold w-5 h-5 flex justify-center items-center rounded-full">
-                  3 {/* Example cart count */}
-                </span>
-              </>
-            )}
+              />
+              <span className="absolute -top-2 -right-2 text-[10px] bg-red-500 text-white font-bold w-5 h-5 flex justify-center items-center rounded-full">
+                3 {/* Example cart count */}
+              </span>
+            </>
+
           </NavLink>
 
-          {/* Sign In Button */}
           {user !== null ? (
-
-            <div className="flex items-center space-x-2">
-              <NavLink to="/profile" className="hidden md:block">
-                <Button
-                  className="rounded-full"
-                  variant="default"
-                  size={"lg"}
-                >
-                  {/*  {user?.name} */} Abubakar
-                </Button>
-              </NavLink>
+            <div className="relative inline-block" ref={dropdownRef}>
               <Button
+                onClick={openDropDown}
+                className="rounded-full p-4"
                 variant="default"
-                size={"lg"}
-                className="rounded-full"
-                onClick={handleLogout}
+                size={"icon"}
               >
-                <LogOut className="h-6 w-6" />
+                <span className="font-bold text-base">{user?.username.charAt(0)}</span>
               </Button>
+
+              {/* Dropdown Content */}
+              {isDropDownOpen && (
+                <DropdownMain isOpen={isDropDownOpen}>
+                  <DropdownItems>
+
+                    <span className="px-4 py-2 text-left font-medium">Abubakar</span>
+
+                    <div className="border-t mb-1"></div>
+                    <DropdownItem>
+                      <Link to={`/user/dashboard`}>
+                        Dashboard <LayoutDashboardIcon className="inline-block w-5 h-5 ml-2" />
+                      </Link>
+                    </DropdownItem>
+                    <DropdownItem>
+                      <button
+                        onClick={handleLogout}
+
+                      >
+                        Sign Out <LogOutIcon className="inline-block w-5 h-5 ml-2" />
+                      </button>
+                    </DropdownItem>
+                  </DropdownItems>
+                </DropdownMain>
+              )}
             </div>
           )
             : (
@@ -109,19 +129,19 @@ const Header: FC = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="md:hidden text-white border-gray-400 transition-colors duration-300 hover:border-[#F76D3A]"
+                className="md:hidden dark:text-white dark:border-gray-400 transition-colors duration-300 hover:border-[#F76D3A]"
               >
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-4 bg-[#1B1B1F]/40 backdrop-blur-2xl text-white">
+            <SheetContent isForNav={true} side="left" className="p-4 bg-[#FAFAFA]/40  dark:bg-[#1B1B1F]/40 backdrop-blur-2xl border-b-2 text-white">
               <div className="flex flex-col mt-24 gap-4">
                 {navItems.map(({ label, href }) => (
                   <NavLink
                     key={href}
                     to={href}
                     className={({ isActive }) =>
-                      `text-lg w-fit font-semibold transition-all hover:scale-[1.05] duration-300 hover:text-[#F76D3A] ${isActive ? "text-[#F76D3A]" : ""
+                      `text-lg w-fit font-semibold text-[#1B1B1F] dark:text-white transition-all hover:scale-105 duration-300 hover:text-cyan-500 dark:hover:text-orange-500 ${isActive ? "text-cyan-500 dark:text-[#F76D3A]" : ""
                       }`
                     }
                   >
@@ -131,21 +151,23 @@ const Header: FC = () => {
                 <NavLink
                   to="/cart"
                   className={({ isActive }) =>
-                    `text-lg font-semibold flex items-center gap-2 transition-colors duration-300 ${isActive ? "text-[#F76D3A]" : "hover:text-[#F76D3A]"
+                    `text-lg w-fit flex items-center gap-2 font-semibold text-[#1B1B1F] dark:text-white transition-all hover:scale-105 duration-300 hover:text-cyan-500 dark:hover:text-orange-500 ${isActive ? "text-cyan-500 dark:text-[#F76D3A]" : ""
                     }`
                   }
                 >
                   <ShoppingCart className="h-6 w-6" /> Cart (3)
                 </NavLink>
-                <NavLink
-                  to="/sign-in"
-                  className={({ isActive }) =>
-                    `text-lg font-semibold transition-colors duration-300 ${isActive ? "text-[#F76D3A]" : "hover:text-[#F76D3A]"
-                    }`
-                  }
-                >
-                  Sign In
-                </NavLink>
+                {
+                  !user && (<NavLink
+                    to="/sign-in"
+                    className={({ isActive }) =>
+                      `text-lg font-semibold transition-colors duration-300 ${isActive ? "text-[#F76D3A]" : "hover:text-[#F76D3A]"
+                      }`
+                    }
+                  >
+                    Sign In
+                  </NavLink>)
+                }
               </div>
             </SheetContent>
           </Sheet>

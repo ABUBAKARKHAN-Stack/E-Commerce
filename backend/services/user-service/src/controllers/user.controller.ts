@@ -35,7 +35,7 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "Invalid phone number")
     }
     const user = await userModel.create({
-        name: username,
+        username,
         email,
         password,
         phone,
@@ -88,34 +88,26 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     if (!user.isVerified) {
-     
-            const token = generateToken({
-                email: user.email,
-            }, "10m")
-            await sendEmail(
-                'E-Commerce Sign In Verification',
-                user.email,
-                'Email Verification',
-                emailTemplate("Email Verification", user.email, token)
-            );
-        
-            throw new ApiError(400, "Your account is not verified. We've sent a verification link to your email. Please check your inbox and verify your email to continue.");
-        
 
-        }
+        const token = generateToken({
+            email: user.email,
+        }, "10m")
+        await sendEmail(
+            'E-Commerce Sign In Verification',
+            user.email,
+            'Email Verification',
+            emailTemplate("Email Verification", user.email, token)
+        );
+
+        throw new ApiError(400, "Your account is not verified. We've sent a verification link to your email. Please check your inbox and verify your email to continue.");
 
 
-    if (user.isActive) {
-        throw new ApiError(400, "User already logged in")
     }
 
     const token = generateToken({
         userId: user._id,
+        role: user.role,
     }, "1d")
-
-    user.isActive = true
-    await user.save();
-
 
     res
         .status(200)
@@ -126,7 +118,9 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
             sameSite: "none",
             secure: true
         })
-        .json(new ApiResponse(200, "User logged in successfully"))
+        .json(new ApiResponse(200, "User logged in successfully", {
+            userToken: token,
+        }))
 }
 )
 
@@ -251,9 +245,9 @@ const getUser = asyncHandler(async (req: Request, res: Response) => {
 
 //? Update a user
 const updateUser = asyncHandler(async (req: Request, res: Response) => {
-    const { name, email, phone, address }: UpdateUser = req.body
+    const { username, email, phone, address }: UpdateUser = req.body
     const userId = res.locals.user._id;
-    if (!name && !email && !phone && !address) {
+    if (!username && !email && !phone && !address) {
         throw new ApiError(400, "At least one field is required")
     }
 
@@ -277,7 +271,7 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const updatedUser = await userModel.findByIdAndUpdate(userId, {
-        name,
+        username,
         email,
         phone,
         address
@@ -331,8 +325,7 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     if (!user) {
         throw new ApiError(400, "User not found");
     }
-    user.isActive = false
-    await user.save()
+
     res
         .status(200)
         .clearCookie("userToken", {

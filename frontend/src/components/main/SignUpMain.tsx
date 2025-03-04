@@ -6,7 +6,6 @@ const SignUpMain = () => {
         <div className="min-h-screen flex justify-center items-center">
             <div className="flex flex-col bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] rounded-2xl px-1 py-4 sm:p-4 border-2 border-[#E5E7EB] dark:border-[#27272A] shadow-2xl dark:shadow-2xl max-w-[30rem] md:max-w-[60%] lg:max-w-[45%] mx-auto items-center justify-center text-black dark:text-white">
 
-
                 {/* Header Section */}
                 <FormHeader />
 
@@ -18,7 +17,7 @@ const SignUpMain = () => {
 
                 {/* Signup Form */}
                 <div className="w-full px-1.5 max-w-[95%] xs:max-w-[92%] mt-6 mb-6">
-                    <SignUpForm />
+                    <SignUpForm isAdmin={false} />
                 </div>
 
                 {/* Sign-in Redirect */}

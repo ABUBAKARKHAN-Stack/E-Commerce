@@ -5,7 +5,7 @@
 
 html {
   font-family: 'poppins', sans-serif;
-  overflow-x: hidden;
+  overflow-x: hidden!important;
   scroll-behavior: smooth;
 }
 
@@ -120,7 +120,7 @@ html {
   --breakpoint-3xl: 1700px;
   --breakpoint-xsm: 550px;
   --breakpoint-xs: 490px;
-  --breakpoint-xxs: 430px
+  --breakpoint-xxs: 450px
 }
 
 @layer base {

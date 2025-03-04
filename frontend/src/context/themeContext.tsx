@@ -16,12 +16,12 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         setTheme(newTheme)
         localStorage.setItem("theme", newTheme)
     }, [theme])
-    
+
     useEffect(() => {
         document.querySelector("html")?.classList.remove(theme)
         const localTheme = localStorage.getItem("theme")
         if (localTheme) {
-            console.log(localTheme);   
+            console.log(localTheme);
             setTheme(localTheme)
             document.querySelector("html")?.classList.add(localTheme)
         }

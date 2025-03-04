@@ -2,13 +2,13 @@ import { JwtPayload } from "jsonwebtoken";
 import mongoose, { Document } from "mongoose";
 
 interface IUser extends Document {
-    name: string;
+    username: string;
     email: string;
     password: string;
     phone: string;
     address: string;
     isVerified: boolean;
-    isActive: boolean;
+    role: string;
     comparePassword: (password: string) => Promise<boolean>;
     hashedPassword: (password: string) => Promise<string>;
 }
@@ -47,7 +47,7 @@ interface LoginUser {
 }
 
 interface UpdateUser {
-    name?: string;
+    username?: string;
     email?: string;
     phone?: string;
     address?: string;

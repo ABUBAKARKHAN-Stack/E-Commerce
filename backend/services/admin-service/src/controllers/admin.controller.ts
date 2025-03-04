@@ -11,9 +11,9 @@ import validator from 'validator'
 
 //? Create a new Admin
 const createAdmin = asyncHandler(async (req: Request, res: Response) => {
-    const { name, email, password, phone, address }: CreateAdmin = req.body;
+    const { username, email, password, phone }: CreateAdmin = req.body;
 
-    if (!name || !email || !password || !phone || !address) {
+    if (!username || !email || !password || !phone) {
         throw new ApiError(400, "All fields are required");
     }
 
@@ -27,7 +27,7 @@ const createAdmin = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 symbol");
     }
 
-    if (!validator.isLength(name, { min: 3, max: 30 })) {
+    if (!validator.isLength(username, { min: 3, max: 30 })) {
         throw new ApiError(400, "Name must be between 3 and 30 characters");
     }
 
@@ -39,16 +39,12 @@ const createAdmin = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "Invalid phone number");
     }
 
-    if (!validator.isLength(address, { min: 10, max: 100 })) {
-        throw new ApiError(400, "Address must be between 10 and 100 characters");
-    }
 
     const admin = await adminModel.createOne({
-        name,
+        username,
         email,
         password,
         phone,
-        address,
     });
 
     if (!admin) {
@@ -106,15 +102,12 @@ const loginAdmin = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "Your account is not verified. A verification link has been sent to your email. Please verify your email to proceed.");
     }
 
-    if (admin.isActive) {
-        throw new ApiError(400, "Admin already logged in")
-    }
 
     const token = generateToken({
         adminId: admin._id,
+        role: admin.role
     }, "1d")
 
-    admin.isActive = true
     await admin.save();
 
 
@@ -122,12 +115,14 @@ const loginAdmin = asyncHandler(async (req: Request, res: Response) => {
         .status(200)
         .setHeader("Authorization", `Bearer ${token}`)
         .cookie("adminToken", token, {
-            httpOnly: true,
+            httpOnly: false,
             maxAge: 1000 * 60 * 60 * 24 * 7,
             sameSite: "none",
             secure: true
         })
-        .json(new ApiResponse(200, "Admin logged in successfully"))
+        .json(new ApiResponse(200, "Admin logged in successfully", {
+            adminToken: token
+        }))
 }
 )
 
@@ -307,8 +302,6 @@ const logoutAdmin = asyncHandler(async (req: Request, res: Response) => {
     if (!admin) {
         throw new ApiError(400, "Admin not found");
     }
-    admin.isActive = false
-    await admin.save()
     res
         .status(200)
         .clearCookie("adminToken", {

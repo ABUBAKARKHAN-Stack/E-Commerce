@@ -1,13 +1,12 @@
 import { Header, Layout, ThemeToggler } from "@/components/reusable"
 import { HeroMain } from '@/components/main'
 import { useThemeContext } from "@/context/themeContext"
-import { useUserContext } from "@/context/userContext"
+import { useAuthContext } from "@/context/authContext"
 const HomePage = () => {
 
-   const { theme } = useThemeContext()
-   const {user} = useUserContext()
-   console.log(user);
-   
+  const { user } = useAuthContext()
+  console.log(user);
+
   return (
     <>
       <Header />

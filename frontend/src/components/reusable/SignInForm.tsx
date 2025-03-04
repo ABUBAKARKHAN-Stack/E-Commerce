@@ -14,48 +14,36 @@ import {
 import { Input } from "@/components/ui/input";
 import { signinSchema } from "@/schemas";
 import { loginUser } from "@/API/userApi";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { errorToast, infoToast, successToast } from "@/utils/toastNotifications";
 import { signInFields } from "@/constants/formFields";
 import { Eye, EyeClosed, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { loginAdmin } from "@/API/adminApi";
+import { jwtDecode } from "jwt-decode";
+import { useAuthContext } from "@/context/authContext";
 
+type Props = {
+    isAdmin: boolean
+}
 
-const SignInForm = () => {
+const SignInForm: FC<Props> = ({ isAdmin }) => {
 
     const form = useForm<z.infer<typeof signinSchema>>({
         resolver: zodResolver(signinSchema),
         defaultValues: { email: "", password: "" },
     });
-    const [loading, setLoading] = useState(false);
     const [isEyeOn, setIsEyeOn] = useState(false)
     const [isPassVisible, setIsPassVisible] = useState(false)
     const navigate = useNavigate()
+    const { login , loading } = useAuthContext()
 
     const eyeToggler = () => {
         setIsEyeOn((prev) => !prev)
         setIsPassVisible(!isPassVisible)
     }
     const onSubmit = async (data: z.infer<typeof signinSchema>) => {
-
-        try {
-            console.log(data);
-            setLoading(true)
-            const res = await loginUser(data)
-            console.log(res);
-            if (res.status === 200) {
-                successToast(res.data.message)
-                navigate("/")
-            }
-
-        } catch (error: any) {
-            console.log(error);
-            const errorMsg = error.response.data.message
-            errorToast(errorMsg)
-        } finally {
-            setLoading(false)
-        }
-
+        login(data, isAdmin, navigate)
         console.log("Login Data:", data);
     };
 

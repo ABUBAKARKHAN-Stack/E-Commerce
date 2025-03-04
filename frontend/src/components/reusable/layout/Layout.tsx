@@ -8,7 +8,7 @@ type Props = {
 // Use forwardRef to pass the ref to the main element
 const Layout = forwardRef<HTMLElement, Props>(({ children, className }, ref) => {
     return (
-        <main ref={ref} className={`w-full  p-4 h-full max-w-[500px] xsm:max-w-xl  sm:max-w-2xl md:max-w-3xl lg:max-w-[1100px] mx-auto ${className || ''}`}>
+        <main ref={ref} className={`w-full p-4 h-full max-w-[500px] xsm:max-w-xl  sm:max-w-2xl md:max-w-3xl lg:max-w-[1100px] mx-auto ${className || ''}`}>
             {children}
         </main>
     );

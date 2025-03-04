@@ -18,27 +18,40 @@ const createProduct = expressAsyncHandler(async (req: Request, res: Response) =>
     if (quantity !== undefined && (isNaN(quantity) || quantity < 0)) {
         throw new ApiError(400, "Quantity cannot be negative");
     }
+
+    const files = req.files as Express.Multer.File[]
+    let thumbnails: string[] = [];
+
+
+    for (const file of files) {
+        const response = await uploadOnCloudinary(file.path)
+        const thumbnailUrl = await thumbnailForProduct(response.public_id)
+        thumbnails.push(thumbnailUrl)
+    }
+    
+
     const product = await productModel.create({
         name,
         description,
         price,
         quantity,
         category,
+        thumbnails: thumbnails
     })
     if (!product) {
         throw new ApiError(400, "Product not created")
     }
 
-    try {
-        await publishEvent<IProduct>("product-creation", "created_product", product)
-    } catch (error) {
-        console.error('Error publishing product created event:', error);
-        throw new ApiError(500, "Error publishing product created event");
-    }
+    // try {
+    //     await publishEvent<IProduct>("product-creation", "created_product", product)
+    // } catch (error) {
+    //     console.error('Error publishing product created event:', error);
+    //     throw new ApiError(500, "Error publishing product created event");
+    // }
 
     res
         .status(201)
-        .json(new ApiResponse(201, "Product created successfully", product))
+        .json(new ApiResponse(201, "Product created successfully", {product,thumbnails}))
 
 })
 
@@ -109,14 +122,15 @@ const addThumbnail = expressAsyncHandler(async (req: Request, res: Response) => 
     if (product.thumbnails.length >= 5) {
         throw new ApiError(400, "Maximum thumbnails reached")
     }
-    const filePath = req.file?.path
-    if (!filePath) {
-        throw new ApiError(400, "File not found")
+    const files = req.files as Express.Multer.File[]
+
+
+    for (const file of files) {
+        const response = await uploadOnCloudinary(file.path)
+        const thumbnailUrl = await thumbnailForProduct(response.public_id)
+        product.thumbnails.push(thumbnailUrl)
     }
 
-    const response = await uploadOnCloudinary(filePath)
-    const thumbnailUrl = await thumbnailForProduct(response.public_id)
-    product.thumbnails.push(thumbnailUrl)
     await product.save()
 
     res
@@ -141,12 +155,12 @@ const deleteProduct = expressAsyncHandler(async (req: Request, res: Response) =>
     }
     await product.deleteOne()
 
-    try {
-        await publishEvent<IProduct>("product-deletion", "deleted_product", product)
-    } catch (error) {
-        console.log("Error publishing product deletion event:", error);
-        throw new ApiError(500, "Error publishing product deletion event");
-    }
+    // try {
+    //     await publishEvent<IProduct>("product-deletion", "deleted_product", product)
+    // } catch (error) {
+    //     console.log("Error publishing product deletion event:", error);
+    //     throw new ApiError(500, "Error publishing product deletion event");
+    // }
 
     res
         .status(200)

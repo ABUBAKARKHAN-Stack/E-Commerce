@@ -39,3 +39,42 @@ export const signInFields = [
         placeholder: "********",
     },
 ] as const;
+
+export const productFields = [
+    {
+        label: "Name",
+        name: "name",
+        type: "text",
+        placeholder: "Enter Product Name"
+    },
+    {
+        label: "Description",
+        name: "description",
+        type: "text",
+        placeholder: "Enter Product Description"
+    },
+    {
+        label: "Price",
+        name: "price",
+        type: "number",
+        placeholder: "Enter Product Price"
+    },
+    {
+        label: "Quantity",
+        name: "quantity",
+        type: "number",
+        placeholder: "Enter Product Quantity"
+    },
+    {
+        label: "Category",
+        name: "category",
+        type: "text",
+        placeholder: "Enter Product Category"
+    },
+    {
+        label: "Thumbnails",
+        name: "thumbnails",
+        placeholder: "",
+        type: "file",
+    },
+] as const;
