@@ -44,12 +44,12 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
     if (!user) {
         throw new ApiError(400, "User not created")
     }
-    // try {
-    //     await publishEvent<IUser>("user-creation", "user-created", user)
-    // } catch (error) {
-    //     console.log("Error publishing event:", error);
-    //     throw new ApiError(500, "Error publishing event");
-    // }
+    try {
+        await publishEvent<IUser>("user-creation", "user-created", user)
+    } catch (error) {
+        console.log("Error publishing event:", error);
+        throw new ApiError(500, "Error publishing event");
+    }
     res
         .status(201)
         .json(new ApiResponse(201, "User Registered Successfully.", user))

@@ -2,19 +2,20 @@ import expressAsyncHandler from "express-async-handler"
 import productModel from "../models/product.model"
 import { Request, Response } from "express"
 import { ApiError, ApiResponse, publishEvent, subscribeToTopics } from '../utils'
-import { IProduct } from "../types/main.types"
 import redisClient from "../config/redis.config"
 import mongoose from "mongoose"
+import { getAllRedisProducts, getProductbyId } from "../helper/redisProduct.helper"
 
 
 const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) => {
-    const cachedProducts = await redisClient.get("products")
+    const cachedProducts = await getAllRedisProducts()
 
-    if (cachedProducts) {
-        const products = JSON.parse(cachedProducts)
+    if (cachedProducts.length > 0) {
+        console.log("🚀 Fetched products from cache");
         res
             .status(200)
-            .json(new ApiResponse(200, "Products fetched successfully from cache", products))
+            .json(new ApiResponse(200, "Products fetched successfully from cache", cachedProducts))
+        return;
     }
 
     const products = await productModel.find()
@@ -30,6 +31,14 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
 
 
 const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
+    const cachedProduct = await getProductbyId(req.params.id)
+    if (cachedProduct) {
+        console.log("🚀 Fetched product from cache");
+        res
+            .status(200)
+            .json(new ApiResponse(200, "Product fetched successfully from cache", cachedProduct))
+        return;
+    }
     const product = await productModel.findById(req.params.id)
     if (!product) {
         throw new ApiError(404, "Product not found")

@@ -5,6 +5,7 @@ import { AdminProductsMian } from '@/components/main'
 const AdminProductsPage = () => {
     return (
         <>
+
             <ThemeToggler />
             <AdminProductsMian />
         </>

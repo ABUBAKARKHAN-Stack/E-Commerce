@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import { Layout, Logo, SideBar, AdminDashboard, AdminHeader } from "../reusable"; // Adjust import path
-import { Button } from "../ui/button";
-import { Menu } from "lucide-react";
+import { Layout, SideBar, AdminDashboard, AdminHeader } from "../reusable"; // Adjust import path
 import { useAuthContext } from "@/context/authContext";
 
 const AdminDashboardMain = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const { user } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
 
   const renderContent = () => {

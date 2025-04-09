@@ -10,6 +10,8 @@ import AdminSignInMain from "./AdminSignInMain";
 import AdminDashboardMain from "./AdminDashboardMain";
 import AdminProductsMian from "./AdminProductsMian";
 import AdminAddProductMain from "./AdminAddProductMain";
+import AdminUpdateProductMain from "./AdminUpdateProductMain";
+import AdminViewProductMain from "./AdminViewProductMain";
 
 export {
         HeroMain,
@@ -23,5 +25,7 @@ export {
         AdminSignInMain,
         AdminDashboardMain,
         AdminProductsMian,
-        AdminAddProductMain
+        AdminAddProductMain,
+        AdminUpdateProductMain,
+        AdminViewProductMain,
 }

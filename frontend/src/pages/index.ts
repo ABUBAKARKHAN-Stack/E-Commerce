@@ -11,6 +11,8 @@ import ErrorPage from "./ErrorPage";
 import EmailVerificationPAge from "./EmailVerificationPage";
 import ProfilePage from "./ProfilePage";
 import AdminAddProductPage from "./AdminAddProductPage";
+import AdminUpdateProductPage from "./AdminUpdateProductPage";
+import AdminViewProductPage from "./AdminViewProductPage";
 export {
   HomePage,
   ProductsPage,
@@ -25,4 +27,6 @@ export {
   EmailVerificationPAge,
   ProfilePage,
   AdminAddProductPage,
+  AdminUpdateProductPage,
+  AdminViewProductPage,
 }

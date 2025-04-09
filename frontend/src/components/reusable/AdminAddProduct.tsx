@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-
-import { useNavigate } from "react-router-dom";
 import ProductForm from "./ProductForm";
 
 const AdminAddProduct = () => {
-    const navigate = useNavigate();
-
-
 
     return (
         <div className="px-4 space-y-6">

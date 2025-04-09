@@ -41,10 +41,46 @@ const createProduct = async (data: any) => {
     })
 }
 
+const getProducts = async () => {
+    return await api.get('/product/all', {
+        withCredentials: true
+    })
+}
+
+const getSingleProduct = async (productId: string) => {
+    return await api.get(`/product/${productId}`, {
+        withCredentials: true
+    })
+}
+
+const deleteProduct = async (productId: string) => {
+    return await api.delete(`/product/admin/delete/${productId}`, {
+        withCredentials: true
+    })
+}
+
+const updateProduct = async (productId: string, data: any) => {
+    return await api.put(`/product/admin/update/${productId}`, data, {
+        withCredentials: true
+    })
+}
+
+const removeProductThumbnail = async (productId: string, thumbnailIndex: any) => {
+    return await api.delete(`/product/admin/remove-thumbnail/${productId}/thumbnail?thumbnailIndex=${thumbnailIndex}`, {
+        withCredentials: true
+    })
+
+}
+
 export {
     createAdmin,
     loginAdmin,
     getAdmin,
     logoutAdmin,
-    createProduct
+    createProduct,
+    getProducts,
+    getSingleProduct,
+    deleteProduct,
+    updateProduct,
+    removeProductThumbnail
 }

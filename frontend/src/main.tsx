@@ -2,12 +2,13 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { HomePage, SignInPage, SignUpPage, AboutPage, ProductsPage, ErrorPage, EmailVerificationPAge, ProfilePage, UserDashboardPage, AdminSignUpPage, AdminSignInPage, AdminDashboardPage, AdminAddProductPage } from '@/pages'
+import { HomePage, SignInPage, SignUpPage, AboutPage, ProductsPage, ErrorPage, EmailVerificationPAge, ProfilePage, UserDashboardPage, AdminSignUpPage, AdminSignInPage, AdminDashboardPage, AdminAddProductPage, AdminUpdateProductPage, AdminViewProductPage } from '@/pages'
 import { ThemeProvider } from '@/context/themeContext'
 import { UserAuthLayout } from '@/components/reusable'
 import AdminAuthLayout from './components/reusable/layout/AdminAuthLayout'
 import { AuthProvider } from './context/authContext'
 import AdminProductsPage from './pages/AdminProductsPage'
+import { ProductProvider } from './context/productContext'
 
 
 
@@ -122,13 +123,28 @@ const router = createBrowserRouter([
       <AdminAddProductPage />
     </AdminAuthLayout>
   },
+  {
+    path: "/admin/products/edit/:id",
+    element: <AdminAuthLayout authenticationRequired={true}>
+      <AdminUpdateProductPage />
+    </AdminAuthLayout>
+  },
+  {
+    path: "/admin/products/product/:id",
+    element: <AdminAuthLayout authenticationRequired={true}>
+      <AdminViewProductPage />
+    </AdminAuthLayout>
+  }
+  
 ])
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <ProductProvider>
+          <RouterProvider router={router} />
+        </ProductProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode >,

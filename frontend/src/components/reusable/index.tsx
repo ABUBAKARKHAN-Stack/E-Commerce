@@ -15,5 +15,7 @@ import AdminProducts from "./AdminProducts"
 import AdminHeader from "./AdminHeader"
 import AdminAddProduct from "./AdminAddProduct"
 import ProductForm from "./ProductForm"
+import AdminUpdateProduct from "./AdminUpdateProduct"
+import AdminViewProduct from "./AdminViewProduct"
 
-export { SignInForm, SignUpForm, Header, Layout, UserAuthLayout, Logo , HeroText  , HeroImage , FormHeader , ThemeToggler , SideBar , UserDashboard , AdminDashboard , AdminProducts , AdminHeader , AdminAddProduct , ProductForm }
+export { SignInForm, SignUpForm, Header, Layout, UserAuthLayout, Logo , HeroText  , HeroImage , FormHeader , ThemeToggler , SideBar , UserDashboard , AdminDashboard , AdminProducts , AdminHeader , AdminAddProduct , ProductForm, AdminUpdateProduct , AdminViewProduct }

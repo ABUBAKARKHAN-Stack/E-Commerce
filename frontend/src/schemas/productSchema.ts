@@ -1,4 +1,4 @@
-import * as z from 'zod'
+import * as z from 'zod';
 
 const productSchema = z.object({
     name: z.string().min(5, {
@@ -16,11 +16,10 @@ const productSchema = z.object({
     category: z.string().min(5, {
         message: 'Category must be at least 5 characters long',
     }),
-    thumbnails: z.array(z.instanceof(File)).min(1, {
-        message: 'Thumbnails must be at least 1',
-    }).max(5, {
-        message: 'Thumbnails must be at most 5',
-    })
-})
+    thumbnails: z.union([
+        z.array(z.string()).min(1, { message: 'At least one thumbnail is required' }), // For existing thumbnails (strings)
+        z.array(z.instanceof(File)).min(1, { message: 'At least one thumbnail is required' }), // For new files
+    ]).optional(), // Make optional to allow existing thumbnails to persist without forcing new uploads
+});
 
-export default productSchema
+export default productSchema;

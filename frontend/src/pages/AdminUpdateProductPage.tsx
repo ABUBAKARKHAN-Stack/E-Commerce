@@ -1,16 +1,16 @@
-import { AdminAddProductMain } from '@/components/main'
+import { AdminUpdateProductMain } from '@/components/main'
 import { ThemeToggler } from '@/components/reusable'
 import { Toaster } from 'sonner'
 
-const AdminAddProductPage = () => {
+const AdminUpdateProductPage = () => {
     const theme = localStorage.getItem('theme');
   return (
     <>
     <ThemeToggler />
     <Toaster theme={theme as "dark" | "light"} />
-    <AdminAddProductMain />
+    <AdminUpdateProductMain />
     </>
   )
 }
 
-export default AdminAddProductPage
+export default AdminUpdateProductPage

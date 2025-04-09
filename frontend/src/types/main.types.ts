@@ -33,3 +33,15 @@ export interface  AdminUpdatedJwtPayload extends JwtPayload {
     role: string;
 }
 
+ 
+
+export interface IProduct {
+    _id: string;
+    name: string;
+    description: string;
+    price: number;
+    category: string;
+    image: string;
+    quantity: number;
+}
+

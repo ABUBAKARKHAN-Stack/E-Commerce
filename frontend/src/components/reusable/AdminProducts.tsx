@@ -4,31 +4,37 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Pencil, Trash, Eye, PlusCircle } from "lucide-react";
-import Layout from "./layout/Layout";
-import { SideBar } from ".";
 import { useNavigate } from "react-router-dom";
-
-const productsData = [
-    { id: 1, name: "iPhone 15", price: "$999", stock: 10, category: "Smartphones" },
-    { id: 2, name: "MacBook Pro", price: "$1999", stock: 5, category: "Laptops" },
-    { id: 3, name: "Sony WH-1000XM5", price: "$399", stock: 15, category: "Headphones" },
-    { id: 4, name: "Samsung Galaxy S23", price: "$799", stock: 8, category: "Smartphones" },
-    { id: 5, name: "Dell XPS 13", price: "$1299", stock: 3, category: "Laptops" },
-    { id: 6, name: "Bose QuietComfort 35 II", price: "$299", stock: 12, category: "Headphones" },
-    { id: 7, name: "Sony PlayStation 5", price: "$499", stock: 6, category: "Gaming Consoles" },
-];
+import { useAdminProductContext } from "@/context/productContext";
+import { Dialog } from "@radix-ui/react-dialog";
+import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 
 const AdminProducts = () => {
     const [search, setSearch] = useState("");
+    const { products, loadingProducts, deleteProduct, deletingProduct } = useAdminProductContext();
     const navigate = useNavigate();
 
-    const filteredProducts = productsData.filter((product) =>
+
+    const onDelete = (productId: string) => {
+        deleteProduct(productId)
+    }
+
+
+
+    const filteredProducts = products?.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
     );
 
+    if (loadingProducts) {
+        return (
+            <div>
+                LOADING...
+            </div>
+        )
+    }
+
     return (
         <div className="px-4 space-y-6">
-
             <div className="flex border-b-2 flex-col md:flex-row md:items-center md:justify-between py-4">
                 <div>
                     <h1 className="text-3xl text-gray-950 dark:text-white font-bold">Manage Products</h1>
@@ -47,38 +53,74 @@ const AdminProducts = () => {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Sr No.</TableHead>
+                            <TableHead>Thumbnail</TableHead>
                             <TableHead>Product Name</TableHead>
                             <TableHead>Price</TableHead>
-                            <TableHead>Stock</TableHead>
+                            <TableHead>Quantity</TableHead>
                             <TableHead>Category</TableHead>
+                            <TableHead>Thumbnails</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {filteredProducts.length > 0 ? (
-                            filteredProducts.map((product) => (
-                                <TableRow key={product.id}>
-                                    <TableCell>{product.id}</TableCell>
-                                    <TableCell>{product.name}</TableCell>
+                        {filteredProducts!?.length > 0 ? (
+                            filteredProducts!.map((product, i) => (
+                                <TableRow key={product._id}>
+                                    <TableCell>{i + 1}</TableCell>
+                                    <TableCell>
+                                        {product.thumbnails.length > 0 && (
+                                            <img src={product.thumbnails[0]} alt={product.name} className="w-12 h-12 object-contain rounded" />
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="overflow-hidden whitespace-nowrap text-ellipsis max-w-1">{product.name}</TableCell>
                                     <TableCell>{product.price}</TableCell>
-                                    <TableCell>{product.stock}</TableCell>
+                                    <TableCell>{product.quantity}</TableCell>
                                     <TableCell>{product.category}</TableCell>
+                                    <TableCell>{product.thumbnails.length}</TableCell>
                                     <TableCell className="flex gap-2">
-                                        <Button size="icon" variant="outline">
+                                        <Button onClick={() => navigate(`/admin/products/product/${product._id}`)} size="icon" variant="outline">
                                             <Eye className="w-4 h-4" />
                                         </Button>
-                                        <Button size="icon" variant="outline">
+                                        <Button onClick={() => navigate(`/admin/products/edit/${product._id}`)} size="icon" variant="outline">
                                             <Pencil className="w-4 h-4" />
                                         </Button>
-                                        <Button size="icon" variant="destructive">
-                                            <Trash className="w-4 h-4" />
-                                        </Button>
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <Button size="icon" variant="destructive">
+                                                    <Trash className="w-4 h-4" />
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader>
+                                                    <DialogTitle>Delete "{product.name}"?
+                                                    </DialogTitle>
+                                                    <DialogDescription className="mt-3">
+                                                        Are you sure you want to delete <span className="font-semibold">{product.name}</span>?
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <DialogFooter>
+                                                    <div className="flex mt-6 w-full justify-between items-center">
+                                                        <DialogClose>
+                                                            <Button variant="outline">Cancel</Button>
+                                                        </DialogClose>
+                                                        <Button disabled={deletingProduct} onClick={() => onDelete(product._id)} variant="destructive">
+                                                            {
+                                                                deletingProduct ? (
+                                                                    "Deleting..."
+                                                                ) : "Confirm Delete"
+                                                            }
+                                                        </Button>
+                                                    </div>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+
                                     </TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center">
+                                <TableCell colSpan={8} className="text-center">
                                     No products found.
                                 </TableCell>
                             </TableRow>
