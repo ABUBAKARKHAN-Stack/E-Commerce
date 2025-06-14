@@ -19,7 +19,7 @@ import userRoutes from './routes/user.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
 import { cartEventConsumer } from './utils/kafka';
 
-app.use("/", userRoutes);
+app.use("/", userRoutes); 
 
 //* Importing  cart routes
 import cartRoutes from './routes/cart.routes';

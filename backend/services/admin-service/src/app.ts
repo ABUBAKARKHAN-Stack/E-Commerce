@@ -6,14 +6,14 @@ import { env } from './config/env';
 import { productEventsConsumer, userEventsConsumer } from './utils/kafka';
 
 const app = express();
-app.use(json({
+app.use(json({ 
     limit: '50mb'
 }));
-app.use(urlencoded({
+app.use(urlencoded({ 
     extended: true
 }));
 
-app.use(cookieparser())
+app.use(cookieparser()) 
 
 // Importing routes
 import router from './routes/admin.routes';

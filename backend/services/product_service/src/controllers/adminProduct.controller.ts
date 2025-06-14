@@ -120,15 +120,20 @@ const updateProduct = expressAsyncHandler(async (req: Request, res: Response) =>
 })
 
 const addThumbnail = expressAsyncHandler(async (req: Request, res: Response) => {
-    const product = await productModel.findById(req.params.id)
+    const product = await productModel.findById(req.params.id);
+
     if (!product) {
         throw new ApiError(404, "Product not found")
     }
+
     if (product.thumbnails.length >= 5) {
         throw new ApiError(400, "You can add only 5 thumbnails")
     }
     const files = req.files as Express.Multer.File[]
 
+    if (files.length + product.thumbnails.length > 5) {
+        throw new ApiError(400, "You can add only 5 thumbnails");
+    }
 
     for (const file of files) {
         const response = await uploadOnCloudinary(file.path)

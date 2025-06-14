@@ -13,14 +13,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signinSchema } from "@/schemas";
-import { loginUser } from "@/API/userApi";
 import { FC, useState } from "react";
-import { errorToast, infoToast, successToast } from "@/utils/toastNotifications";
 import { signInFields } from "@/constants/formFields";
-import { Eye, EyeClosed, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { loginAdmin } from "@/API/adminApi";
-import { jwtDecode } from "jwt-decode";
+
 import { useAuthContext } from "@/context/authContext";
 
 type Props = {

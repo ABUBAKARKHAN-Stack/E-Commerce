@@ -21,7 +21,7 @@ app.use('/', orderRoutes);
 const PORT = env.PORT || 3001;
 
 Promise.all([
-    consumeCartEvent()
+    consumeCartEvent() 
 ])
     .then(() => {
         console.log("Connected to Kafka");        

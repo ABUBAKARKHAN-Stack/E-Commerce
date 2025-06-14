@@ -1,5 +1,6 @@
 import * as z from "zod"
 
+// Signup Schema
 const signupSchema = z.object({
     username: z.string().min(2, {
         message: "Username must be at least 2 characters.",
@@ -25,10 +26,17 @@ const signupSchema = z.object({
         .regex(/[!@#$%^&*(),.?":{}|<>]/, "Must contain at least one special character."),
 })
 
-// Validation Schema
+// Signin Schema
 const signinSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email address." }),
     password: z.string().min(8, { message: "Password must be at least 8 characters." }),
 });
 
-export { signupSchema , signinSchema  }
+// Forgot Password Schema
+const forgotPasswordSchema = z.object({
+   identifier: z.string({
+    message: "Email or Phone is required"
+})
+})
+
+export { signupSchema , signinSchema, forgotPasswordSchema  }

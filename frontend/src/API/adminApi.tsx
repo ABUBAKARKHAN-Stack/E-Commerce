@@ -60,7 +60,7 @@ const deleteProduct = async (productId: string) => {
 }
 
 const updateProduct = async (productId: string, data: any) => {
-    return await api.put(`/product/admin/update/${productId}`, data, {
+    return await api.patch(`/product/admin/update/${productId}`, data, {
         withCredentials: true
     })
 }

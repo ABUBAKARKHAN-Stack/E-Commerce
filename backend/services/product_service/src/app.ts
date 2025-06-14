@@ -10,7 +10,7 @@ app.use(json({
     limit: "50mb",
 }));
 app.use(urlencoded({ extended: true }));
-app.use(cookieParser())
+app.use(cookieParser());
 
 
 const PORT = process.env.PORT || 3003;

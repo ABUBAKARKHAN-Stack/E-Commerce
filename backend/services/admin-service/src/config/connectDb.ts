@@ -8,7 +8,7 @@ const connectDb = async () => {
         console.log(`Connected to database at ${host}:${port}/${name}`);
     } catch (error) {
         console.log("Error Database Connection :: ", error);
-    }
+    } 
 
 }
-export { connectDb };
+export { connectDb };  

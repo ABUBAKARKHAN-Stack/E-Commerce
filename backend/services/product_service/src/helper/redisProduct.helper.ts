@@ -1,6 +1,6 @@
 import redisClient from "../config/redis.config";
 
-/**
+/*
  * Add a new product to Redis (push to existing array)
  */
 export const addProduct = async (product: any) => {
@@ -19,7 +19,7 @@ export const addProduct = async (product: any) => {
     }
 };
 
-/**
+/*
  * Remove a product from Redis by ID
  */
 export const removeProduct = async (productId: string) => {
@@ -40,7 +40,7 @@ export const removeProduct = async (productId: string) => {
     }
 };
 
-/**
+/*
  * Update a product in Redis by ID
  */
 export const updateProduct = async (productId: string, updatedProduct: any) => {
@@ -59,7 +59,7 @@ export const updateProduct = async (productId: string, updatedProduct: any) => {
     }
 };
 
-/**
+/*
  * Get all products from Redis
  */
 export const getAllRedisProducts = async () => {
@@ -72,7 +72,7 @@ export const getAllRedisProducts = async () => {
     }
 };
 
-/** 
+/*
  * Get a product from Redis by ID
  * @param productId
  */

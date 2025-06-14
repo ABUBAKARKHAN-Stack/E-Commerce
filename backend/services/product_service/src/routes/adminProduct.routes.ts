@@ -15,7 +15,7 @@ const router = Router();
 router.post("/create", adminAuth, upload.array("thumbnails", 5), createProduct)
 router.post("/add-thumbnail/:id", adminAuth, upload.array("thumbnails", 5), addThumbnail)
 router.delete("/remove-thumbnail/:id/thumbnail", adminAuth, removeThumbnail)
-router.put("/update/:id", adminAuth, upload.array("thumbnails", 5), updateProduct)
+router.patch("/update/:id", adminAuth, upload.array("thumbnails", 5), updateProduct)
 router.delete("/delete/:id", adminAuth, deleteProduct)
 
 

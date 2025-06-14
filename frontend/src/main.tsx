@@ -2,21 +2,43 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { HomePage, SignInPage, SignUpPage, AboutPage, ProductsPage, ErrorPage, EmailVerificationPAge, ProfilePage, UserDashboardPage, AdminSignUpPage, AdminSignInPage, AdminDashboardPage, AdminAddProductPage, AdminUpdateProductPage, AdminViewProductPage } from '@/pages'
+import {
+  ErrorPage,
+} from '@/pages/shared' //* Shared Pages
+import {
+  AdminSignUpPage,
+  AdminSignInPage,
+  AdminDashboardPage,
+  AdminAddProductPage,
+  AdminUpdateProductPage,
+  AdminViewProductPage,
+  AdminProductsPage
+} from '@/pages/admin' //* Admin Pages
+import {
+  HomePage,
+  AboutPage,
+  ProductsPage,
+  UserSignInPage,
+  UserSignUpPage,
+  UserDashboardPage,
+  UserForgotPasswordPage,
+  UserProfilePage,
+  UserEmailVerificationPage
+
+} from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
-import { UserAuthLayout } from '@/components/reusable'
-import AdminAuthLayout from './components/reusable/layout/AdminAuthLayout'
+import { UserAuthLayout } from '@/components/layout/user'
+import { AdminAuthLayout } from '@/components/layout/admin'
 import { AuthProvider } from './context/authContext'
-import AdminProductsPage from './pages/AdminProductsPage'
 import { ProductProvider } from './context/productContext'
 
 
 
 const router = createBrowserRouter([
   {
-    errorElement: <ErrorPage />,
+    errorElement: <ErrorPage />, //! Error Page (Shared Page)
   },
-  // Public Routes (No Auth Required For Users)
+  //! Public Routes (No Auth Required For Users)
   {
     path: "/",
     element: (
@@ -30,7 +52,7 @@ const router = createBrowserRouter([
     element: (
       <UserAuthLayout authenticationRequired={false}>
         <AdminAuthLayout authenticationRequired={false}>
-          <SignInPage />
+          <UserSignInPage />
         </AdminAuthLayout>
       </UserAuthLayout>
     ),
@@ -40,7 +62,7 @@ const router = createBrowserRouter([
     element: (
       <UserAuthLayout authenticationRequired={false}>
         <AdminAuthLayout authenticationRequired={false}>
-          <SignUpPage />
+          <UserSignUpPage />
         </AdminAuthLayout>
       </UserAuthLayout>
     ),
@@ -49,16 +71,25 @@ const router = createBrowserRouter([
     path: "/user/verify/:email/:token",
     element: (
       <UserAuthLayout authenticationRequired={false}>
-        <EmailVerificationPAge />
+        <UserEmailVerificationPage />
       </UserAuthLayout>
     ),
   },
   {
+    path: "/forgot-password",
+    element: (
+      <UserAuthLayout authenticationRequired={false}>
+        <UserForgotPasswordPage />
+      </UserAuthLayout>
+    )
+  },
+  {
     path: "/about",
-    element:
+    element: (
       <AdminAuthLayout authenticationRequired={false}>
         <AboutPage />
       </AdminAuthLayout>
+    )
   },
   {
     path: "/products",
@@ -69,15 +100,7 @@ const router = createBrowserRouter([
     ),
   },
 
-  // Protected Routes (Require Auth For Users)
-  {
-    path: "/user/dashboard/profile/:name",
-    element: (
-      <UserAuthLayout authenticationRequired={true}>
-        <ProfilePage />
-      </UserAuthLayout>
-    ),
-  },
+  //! Protected Routes (Require Auth For Users)
   {
     path: "/user/dashboard",
     element: (
@@ -86,56 +109,76 @@ const router = createBrowserRouter([
       </UserAuthLayout>
     ),
   },
+  {
+    path: "/user/dashboard/profile/:name",
+    element: (
+      <UserAuthLayout authenticationRequired={true}>
+        <UserProfilePage />
+      </UserAuthLayout>
+    ),
+  },
 
-  // Public Routes (No Auth Required For Admin)
+  //! Public Routes (No Auth Required For Admin)
   {
     path: "/admin/sign-up",
-    element: <AdminAuthLayout authenticationRequired={false}>
-      <UserAuthLayout authenticationRequired={false}>
-        <AdminSignUpPage />
-      </UserAuthLayout>
-    </AdminAuthLayout>
+    element: (
+      <AdminAuthLayout authenticationRequired={false}>
+        <UserAuthLayout authenticationRequired={false}>
+          <AdminSignUpPage />
+        </UserAuthLayout>
+      </AdminAuthLayout>
+    )
   },
   {
     path: "/admin/sign-in",
-    element:
+    element: (
       <AdminAuthLayout authenticationRequired={false}>
         <UserAuthLayout authenticationRequired={false}>
           <AdminSignInPage />
         </UserAuthLayout>
       </AdminAuthLayout>
+    )
   },
   {
     path: "/admin/dashboard",
-    element: <AdminAuthLayout authenticationRequired={true}>
-      <AdminDashboardPage />
-    </AdminAuthLayout>
+    element: (
+      <AdminAuthLayout authenticationRequired={true}>
+        <AdminDashboardPage />
+      </AdminAuthLayout>
+    )
   },
   {
     path: "/admin/products",
-    element: <AdminAuthLayout authenticationRequired={true}>
-      <AdminProductsPage />
-    </AdminAuthLayout>
+    element: (
+      <AdminAuthLayout authenticationRequired={true}>
+        <AdminProductsPage />
+      </AdminAuthLayout>
+    )
   },
   {
     path: "/admin/products/add",
-    element: <AdminAuthLayout authenticationRequired={true}>
-      <AdminAddProductPage />
-    </AdminAuthLayout>
+    element: (
+      <AdminAuthLayout authenticationRequired={true}>
+        <AdminAddProductPage />
+      </AdminAuthLayout>
+    )
   },
   {
     path: "/admin/products/edit/:id",
-    element: <AdminAuthLayout authenticationRequired={true}>
-      <AdminUpdateProductPage />
-    </AdminAuthLayout>
+    element: (
+      <AdminAuthLayout authenticationRequired={true}>
+        <AdminUpdateProductPage />
+      </AdminAuthLayout>
+    )
   },
   {
     path: "/admin/products/product/:id",
-    element: <AdminAuthLayout authenticationRequired={true}>
-      <AdminViewProductPage />
-    </AdminAuthLayout>
+    element: (
+      <AdminAuthLayout authenticationRequired={true}>
+        <AdminViewProductPage />
+      </AdminAuthLayout>
+    )
   }
-  
 ])
 
 createRoot(document.getElementById('root')!).render(

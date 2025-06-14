@@ -52,8 +52,9 @@ const getCartDetails = expressAsyncHandler(async (req: Request, res: Response) =
 })
 
 const proceedToCheckout = expressAsyncHandler(async (req: Request, res: Response) => {
-    const { _id } = res.locals.user
-    const userId = _id
+    const { _id } = res.locals.user;
+    const userId = _id;
+    
     const cart = await cartModel.aggregate([
         {
             $match: {
@@ -73,9 +74,9 @@ const proceedToCheckout = expressAsyncHandler(async (req: Request, res: Response
 
             }
         }
-    ])
-    if (!cart) {
-        throw new ApiError(404, "Cart not found")
+    ]);
+    if (!cart.length) {
+        throw new ApiError(404, "Cart not found");
     }
 
     console.log(cart);

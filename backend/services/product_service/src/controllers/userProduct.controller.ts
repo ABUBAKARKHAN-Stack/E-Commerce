@@ -103,7 +103,9 @@ const removeFromCart = expressAsyncHandler(async (req: Request, res: Response) =
         console.log("✅ Event published successfully", cartedProducts);
 
         // Respond immediately (error handling is done asynchronously)
-        res.status(202).json(new ApiResponse(202, "Product removal request sent"));
+        res
+            .status(202)
+            .json(new ApiResponse(202, "Product removal request sent"));
     } catch (error) {
         console.error("🚨 Error in product removal:", error);
         throw new ApiError(500, "Error processing removal request")
