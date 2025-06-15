@@ -1,7 +1,7 @@
 import { LayoutDashboardIcon, LogOutIcon, Menu } from 'lucide-react'
 import React, { FC, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import Logo from '@/components/reusable/Logo'
+import Logo from '@/components/reusable/shared/Logo'
 import Layout from '@/components/layout/shared/Layout'
 import { useAuthContext } from '@/context/authContext'
 import { Link, NavLink, useNavigate } from 'react-router-dom'

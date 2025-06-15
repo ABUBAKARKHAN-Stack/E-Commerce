@@ -1,5 +1,5 @@
 import { AdminViewProductMain } from '@/components/main/admin';
-import { ThemeToggler } from '@/components/reusable';
+import { ThemeToggler } from '@/components/reusable/shared';
 import { Toaster } from 'sonner';
 
 const AdminViewProductPage = () => {

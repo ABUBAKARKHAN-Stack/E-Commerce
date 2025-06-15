@@ -1,4 +1,4 @@
-import { SignInForm, FormHeader } from '@/components/reusable';
+import { SignInForm, FormHeader } from '@/components/reusable/shared';
 import { Link } from 'react-router-dom';
 
 const UserSignInMain = () => {
@@ -27,7 +27,7 @@ const UserSignInMain = () => {
                         to="/forgot-password"
                        className="dark:text-orange-400 text-cyan-400 hover:text-cyan-500 font-medium underline dark:hover:text-orange-500 transition-colors duration-200"
                     >
-                        Forgotten Password
+                        Forgotten Password?
                     </Link>
 
                 {/* Sign-in Redirect */}

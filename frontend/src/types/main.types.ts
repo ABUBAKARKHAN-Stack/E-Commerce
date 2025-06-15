@@ -33,6 +33,10 @@ export interface  AdminUpdatedJwtPayload extends JwtPayload {
     role: string;
 }
 
+
+export interface IResetpasswordQueryParams { 
+    queryParameters: object | null;
+}
  
 
 export interface IProduct {

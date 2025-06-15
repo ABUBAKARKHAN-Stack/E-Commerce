@@ -1,4 +1,4 @@
-import { ThemeToggler } from "@/components/reusable"
+import { ThemeToggler } from "@/components/reusable/shared"
 import { AdminDashboardMain } from "@/components/main/admin"
 
 const AdminDashboardPage = () => {

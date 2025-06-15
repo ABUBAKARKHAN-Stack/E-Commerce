@@ -5,8 +5,8 @@ import AdminSignInMain from "./AdminSignInMain";
 import AdminSignUpMain from "./AdminSignUpMain";
 import AdminUpdateProductMain from "./AdminUpdateProductMain";
 import AdminViewProductMain from "./AdminViewProductMain";
-
-
+import AdminForgotPasswordMain from "./AdminForgotPasswordMain";
+import AdminResetPasswordMain from "./AdminResetPasswordMain";
 
 export {
     AdminAddProductMain,
@@ -15,5 +15,8 @@ export {
     AdminSignInMain,
     AdminSignUpMain,
     AdminUpdateProductMain,
-    AdminViewProductMain
+    AdminViewProductMain,
+    AdminForgotPasswordMain,
+    AdminResetPasswordMain,
+    
 }

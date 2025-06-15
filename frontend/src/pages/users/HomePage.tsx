@@ -1,7 +1,7 @@
-import { ThemeToggler } from "@/components/reusable"
+import { ThemeToggler } from "@/components/reusable/shared"
 import { Layout } from '@/components/layout/shared'
 import { Header } from '@/components/layout/user'
-import { HeroMain } from '@/components/main/users'
+import { HeroMain, FeaturedCategoriesMain } from '@/components/main/users'
 import { useAuthContext } from "@/context/authContext"
 const HomePage = () => {
 
@@ -12,11 +12,8 @@ const HomePage = () => {
     <>
       <Header />
       <HeroMain />
+      <FeaturedCategoriesMain />
       <ThemeToggler />
-      <Layout>
-        hi
-      </Layout>
-
     </>
   )
 }

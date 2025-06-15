@@ -1,16 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "../ui/form"
-import { Input } from "../ui/input"
-import { Button } from "../ui/button"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Button } from "@/components/ui/button"
 import { signupSchema } from "@/schemas"
 import { signUpFields } from "@/constants/formFields"
 import { createUser } from "@/API/userApi"
 import { FC, useState } from "react"
 import { successToast, errorToast } from '@/utils/toastNotifications'
-import { Eye, EyeOff } from "lucide-react"
 import { createAdmin } from "@/API/adminApi"
+import PasswordVisibilityToggler from "./PasswordVisibilityToggler"
 
 type Props = {
     isAdmin: boolean
@@ -29,13 +28,7 @@ const SignUpForm: FC<Props> = ({ isAdmin }) => {
     })
 
     const [loading, setLoading] = useState(false)
-    const [isEyeOn, setIsEyeOn] = useState(false)
-    const [isPassVisible, setIsPassVisible] = useState(false)
 
-    const eyeToggler = () => {
-        setIsEyeOn((prev) => !prev)
-        setIsPassVisible(!isPassVisible)
-    }
     const onSubmit = async (data: z.infer<typeof signupSchema>) => {
         try {
             setLoading(true)
@@ -71,19 +64,13 @@ const SignUpForm: FC<Props> = ({ isAdmin }) => {
                                     <FormItem>
                                         <FormLabel>{label}</FormLabel>
                                         <FormControl>
-                                            <Input type={type === "password" && isPassVisible ? "text" : type} placeholder={placeholder} {...field} />
+                                            <PasswordVisibilityToggler
+                                                name={name}
+                                                type={type}
+                                                field={field}
+                                                placeholder={placeholder}
+                                            />
                                         </FormControl>
-                                        {
-                                            name === "password" && <FormDescription>
-                                                <div className="relative text-[#1B1B1F] dark:text-gray-200">
-                                                    <button type="button" className="absolute block -top-[79px] right-2" onClick={eyeToggler} >
-                                                        {
-                                                            !isEyeOn ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />
-                                                        }
-                                                    </button>
-                                                </div>
-                                            </FormDescription>
-                                        }
                                         <FormMessage />
                                     </FormItem>
                                 )}

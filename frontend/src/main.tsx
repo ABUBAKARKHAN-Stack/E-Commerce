@@ -12,7 +12,9 @@ import {
   AdminAddProductPage,
   AdminUpdateProductPage,
   AdminViewProductPage,
-  AdminProductsPage
+  AdminProductsPage,
+  AdminForgotPasswordPage,
+  AdminResetPasswordPage
 } from '@/pages/admin' //* Admin Pages
 import {
   HomePage,
@@ -23,7 +25,8 @@ import {
   UserDashboardPage,
   UserForgotPasswordPage,
   UserProfilePage,
-  UserEmailVerificationPage
+  UserEmailVerificationPage,
+  UserResetPasswordPage
 
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
@@ -84,6 +87,14 @@ const router = createBrowserRouter([
     )
   },
   {
+    path: "/user/reset-password",
+    element: (
+      <UserAuthLayout authenticationRequired={false}>
+        <UserResetPasswordPage />
+      </UserAuthLayout>
+    )
+  },
+  {
     path: "/about",
     element: (
       <AdminAuthLayout authenticationRequired={false}>
@@ -139,6 +150,19 @@ const router = createBrowserRouter([
       </AdminAuthLayout>
     )
   },
+  {
+    path: "/admin/forgot-password",
+    element: (
+      <AdminForgotPasswordPage />
+    )
+  },
+  {
+    path: "/admin/reset-password",
+    element: (
+      <AdminResetPasswordPage />
+    )
+  },
+  //! Protected Routes (Require Auth for Admins)
   {
     path: "/admin/dashboard",
     element: (

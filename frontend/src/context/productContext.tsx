@@ -117,7 +117,6 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
             
             try {
                 const res = await updateProduct(productId, formData);
-
                 successToast(res.data.message);
                 await getAllProducts();
                 await getProduct(productId);

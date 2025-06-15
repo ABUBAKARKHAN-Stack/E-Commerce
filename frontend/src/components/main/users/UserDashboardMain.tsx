@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Logo } from "@/components/reusable";
+import { Logo } from "@/components/reusable/shared";
 import { Layout, SideBar } from "@/components/layout/shared";
 import { UserDashboard } from '@/components/sections/user'
 import { Button } from "@/components/ui/button";

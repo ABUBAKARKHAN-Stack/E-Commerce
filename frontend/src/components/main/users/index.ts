@@ -6,7 +6,8 @@ import UserDashboardMain from "./UserDashboardMain";
 import UserSignInMain from "./UserSignInMain";
 import UserSignUpMain from "./UserSignUpMain";
 import UserForgotPasswordMain from "./UserForgotPasswordMain";
-
+import UserResetPasswordMain from "./UserResetPasswordMain";
+import FeaturedCategoriesMain from "./FeaturedCategoriesMain";
 
 export {
     HeroMain,
@@ -16,5 +17,7 @@ export {
     UserDashboardMain,
     UserSignInMain,
     UserSignUpMain,
-    UserForgotPasswordMain
+    UserForgotPasswordMain,
+    UserResetPasswordMain,
+    FeaturedCategoriesMain
 }

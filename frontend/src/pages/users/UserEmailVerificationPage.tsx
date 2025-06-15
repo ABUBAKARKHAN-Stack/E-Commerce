@@ -1,4 +1,4 @@
-import { ThemeToggler } from '@/components/reusable';
+import { ThemeToggler } from '@/components/reusable/shared';
 import { Layout } from '@/components/layout/shared'
 import { useParams } from 'react-router-dom'
 import { verifyUser } from '@/API/userApi';

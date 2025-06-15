@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ProductForm from "@/components/reusable/ProductForm";
+import ProductForm from "@/components/reusable/admin/ProductForm";
 import { useParams } from "react-router-dom";
 import { useAdminProductContext } from "@/context/productContext";
 

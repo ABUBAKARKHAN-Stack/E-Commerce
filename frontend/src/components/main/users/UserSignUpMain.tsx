@@ -1,4 +1,4 @@
-import { SignUpForm, FormHeader } from '@/components/reusable';
+import { SignUpForm, FormHeader } from '@/components/reusable/shared';
 import { Link } from 'react-router-dom';
 
 const UserSignUpMain = () => {

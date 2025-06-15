@@ -1,5 +1,5 @@
 import { AdminSignUpMain } from '@/components/main/admin'
-import { ThemeToggler } from '@/components/reusable'
+import { ThemeToggler } from '@/components/reusable/shared'
 import { Layout } from '@/components/layout/shared'
 import { Toaster } from 'sonner'
 import { useThemeContext } from '@/context/themeContext'

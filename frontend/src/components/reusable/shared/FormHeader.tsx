@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Logo from './Logo'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 import { FC } from 'react'
 
 const FormHeader: FC = () => {
@@ -10,7 +10,7 @@ const FormHeader: FC = () => {
             <Logo width='w-32 sm:w-40 md:w-48' />
             <Link to="/">
                 <Button
-                    className='text-[10px] bg-cyan-500 hover:bg-cyan-600/90 transition-all ease-linear duration-300 hover:scale-105 rounded-full xxs:text-xs xsm:text-sm xsm:py-5 hover:underline'
+                    className='text-[10px] transition-all ease-linear duration-300 hover:scale-105 rounded-full xxs:text-xs xsm:text-sm xsm:py-5 hover:underline'
                     variant="default"
                 >
                     Back to Home

@@ -1,5 +1,5 @@
 import { UserSignInMain } from "@/components/main/users"
-import { ThemeToggler } from "@/components/reusable"
+import { ThemeToggler } from "@/components/reusable/shared"
 import { Layout } from "@/components/layout/shared"
 import { useThemeContext } from "@/context/themeContext"
 import { Toaster } from "sonner"

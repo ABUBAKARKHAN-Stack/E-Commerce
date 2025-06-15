@@ -1,10 +1,10 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import { CircleX, Eye } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 type Props = {
     form: any;

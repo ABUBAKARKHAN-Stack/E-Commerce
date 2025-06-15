@@ -34,6 +34,22 @@ const logoutAdmin = async () => {
     })
 }
 
+//* ForgotPassword Admin
+const forgotPasswordAdmin = async (data: any) => {
+    return await api.post('/admin/forgot-password', data);
+}
+
+//* Reset Password Admin
+const resetPasswordAdmin = async (data: any,params:any) => {
+    return api.post('/admin/reset-password', data,
+        {
+            params: {
+                email: params.email,
+                token: params.token
+            }
+        })
+}
+
 //* Create Product
 const createProduct = async (data: any) => {
     return await api.post('/product/admin/create', data, {
@@ -77,6 +93,8 @@ export {
     loginAdmin,
     getAdmin,
     logoutAdmin,
+    forgotPasswordAdmin,
+    resetPasswordAdmin,
     createProduct,
     getProducts,
     getSingleProduct,

@@ -1,7 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
+type ThemeContextTypes = {
+    theme: string;
+    toggleTheme: () => void;
+}
 
-const ThemeContext = createContext({
+const ThemeContext = createContext<ThemeContextTypes>({
     theme: "dark",
     toggleTheme: () => { }
 })
@@ -17,13 +21,18 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem("theme", newTheme)
     }, [theme])
 
+
     useEffect(() => {
+        let firstMounted = true;
         document.querySelector("html")?.classList.remove(theme)
         const localTheme = localStorage.getItem("theme")
         if (localTheme) {
+            firstMounted = false;
             console.log(localTheme);
             setTheme(localTheme)
             document.querySelector("html")?.classList.add(localTheme)
+        } else {
+            localStorage.setItem("theme",theme);
         }
     }, [])
 

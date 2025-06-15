@@ -1,4 +1,4 @@
-import ProductForm from "@/components/reusable/ProductForm";
+import ProductForm from "@/components/reusable/admin/ProductForm";
 
 const AdminAddProduct = () => {
 

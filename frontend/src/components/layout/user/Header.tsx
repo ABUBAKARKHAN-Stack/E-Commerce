@@ -4,7 +4,7 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuLink } from "@/compon
 import { FC, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { ShoppingCart, Menu, LogOutIcon, LayoutDashboardIcon } from "lucide-react";
-import { Logo } from "@/components/reusable";
+import { Logo } from "@/components/reusable/shared";
 import { Layout } from '@/components/layout/shared'
 import { DropdownItem, DropdownItems, DropdownMain } from '@/components/ui/dropdown-menu'
 import { useAuthContext } from "@/context/authContext";
@@ -43,7 +43,7 @@ const Header: FC = () => {
   }, []);
 
   return (
-    <header className=" h-20 w-full border-b-2 items-center dark:bg-[#1B1B1F] shadow-lg">
+    <header className=" h-20 w-full absolute z-50 top-0 border-b-2 items-center dark:bg-[#1B1B1F] shadow-lg">
       <Layout className="flex items-center justify-between">
         {/* Logo */}
         <Logo />
@@ -64,8 +64,8 @@ const Header: FC = () => {
           <NavLink to="/cart" className="relative hidden md:block">
             <>
               <ShoppingCart
-                className="h-6 w-6 transition-colors duration-300 hover:text-cyan-600  dark:hover:text-[#F76D3A]
-                    "
+                className="h-6 w-6 transition-colors duration-300 hover:text-cyan-600/90/90  dark:hover:text-orange-600/90
+                "
               />
               <span className="absolute -top-2 -right-2 text-[10px] bg-red-500 text-white font-bold w-5 h-5 flex justify-center items-center rounded-full">
                 3 {/* Example cart count */}
@@ -130,7 +130,7 @@ const Header: FC = () => {
               <Button
                 variant="outline"
                 size="icon"
-                className="md:hidden dark:text-white dark:border-gray-400 transition-colors duration-300 hover:border-[#F76D3A]"
+                className="md:hidden dark:text-white dark:border-gray-400 transition-colors duration-300 hover:border-orange-500"
               >
                 <Menu className="h-6 w-6" />
               </Button>
@@ -142,7 +142,7 @@ const Header: FC = () => {
                     key={href}
                     to={href}
                     className={({ isActive }) =>
-                      `text-lg w-fit font-semibold text-[#1B1B1F] dark:text-white transition-all hover:scale-105 duration-300 hover:text-cyan-500 dark:hover:text-orange-500 ${isActive ? "text-cyan-500 dark:text-[#F76D3A]" : ""
+                      `text-lg w-fit font-semibold text-[#1B1B1F] dark:text-white transition-all hover:scale-105 duration-300 hover:text-cyan-600/90 dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
                       }`
                     }
                   >
@@ -152,7 +152,7 @@ const Header: FC = () => {
                 <NavLink
                   to="/cart"
                   className={({ isActive }) =>
-                    `text-lg w-fit flex items-center gap-2 font-semibold text-[#1B1B1F] dark:text-white transition-all hover:scale-105 duration-300 hover:text-cyan-500 dark:hover:text-orange-500 ${isActive ? "text-cyan-500 dark:text-[#F76D3A]" : ""
+                    `text-lg w-fit flex items-center gap-2 font-semibold text-[#1B1B1F] dark:text-white transition-all hover:scale-105 duration-300 hover:text-cyan-600/90 dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
                     }`
                   }
                 >
@@ -162,7 +162,7 @@ const Header: FC = () => {
                   !user && (<NavLink
                     to="/sign-in"
                     className={({ isActive }) =>
-                      `text-lg font-semibold transition-colors duration-300 ${isActive ? "text-[#F76D3A]" : "hover:text-[#F76D3A]"
+                      `text-lg font-semibold transition-colors duration-300 ${isActive ? "text-orange-500" : "hover:text-orange-600/90"
                       }`
                     }
                   >

@@ -153,25 +153,21 @@ const verifyAdmin = asyncHandler(async (req: Request, res: Response) => {
 
 //? Forgot password
 const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
-    const { email, phone } = req.body;
+    const { identifier } = req.body;
 
-    if (!email && !phone) {
+    if (!identifier) {
         throw new ApiError(400, "Email or phone is required")
     }
 
-    if (email && !validator.isEmail(email)) {
-        throw new ApiError(400, "Invalid email")
+    if (identifier && !validator.isEmail(identifier) && !validator.isMobilePhone(identifier, "en-PK")) {
+        throw new ApiError(400, "Invalid email or phone")
 
-    }
-
-    if (phone && !validator.isMobilePhone(phone, "en-PK")) {
-        throw new ApiError(400, "Invalid phone number")
     }
 
     const admin = await adminModel.findOne({
         $or: [
-            { email },
-            { phone }
+            { email: identifier },
+            { phone: identifier }
         ]
     })
     if (!admin) {
@@ -207,7 +203,16 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     })) {
         throw new ApiError(400, "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 symbol")
     }
-    const { admin } = res.locals;
+
+    if (password) {
+        const { admin } = res.locals;
+        const isSame = await admin.comparePassword(password);
+        if (isSame) {
+            throw new ApiError(400, "New password cannot be the same as the old password.")
+        }
+    }
+
+    const { admin } =  res.locals;
     admin.password = password;
     await admin.save()
     res

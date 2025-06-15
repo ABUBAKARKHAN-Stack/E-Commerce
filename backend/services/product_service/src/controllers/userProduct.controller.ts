@@ -5,6 +5,7 @@ import { ApiError, ApiResponse, publishEvent, subscribeToTopics } from '../utils
 import redisClient from "../config/redis.config"
 import mongoose from "mongoose"
 import { getAllRedisProducts, getProductbyId } from "../helper/redisProduct.helper"
+import { IProduct } from "../types/main.types"
 
 
 const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) => {
@@ -46,6 +47,35 @@ const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
     res
         .status(200)
         .json(new ApiResponse(200, "Product fetched successfully", product))
+})
+
+const getCategories = expressAsyncHandler(async (req: Request, res: Response) => {
+    const cachedProducts = await getAllRedisProducts();
+    if (cachedProducts.length > 0) {
+        const categories = [...new Set(cachedProducts.map((p: IProduct) => p.category))];
+        res
+        .status(200)
+        .json(new ApiResponse(200,"Categories Fetched from cache",categories));
+        console.log("Categories Fetched from cache");
+        return;
+    }
+
+    const products = await productModel
+    .find()
+    .lean();
+    if (products.length === 0) {
+        res
+            .status(400)
+            .json(new ApiResponse(400, 'failed to fetch categories',))
+        return;
+    }
+    const categories = [...new Set(products.map((p) => p.category))]
+    
+    
+    res
+    .status(200)
+    .json(new ApiResponse(200, "Categories Fetched", categories))
+
 })
 
 
@@ -155,10 +185,12 @@ const updateCart = expressAsyncHandler(async (req: Request, res: Response) => {
 })
 
 
+
 export {
     getAllProducts,
     getProduct,
     addToCart,
     updateCart,
-    removeFromCart
+    removeFromCart,
+    getCategories
 }

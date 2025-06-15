@@ -4,7 +4,6 @@ import axios from 'axios'
 
 const api = axios.create({
   baseURL: `http://localhost:3005/user`,
-  // withCredentials: true
 })
 
 //* Create New USER
@@ -38,10 +37,27 @@ const logoutUser = async () => {
   })
 }
 
+//* Forgot Password
+const forgotPasswordUser = async (data: any) => {
+  return await api.post('/forgot-password', data)
+}
+
+//* Reset Password
+const resetPasswordUser = async (data: any, params: any) => {
+  return await api.post('/reset-password', data, {
+    params: {
+      email: params.email,
+      token: params.token
+    }
+  })
+}
+
 export {
   createUser,
   loginUser,
   verifyUser,
   getUser,
-  logoutUser
+  logoutUser,
+  forgotPasswordUser,
+  resetPasswordUser
 }

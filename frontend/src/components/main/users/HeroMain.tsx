@@ -78,7 +78,7 @@ const HeroMain = () => {
     }, [currentIndex]); // Depend on currentIndex to re-trigger animation
 
     return (
-        <main className="w-screen h-[calc(100vh-80px)] bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl border-b-2 flex flex-col items-center justify-center">
+        <main className="w-screen h-screen bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl border-b-2 flex flex-col items-center justify-center">
             {heroItems.slice(currentIndex, currentIndex + 1).map((item, i) => {
                 const { heading, para, image } = item;
                 return (

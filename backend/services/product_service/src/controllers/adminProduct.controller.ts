@@ -8,7 +8,9 @@ import { uploadOnCloudinary, deleteOnCloudinary, thumbnailForProduct } from '../
 import mongoose from "mongoose";
 
 const createProduct = expressAsyncHandler(async (req: Request, res: Response) => {
-    const { name, description, price, quantity, category }: CreateProduct = req.body
+    let { name, description, price, quantity, category }: CreateProduct = req.body
+    const spaceRegex = /\s/;
+
 
     if (!name || !description || !price || !quantity || !category) {
         throw new ApiError(400, "All fields are required")
@@ -31,13 +33,17 @@ const createProduct = expressAsyncHandler(async (req: Request, res: Response) =>
         thumbnails.push(thumbnailUrl)
     }
 
+    if (spaceRegex.test(category.toLowerCase())) {
+        category = category.replaceAll(" ", "-");
+    }
+
 
     const product = await productModel.create({
         name,
         description,
         price,
         quantity,
-        category,
+        category: category.toLowerCase(),
         thumbnails: thumbnails
     })
     if (!product) {
@@ -59,7 +65,8 @@ const createProduct = expressAsyncHandler(async (req: Request, res: Response) =>
 })
 
 const updateProduct = expressAsyncHandler(async (req: Request, res: Response) => {
-    const { name, description, price, quantity, category } = req.body
+    let { name, description, price, quantity, category } = req.body
+    const spaceRegex = /\s/;
 
     if (!name && !description && !price && !quantity && !category) {
         throw new ApiError(400, "At least one field is required")
@@ -75,13 +82,17 @@ const updateProduct = expressAsyncHandler(async (req: Request, res: Response) =>
         }
     }
 
+     if (spaceRegex.test(category.toLowerCase())) {
+        category = category.replaceAll(" ", "-");
+    }
+
 
     const updatedFields: Partial<CreateProduct> = {}
-    if (name) updatedFields.name = name
-    if (description) updatedFields.description = description
-    if (price) updatedFields.price = price
-    if (quantity) updatedFields.quantity = quantity
-    if (category) updatedFields.category = category
+    if (name) updatedFields.name = name;
+    if (description) updatedFields.description = description;
+    if (price) updatedFields.price = price;
+    if (quantity) updatedFields.quantity = quantity;
+    if (category) updatedFields.category = category.toLowerCase();
 
     const product = await productModel.findById(req.params.id)
     const files = req.files as Express.Multer.File[]

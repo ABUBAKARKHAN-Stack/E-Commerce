@@ -1,15 +1,16 @@
 import { FC, useEffect, useState } from 'react';
-import { Button } from "../ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { productSchema } from '@/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { productFields } from '@/constants/formFields';
-import { Input } from '../ui/input';
+import { Input } from '@/components/ui/input';
 import Dropzone from './Dropzone';
 import { useNavigate } from 'react-router-dom';
 import { useAdminProductContext } from '@/context/productContext';
+import { ArrowLeft } from 'lucide-react';
 
 type Props = {
     product?: any;
@@ -111,6 +112,7 @@ const ProductForm: FC<Props> = ({ product }) => {
                         {product ? "Edit Product" : "Add Product"}
                     </Button>
                     <Button onClick={() => navigate(-1)} className="w-full xsm:w-fit" type="button" variant={"outline"}>
+                        <ArrowLeft />
                         Go Back
                     </Button>
                 </div>

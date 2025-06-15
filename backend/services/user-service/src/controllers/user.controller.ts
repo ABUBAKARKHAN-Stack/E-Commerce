@@ -150,27 +150,20 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
 
 //? Forgot password
 const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
-    const { email, phone } = req.body;
+    const { identifier } = req.body;
 
-    if (!email && !phone) {
+    if (!identifier) {
         throw new ApiError(400, "Email or phone is required")
     }
-    console.log(email, phone);
 
-
-    if (email && !validator.isEmail(email)) {
-        throw new ApiError(400, "Invalid email")
-
-    }
-
-    if (phone && !validator.isMobilePhone(phone, "en-PK")) {
-        throw new ApiError(400, "Invalid phone number")
+    if (identifier && !validator.isEmail(identifier) && !validator.isMobilePhone(identifier, "en-PK")) {
+        throw new ApiError(400, "Invalid email or phone")
     }
 
     const user = await userModel.findOne({
         $or: [
-            { email },
-            { phone }
+            { email: identifier },
+            { phone: identifier }
         ]
     })
     if (!user) {
@@ -214,12 +207,12 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
         }
         const isSame = await user.comparePassword(password)
         if (isSame) {
-            throw new ApiError(400, "New password cannot be same as old password")
+            throw new ApiError(400, "New password cannot be the same as the old password.")
         }
     }
 
     const { user } = res.locals;
-    user.password = password;
+    user.password = password; 
     await user.save()
     res
         .status(200)
