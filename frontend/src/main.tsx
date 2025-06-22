@@ -31,7 +31,7 @@ import {
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
 import { UserAuthLayout } from '@/components/layout/user'
-import { AdminAuthLayout } from '@/components/layout/admin'
+import { AdminAuthLayout, AdminRoot } from '@/components/layout/admin'
 import { AuthProvider } from './context/authContext'
 import { ProductProvider } from './context/productContext'
 
@@ -164,45 +164,32 @@ const router = createBrowserRouter([
   },
   //! Protected Routes (Require Auth for Admins)
   {
-    path: "/admin/dashboard",
-    element: (
-      <AdminAuthLayout authenticationRequired={true}>
-        <AdminDashboardPage />
-      </AdminAuthLayout>
-    )
+    path: "/admin",
+    element: <AdminRoot />,
+    children: [
+      {
+        path: 'dashboard',
+        element: <AdminDashboardPage />
+      },
+      {
+        path: 'products',
+        element: <AdminProductsPage />
+
+      },
+      {
+        path: 'products/add',
+        element: <AdminAddProductPage />
+      },
+      {
+        path: 'products/edit/:id',
+        element: <AdminUpdateProductPage />
+      },
+      {
+        path: 'products/product/:id',
+        element: <AdminViewProductPage />
+      },
+    ]
   },
-  {
-    path: "/admin/products",
-    element: (
-      <AdminAuthLayout authenticationRequired={true}>
-        <AdminProductsPage />
-      </AdminAuthLayout>
-    )
-  },
-  {
-    path: "/admin/products/add",
-    element: (
-      <AdminAuthLayout authenticationRequired={true}>
-        <AdminAddProductPage />
-      </AdminAuthLayout>
-    )
-  },
-  {
-    path: "/admin/products/edit/:id",
-    element: (
-      <AdminAuthLayout authenticationRequired={true}>
-        <AdminUpdateProductPage />
-      </AdminAuthLayout>
-    )
-  },
-  {
-    path: "/admin/products/product/:id",
-    element: (
-      <AdminAuthLayout authenticationRequired={true}>
-        <AdminViewProductPage />
-      </AdminAuthLayout>
-    )
-  }
 ])
 
 createRoot(document.getElementById('root')!).render(

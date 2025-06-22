@@ -8,6 +8,8 @@ import UserSignUpMain from "./UserSignUpMain";
 import UserForgotPasswordMain from "./UserForgotPasswordMain";
 import UserResetPasswordMain from "./UserResetPasswordMain";
 import FeaturedCategoriesMain from "./FeaturedCategoriesMain";
+import TrendingProductsMain from "./TrendingProductsMain";
+import WhyChooseUsMain from "./WhyChooseUsMain";
 
 export {
     HeroMain,
@@ -19,5 +21,7 @@ export {
     UserSignUpMain,
     UserForgotPasswordMain,
     UserResetPasswordMain,
-    FeaturedCategoriesMain
+    FeaturedCategoriesMain,
+    TrendingProductsMain,
+    WhyChooseUsMain
 }

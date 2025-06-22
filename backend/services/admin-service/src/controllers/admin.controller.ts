@@ -214,7 +214,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
 
     const { admin } =  res.locals;
     admin.password = password;
-    await admin.save()
+    await admin.save();
     res
         .status(200)
         .json(new ApiResponse(200, "Password reset successfully"))

@@ -7,8 +7,12 @@ type Props = {
 
 const HeroImage = forwardRef<HTMLDivElement, Props>(({ image, heading }, imageContainerRef) => {
     return (
-        <div ref={imageContainerRef} className="w-3/4 xsm:w-fit md:w-[40%]">
-            <img src={image} className="w-full drop-shadow-xl" alt={heading} />
+        <div ref={imageContainerRef} className="w-full sm:w-3/4 md:w-[40%] flex justify-center">
+            <img
+                src={image}
+                alt={heading}
+                className="w-full max-w-xs sm:max-w-sm md:max-w-md  drop-shadow-xl"
+            />
         </div>
     )
 })

@@ -3,16 +3,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Pencil, Trash, Eye, PlusCircle } from "lucide-react";
+import { Pencil, Trash, Eye, PlusCircle, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAdminProductContext } from "@/context/productContext";
+import { useAdminProductContext } from "@/context/adminProductContext";
 import { Dialog } from "@radix-ui/react-dialog";
 import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AdminProductLoading } from "@/types/main.types";
 
 const AdminProducts = () => {
     const [search, setSearch] = useState("");
-    const { products, loadingProducts, deleteProduct, deletingProduct } = useAdminProductContext();
+    const { products, deleteProduct, loading } = useAdminProductContext();
     const navigate = useNavigate();
+    console.log(products);
+
 
 
     const onDelete = (productId: string) => {
@@ -25,7 +28,7 @@ const AdminProducts = () => {
         product.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    if (loadingProducts) {
+    if (loading === AdminProductLoading.GET_ALL) {
         return (
             <div>
                 LOADING...
@@ -57,6 +60,7 @@ const AdminProducts = () => {
                             <TableHead>Product Name</TableHead>
                             <TableHead>Price</TableHead>
                             <TableHead>Quantity</TableHead>
+                            <TableHead>Rating</TableHead>
                             <TableHead>Category</TableHead>
                             <TableHead>Thumbnails</TableHead>
                             <TableHead>Actions</TableHead>
@@ -75,6 +79,10 @@ const AdminProducts = () => {
                                     <TableCell className="overflow-hidden whitespace-nowrap text-ellipsis max-w-1">{product.name}</TableCell>
                                     <TableCell>{product.price}</TableCell>
                                     <TableCell>{product.quantity}</TableCell>
+                                    <TableCell className="flex items-center gap-x-1">
+                                        <span>{product.avgRating}</span>
+                                        <Star className="size-4 fill-white" />
+                                    </TableCell>
                                     <TableCell>{product.category}</TableCell>
                                     <TableCell>{product.thumbnails.length}</TableCell>
                                     <TableCell className="flex gap-2">
@@ -103,9 +111,9 @@ const AdminProducts = () => {
                                                         <DialogClose>
                                                             <Button variant="outline">Cancel</Button>
                                                         </DialogClose>
-                                                        <Button disabled={deletingProduct} onClick={() => onDelete(product._id)} variant="destructive">
+                                                        <Button disabled={loading === AdminProductLoading.DELETE} onClick={() => onDelete(product._id)} variant="destructive">
                                                             {
-                                                                deletingProduct ? (
+                                                                loading === AdminProductLoading.DELETE ? (
                                                                     "Deleting..."
                                                                 ) : "Confirm Delete"
                                                             }

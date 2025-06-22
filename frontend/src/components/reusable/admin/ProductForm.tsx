@@ -9,8 +9,9 @@ import { productFields } from '@/constants/formFields';
 import { Input } from '@/components/ui/input';
 import Dropzone from './Dropzone';
 import { useNavigate } from 'react-router-dom';
-import { useAdminProductContext } from '@/context/productContext';
+import { useAdminProductContext } from '@/context/adminProductContext';
 import { ArrowLeft } from 'lucide-react';
+import { AdminProductLoading } from '@/types/main.types';
 
 type Props = {
     product?: any;
@@ -31,7 +32,7 @@ const ProductForm: FC<Props> = ({ product }) => {
     const [files, setFiles] = useState<File[]>([]);
     const [existingThumbnails, setExistingThumbnails] = useState<string[]>(product?.thumbnails || []);
     const navigate = useNavigate();
-    const { addProduct, addingProduct, editProduct, removeThumbnail } = useAdminProductContext();
+    const { addProduct, editProduct, removeThumbnail, loading } = useAdminProductContext();
 
     useEffect(() => {
         if (product) {
@@ -108,7 +109,7 @@ const ProductForm: FC<Props> = ({ product }) => {
                 />
 
                 <div className='flex gap-x-2'>
-                    <Button disabled={addingProduct} className="w-full xsm:w-fit" type="submit">
+                    <Button disabled={product ? loading === AdminProductLoading.EDIT : loading === AdminProductLoading.ADD} className="w-full xsm:w-fit" type="submit">
                         {product ? "Edit Product" : "Add Product"}
                     </Button>
                     <Button onClick={() => navigate(-1)} className="w-full xsm:w-fit" type="button" variant={"outline"}>

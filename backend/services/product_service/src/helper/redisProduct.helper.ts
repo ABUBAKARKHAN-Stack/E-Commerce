@@ -78,12 +78,23 @@ export const getAllRedisProducts = async () => {
  */
 export const getProductbyId = async (productId: string) => {
     try {
-        const products = await redisClient.get("products");
-        if (!products) return;
-        const parsedProducts = JSON.parse(products);
-        return parsedProducts.find((product: any) => product._id === productId);
+        const product = await redisClient.get(`product:${productId}`);
+        if (!product) return;
+        const parsedProduct = JSON.parse(product);
+        return parsedProduct;
     } catch (error) {
         console.error("Error fetching product from Redis:", error);
         throw error;
     }
 }
+
+
+/*
+ * Invalidate product from Redis by ID
+ * @param productId
+ */
+export const invalidateProductCache = async (productId: string) => {
+    await redisClient.del("products");
+    await redisClient.del('top-products');
+    await redisClient.del(`product:${productId}`);
+};

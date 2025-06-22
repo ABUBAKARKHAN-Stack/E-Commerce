@@ -74,7 +74,7 @@ const Dropzone: FC<Props> = ({ field, setFiles, files, form, existingThumbnails,
                 {existingThumbnails.map((url, i) => {
 
                     return (<div key={i} className="relative group w-full h-30 bg-gray-200 dark:bg-zinc-800 border-2 rounded-md overflow-hidden">
-                        <img src={url} alt={`Existing thumbnail ${i}`} className="w-full h-full aspect-video rounded-md" />
+                        <img src={url} alt={`Existing thumbnail ${i}`} className="w-full h-full object-contain p-1 rounded-md" />
 
                         {/* Overlay */}
                         <div className="absolute inset-0 bg-black/30 bg-opacity-30 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

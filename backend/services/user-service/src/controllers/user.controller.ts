@@ -204,7 +204,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
         const { user } = res.locals
         if (!user) {
             throw new ApiError(400, "User not found")
-        }
+        } 
         const isSame = await user.comparePassword(password)
         if (isSame) {
             throw new ApiError(400, "New password cannot be the same as the old password.")

@@ -72,17 +72,17 @@ const HeroMain = () => {
             setCurrentIndex((prev) =>
                 prev < heroItems.length - 1 ? prev + 1 : 0
             );
-        }, 7000); // Match total animation duration
+        }, 7000); 
 
         return () => clearTimeout(timeout);
-    }, [currentIndex]); // Depend on currentIndex to re-trigger animation
+    }, [currentIndex]); 
 
     return (
-        <main className="w-screen h-screen bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl border-b-2 flex flex-col items-center justify-center">
+        <main className="w-full min-h-screen py-10 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl border-b-2 flex flex-col items-center justify-center">
             {heroItems.slice(currentIndex, currentIndex + 1).map((item, i) => {
                 const { heading, para, image } = item;
                 return (
-                    <Layout ref={layoutRef} key={i} className="flex flex-col-reverse gap-y-20 justify-center md:gap-0 md:flex-row md:justify-between items-center">
+                    <Layout ref={layoutRef} key={i} className="flex my-auto flex-col-reverse gap-y-20 justify-center md:gap-0 md:flex-row md:justify-between items-center">
                          <HeroText heading={heading} para={para} ref={textContainerRef} />
                          <HeroImage image={image} heading={heading} ref={imageContainerRef} />
                     </Layout>

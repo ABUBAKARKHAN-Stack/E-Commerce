@@ -11,15 +11,17 @@ import {
     DialogClose,
 } from "@/components/ui/dialog";
 import { Eye, CircleX, Pencil } from "lucide-react";
-import { useAdminProductContext } from "@/context/productContext";
+import { useAdminProductContext } from "@/context/adminProductContext";
 import { Button } from "@/components/ui/button";
 
 const AdminViewProduct = () => {
-    const { id } = useParams(); // Get product ID from URL
-    const navigate = useNavigate(); // For navigation
+    const { id } = useParams();
+    const navigate = useNavigate();
     const { getProduct, removeThumbnail } = useAdminProductContext();
     const [product, setProduct] = useState<any>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+    console.log(product);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -68,6 +70,8 @@ const AdminViewProduct = () => {
                             {product.name}
                         </h2>
                         <p className="text-gray-700 dark:text-gray-300">{product.description}</p>
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">Category: {product.category.charAt(0).toUpperCase() + product.category.slice(1)}</p>
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">Rating: {product.avgRating}</p>
                         <p className="text-gray-800 dark:text-gray-200 font-bold">
                             Price: ${product.price}
                         </p>
@@ -83,7 +87,7 @@ const AdminViewProduct = () => {
                                         <img
                                             src={thumbnail}
                                             alt={`Existing thumbnail ${i}`}
-                                            className="w-full h-full aspect-video rounded-md"
+                                            className="w-full h-full object-contain rounded-md"
                                         />
 
                                         {/* Overlay Actions */}

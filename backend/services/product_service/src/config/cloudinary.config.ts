@@ -1,6 +1,7 @@
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { env } from './env';
 import { ApiError } from '../utils';
+import streamifier from 'streamifier';
 
 cloudinary.config({
     cloud_name: env.CLOUDINARY.CLOUD_NAME,
@@ -8,16 +9,16 @@ cloudinary.config({
     api_secret: env.CLOUDINARY.API_SECRET
 })
 
-const uploadOnCloudinary = async (filePath: string): Promise<UploadApiResponse> => {
-    try {
-        const respone = await cloudinary.uploader.upload(filePath, {
+const uploadOnCloudinary = async (imageBuffer: Buffer): Promise<UploadApiResponse> => {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream({
             resource_type: "auto"
+        }, (err, result) => {
+            if (err) return reject(err);
+            resolve(result!);
         })
-        console.log("Image Uploaded On Cloudinary", respone.url);
-        return respone
-    } catch (err) {
-        throw new ApiError(500, "Failed to upload on cloudinary")
-    }
+        streamifier.createReadStream(imageBuffer).pipe(uploadStream);
+    });
 }
 
 const deleteOnCloudinary = async (publicId: string) => {

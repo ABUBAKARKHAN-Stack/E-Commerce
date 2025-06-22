@@ -9,6 +9,15 @@ interface IProduct extends Document {
     category: string;
     thumbnail: string;
     thumbnails: string[];
+    reviews: IReviews[];
+    avgRating: number;
+    totalReviews: number
+}
+
+interface IReviews extends Document {
+    userId: string;
+    review?: string;
+    rating: number;
 }
 
 interface CreateProduct {
@@ -23,4 +32,9 @@ interface CreateProduct {
 interface JwtUpdatedPayload extends JwtPayload {
     userId: string;
 }
-export { IProduct, CreateProduct , JwtUpdatedPayload };
+export {
+    IProduct,
+    IReviews,
+    CreateProduct,
+    JwtUpdatedPayload
+};

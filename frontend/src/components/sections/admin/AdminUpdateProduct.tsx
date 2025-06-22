@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import ProductForm from "@/components/reusable/admin/ProductForm";
 import { useParams } from "react-router-dom";
-import { useAdminProductContext } from "@/context/productContext";
+import { useAdminProductContext } from "@/context/adminProductContext";
+import { AdminProductLoading } from "@/types/main.types";
 
 const AdminUpdateProduct = () => {
     const { id } = useParams(); 
-    const { getProduct } = useAdminProductContext()
+    const { getProduct, loading } = useAdminProductContext()
     const [product, setProduct] = useState<any>(null);
-
 
 
     useEffect(() => {
@@ -20,11 +20,8 @@ const AdminUpdateProduct = () => {
             }
         };
         fetchProduct();
-
-
     }, [id]);
 
-    console.log(product);
 
 
     return (
@@ -41,7 +38,9 @@ const AdminUpdateProduct = () => {
             </div>
 
             <div className="bg-gradient-to-b px-4 py-8 from-[#ffffff] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b border-4 rounded-xl dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F]">
-                    <ProductForm  product={product} />
+                    {
+                        loading === AdminProductLoading.GET_ONE ? "Loading" : <ProductForm  product={product} />
+                    }
             </div>
         </div>
     );

@@ -1,11 +1,12 @@
 import productModel from "../models/product.model";
 import { ApiResponse, ApiError, publishEvent } from '../utils/index'
-import { addProduct, removeProduct, updateProduct as updateProductFromRedis } from "../helper/redisProduct.helper";
+import { addProduct, invalidateProductCache, removeProduct, updateProduct as updateProductFromRedis } from "../helper/redisProduct.helper";
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response } from 'express'
 import { CreateProduct, IProduct } from "../types/main.types";
 import { uploadOnCloudinary, deleteOnCloudinary, thumbnailForProduct } from '../config/cloudinary.config'
 import mongoose from "mongoose";
+import { removeBg } from "../config/removebg.config";
 
 const createProduct = expressAsyncHandler(async (req: Request, res: Response) => {
     let { name, description, price, quantity, category }: CreateProduct = req.body
@@ -28,9 +29,13 @@ const createProduct = expressAsyncHandler(async (req: Request, res: Response) =>
 
 
     for (const file of files) {
-        const response = await uploadOnCloudinary(file.path)
-        const thumbnailUrl = await thumbnailForProduct(response.public_id)
-        thumbnails.push(thumbnailUrl)
+        const imageBuffer = await removeBg(file.path);
+        if (!imageBuffer) {
+            throw new ApiError(500, "Failed to process image. Please try uploading a different image.");
+        }
+        const response = await uploadOnCloudinary(imageBuffer);
+        const thumbnailUrl = await thumbnailForProduct(response.public_id);
+        thumbnails.push(thumbnailUrl);
     }
 
     if (spaceRegex.test(category.toLowerCase())) {
@@ -82,7 +87,7 @@ const updateProduct = expressAsyncHandler(async (req: Request, res: Response) =>
         }
     }
 
-     if (spaceRegex.test(category.toLowerCase())) {
+    if (spaceRegex.test(category.toLowerCase())) {
         category = category.replaceAll(" ", "-");
     }
 
@@ -102,18 +107,22 @@ const updateProduct = expressAsyncHandler(async (req: Request, res: Response) =>
     if (!product) {
         throw new ApiError(404, "Product not found")
     }
-    
+
     if (files) {
         if (product.thumbnails.length >= 5 || product.thumbnails.length + files.length > 5) {
             throw new ApiError(400, "You can add only 5 thumbnails")
         }
         for (const file of files) {
-            const response = await uploadOnCloudinary(file.path)
+            const imageBuffer = await removeBg(file.path);
+            if (!imageBuffer) {
+                throw new ApiError(500, "Failed to process image. Please try uploading a different image.");
+            }
+            const response = await uploadOnCloudinary(imageBuffer);
             const thumbnailUrl = await thumbnailForProduct(response.public_id)
             thumbnails.push(thumbnailUrl)
         }
 
-    }    
+    }
 
     product.set(updatedFields)
 
@@ -123,8 +132,9 @@ const updateProduct = expressAsyncHandler(async (req: Request, res: Response) =>
 
     await product.save()
 
-    await updateProductFromRedis((product._id as mongoose.Schema.Types.ObjectId).toString(), product)
 
+    await updateProductFromRedis((product._id as mongoose.Schema.Types.ObjectId).toString(), product)
+    await invalidateProductCache((product._id as mongoose.Schema.Types.ObjectId).toString())
     res
         .status(200)
         .json(new ApiResponse(200, "Product updated successfully", product))
@@ -147,13 +157,19 @@ const addThumbnail = expressAsyncHandler(async (req: Request, res: Response) => 
     }
 
     for (const file of files) {
-        const response = await uploadOnCloudinary(file.path)
-        const thumbnailUrl = await thumbnailForProduct(response.public_id)
-        product.thumbnails.push(thumbnailUrl)
+        const imageBuffer = await removeBg(file.path);
+        if (!imageBuffer) {
+            throw new ApiError(500, "Failed to process image. Please try uploading a different image.");
+        }
+        const response = await uploadOnCloudinary(imageBuffer);
+        const thumbnailUrl = await thumbnailForProduct(response.public_id);
+        product.thumbnails.push(thumbnailUrl);
     }
 
-    await product.save()
+    await product.save();
 
+    await updateProductFromRedis((product._id as mongoose.Schema.Types.ObjectId).toString(), product)
+    await invalidateProductCache((product._id as mongoose.Schema.Types.ObjectId).toString())
     res
         .status(200)
         .json(new ApiResponse(200, "Thumbnail added successfully", product))
@@ -187,6 +203,7 @@ const removeThumbnail = expressAsyncHandler(async (req: Request, res: Response) 
     await product.save()
 
     await updateProductFromRedis((product._id as mongoose.Schema.Types.ObjectId).toString(), product)
+    await invalidateProductCache((product._id as mongoose.Schema.Types.ObjectId).toString())
 
     res
         .status(200)
@@ -219,7 +236,7 @@ const deleteProduct = expressAsyncHandler(async (req: Request, res: Response) =>
         throw new ApiError(500, "Error publishing product deletion event");
     }
     await removeProduct(req.params.id)
-
+    await invalidateProductCache((product._id as mongoose.Schema.Types.ObjectId).toString())
     res
         .status(200)
         .json(new ApiResponse(200, "Product deleted successfully", product))

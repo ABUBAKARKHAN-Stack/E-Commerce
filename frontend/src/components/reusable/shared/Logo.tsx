@@ -3,16 +3,17 @@ import { Link } from 'react-router-dom'
 import shopnexLogo from '@/assets/shopnex.webp'
 
 type Props = {
-    width?: string
+    width?: string;
+    className?: string
 }
 
-const Logo: FC<Props> = ({ width = "w-48" }) => {
+const Logo: FC<Props> = ({ width = "w-48" , className }) => {
     return (
         <Link to="/" className="text-white">
             <img
                 src={shopnexLogo}
                 alt="ShopNex Logo"
-                className={`${width} dark:invert-0 invert`}
+                className={`${width} ${className} dark:invert-0 invert`}
             />
         </Link>
     )

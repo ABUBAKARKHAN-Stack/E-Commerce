@@ -49,3 +49,11 @@ export interface IProduct {
     quantity: number;
 }
 
+export const enum AdminProductLoading {
+  ADD = "add",
+  DELETE = "delete",
+  EDIT = "edit",
+  GET_ALL = "get-products",
+  GET_ONE = "get-product"
+}
+
