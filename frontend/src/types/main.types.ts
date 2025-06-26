@@ -28,16 +28,16 @@ export interface UserUpdatedJwtPayload extends JwtPayload {
     role: string;
 }
 
-export interface  AdminUpdatedJwtPayload extends JwtPayload {
+export interface AdminUpdatedJwtPayload extends JwtPayload {
     adminId: string;
     role: string;
 }
 
 
-export interface IResetpasswordQueryParams { 
+export interface IResetpasswordQueryParams {
     queryParameters: object | null;
 }
- 
+
 
 export interface IProduct {
     _id: string;
@@ -50,10 +50,16 @@ export interface IProduct {
 }
 
 export const enum AdminProductLoading {
-  ADD = "add",
-  DELETE = "delete",
-  EDIT = "edit",
-  GET_ALL = "get-products",
-  GET_ONE = "get-product"
+    ADD = "add",
+    DELETE = "delete",
+    EDIT = "edit",
+    GET_ALL = "get-products",
+    GET_ONE = "get-product"
 }
+
+export interface NavItem {
+    label: string;
+    href: string;
+};
+
 
