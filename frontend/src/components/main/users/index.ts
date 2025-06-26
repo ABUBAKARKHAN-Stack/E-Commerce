@@ -10,6 +10,8 @@ import UserResetPasswordMain from "./UserResetPasswordMain";
 import FeaturedCategoriesMain from "./FeaturedCategoriesMain";
 import TrendingProductsMain from "./TrendingProductsMain";
 import WhyChooseUsMain from "./WhyChooseUsMain";
+import TestimonialsMain from "./TestimonialsMain";
+import NewsletterCTASectionMain from "./NewsletterCTASectionMain";
 
 export {
     HeroMain,
@@ -23,5 +25,7 @@ export {
     UserResetPasswordMain,
     FeaturedCategoriesMain,
     TrendingProductsMain,
-    WhyChooseUsMain
+    WhyChooseUsMain,
+    TestimonialsMain,
+    NewsletterCTASectionMain
 }

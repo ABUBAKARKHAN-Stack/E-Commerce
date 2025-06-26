@@ -15,7 +15,6 @@ const PasswordVisibilityToggler: FC<PasswordVisibilityTogglerProps> = ({ name, t
     const [isEyeOn, setIsEyeOn] = useState(false);
     const [isPassVisible, setIsPassVisible] = useState(false);
     const [isButtonHovered, setIsButtonHovered] = useState(false);
-    // const ref = useRef<HTMLButtonElement | null>(null);
     const eyeToggler = () => {
         setIsEyeOn((prev) => !prev)
         setIsPassVisible(!isPassVisible)

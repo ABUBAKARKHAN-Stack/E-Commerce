@@ -30,7 +30,7 @@ const SignInForm: FC<Props> = ({ isAdmin }) => {
     const navigate = useNavigate()
     const { login, loading } = useAuthContext()
 
-    
+
     const onSubmit = async (data: z.infer<typeof signinSchema>) => {
         login(data, isAdmin, navigate)
         console.log("Login Data:", data);

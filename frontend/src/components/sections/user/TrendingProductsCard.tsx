@@ -37,7 +37,7 @@ const RenderTrendingProductsCards = ({
                         <ProductCardHeaderButtons />
                         <CategoryBadge category={category} />
                         <div className='bg-gray-200 absolute top-px right-px flex justify-center items-center  w-[99%] h-full p-4 rounded-t dark:bg-[#2c2c2e]'>
-                            <img src={thumbnail} alt={name + "Image"} className='object-contain size-39 drop-shadow-xl pt-3' />
+                            <img src={thumbnail} alt={name + "Image"} className='object-contain size-39 drop-shadow-8px shadow-black pt-3' />
                         </div>
                     </div>
                     <div className='flex justify-center items-center'>
@@ -53,8 +53,6 @@ const RenderTrendingProductsCards = ({
                         {Array.from(({ length: Math.round(avgRating) }), (_, i) => (
                             <Star key={i} size={16} className='fill-cyan-500 dark:fill-orange-500 text-cyan-500 dark:text-orange-500' />
                         ))}
-
-
                         <span className='ml-1.5 text-xs font-medium'>({totalReviews})</span>
                     </div>
                 </div>
@@ -78,8 +76,8 @@ const TrendingProductsCard = () => {
                 totalReviews
             }, i) => (
                 <RenderTrendingProductsCards
-                    key={i}
                     i={i}
+                    key={i}
                     category={category}
                     thumbnail={thumbnail}
                     price={price}
@@ -97,6 +95,7 @@ const TrendingProductsCard = () => {
                 topRatedProducts?.length > 0 && topRatedProducts?.map((({ name, price, thumbnails, totalReviews, avgRating, category }, i) => (
                     <RenderTrendingProductsCards
                         i={i}
+                        key={i}
                         name={name}
                         price={price}
                         totalReviews={totalReviews}

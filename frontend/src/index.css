@@ -121,9 +121,11 @@ html {
   --breakpoint-xsm: 550px;
   --breakpoint-xs: 490px;
   --breakpoint-xxs: 450px;
-  --shadow-xs: 0px 0px 6px var(--color);
+  --shadow-6px: 0px 0px 6px var(--color);
+  --shadow-8px: 0px 0px 8px var(--color);
+  --shadow-10px: 0px 0px 10px var(--color);
   --shadow-20px: 0px 0px 20px var(--color);
-  --drop-shadow-xl: 0px 0px 8px var(--tw-shadow-color);
+  --drop-shadow-8px: 0px 0px 8px var(--tw-shadow-color);
   --breakpoint-1100: 1100px;
 }
 
@@ -135,4 +137,14 @@ html {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.my-masonry-grid {
+  display: flex;
+  width: auto;
+}
+
+.my-masonry-grid_column {
+  padding-left: 1rem;
+  background-clip: padding-box;
 }

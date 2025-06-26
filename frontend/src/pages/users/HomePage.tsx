@@ -1,10 +1,12 @@
 import { ThemeToggler } from "@/components/reusable/shared"
-import { Header } from '@/components/layout/user'
+import { Footer, Header } from '@/components/layout/user'
 import {
   HeroMain,
   FeaturedCategoriesMain,
   TrendingProductsMain,
-  WhyChooseUsMain
+  WhyChooseUsMain,
+  TestimonialsMain,
+  NewsletterCTASectionMain
 } from '@/components/main/users'
 import { ScrollProgress } from "@/components/magicui/scroll-progress"
 const HomePage = () => {
@@ -17,6 +19,9 @@ const HomePage = () => {
       <FeaturedCategoriesMain />
       <TrendingProductsMain />
       <WhyChooseUsMain />
+      <TestimonialsMain />
+      <NewsletterCTASectionMain />
+      <Footer />
       <ThemeToggler />
     </>
   )

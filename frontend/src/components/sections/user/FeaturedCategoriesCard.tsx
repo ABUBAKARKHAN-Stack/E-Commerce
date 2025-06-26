@@ -18,8 +18,8 @@ const RenderCategoryCards: FC<RenderCategoryCardsProps> = ({
   i
 }) => {
   return (
-    <BlurFade key={i} inView direction='right' delay={0.25 + i * 0.05} once={false}>
-      <Link to={`/products/category/${category}`} className='xsm:w-40 xxs:w-50 w-[calc(100vw-32px)] h-40 shadow flex flex-col justify-center gap-y-3 items-center rounded-sm dark:bg-orange-500 bg-cyan-500 dark:hover:bg-orange-600/90 hover:bg-cyan-600/90 transition-all ease-linear border-0 hover:border-[1.5px] dark:hover:border-orange-600/70 hover:border-cyan-600/50 duration-300 hover:scale-105 text-white '>
+    <BlurFade inView direction='right' delay={0.25 + i * 0.05} once={false}>
+      <Link to={`/products/category/${category}`} className='xsm:w-40 xxs:w-50 w-[calc(100vw-32px)] h-40 shadow flex flex-col justify-center gap-y-3 items-center rounded-sm dark:bg-orange-500 bg-cyan-500 dark:hover:bg-orange-600/90 hover:bg-cyan-600/90 transition-all ease-linear border-0 hover:border-[1.5px] dark:hover:border-orange-600/70 hover:border-cyan-600/50 duration-300 hover:scale-105 text-white'>
         {icon}
         <h4 className='font-semibold px-2 text-wrap text-center uppercase'>{title}</h4>
       </Link>
@@ -37,6 +37,7 @@ const FeaturedCategoriesCard = () => {
           title={title}
           icon={icon}
           category={category}
+          key={i}
           i={i}
         />
       )
@@ -50,6 +51,7 @@ const FeaturedCategoriesCard = () => {
         title={title}
         icon={categoriesIconMap[category] || categoriesIconMap["default"]}
         category={category}
+        key={i}
         i={i}
       />
       )

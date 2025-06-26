@@ -1,18 +1,21 @@
 import { whyChooseUsData } from "@/data/whyChooseUs";
 import ShopnexLogo from '@/assets/shopnex.webp'
 import { BlurFade } from "@/components/magicui/blur-fade";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 
 const WhyChooseUs = () => {
     const leftItems = whyChooseUsData.slice(0, 3);
     const rightItems = whyChooseUsData.slice(3);
+    const isMd = useMediaQuery('(max-width: 768px)');
+
 
     return (
         <>
             <div className="space-y-10 mr-auto">
                 {
                     leftItems.map(({ icon, text, heading }, i) => (
-                        <BlurFade key={i} inView direction="up" delay={0.25 + i * 0.05} once={false} className="space-y-2">
+                        <BlurFade key={i} inView direction="right" delay={0.25 + i * 0.05} once={false} className="space-y-2">
                             <div className="flex  md:items-end items-center flex-col gap-y-1.5">
                                 <div className="size-11.5 flex justify-center items-center rounded-full dark:bg-orange-500  bg-cyan-500">
                                     {icon}
@@ -26,16 +29,18 @@ const WhyChooseUs = () => {
                     ))
                 }
             </div>
+
+            
             <BlurFade inView direction='up' delay={0.5} inViewMargin="-50px" once={false} className="flex justify-center items-center">
                 <div className="lg:size-80 md:block hidden size-52  animate-pulse m-auto rounded-full shadow-20px border-2 dark:border-orange-500 dark:shadow-orange-500 shadow-cyan-500 border-cyan-500 ">
                 </div>
-                <img src={ShopnexLogo} alt="Shopnex Logo" className="lg:w-78 md:block hidden w-52 absolute  top-1/2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 my-auto   drop-shadow-xl dark:shadow-black shadow-gray-300 dark:invert-0 invert" />
+                <img src={ShopnexLogo} alt="Shopnex Logo" className="lg:w-78 md:block hidden w-52 absolute  top-1/2  left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 my-auto drop-shadow-8px dark:shadow-black shadow-gray-300 dark:invert-0 invert" />
             </BlurFade>
 
             <div className="space-y-10 ml-auto">
                 {
                     rightItems.map(({ icon, text, heading }, i) => (
-                        <BlurFade key={i} inView direction='up' delay={0.25 + i * 0.05} once={false} className="space-y-2">
+                        <BlurFade key={i} inView direction={isMd ? 'right' : 'left'} delay={0.25 + i * 0.05} once={false} className="space-y-2">
                             <div className="flex md:items-start items-center flex-col gap-y-1.5">
                                 <div className="size-11.5 flex justify-center items-center rounded-full dark:bg-orange-500  bg-cyan-500">
                                     {icon}

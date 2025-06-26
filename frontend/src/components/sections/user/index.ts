@@ -4,11 +4,15 @@ import UserDashboard from "./UserDashboard";
 import FeaturedCategoriesCard from "./FeaturedCategoriesCard";
 import TrendingProductsCard from "./TrendingProductsCard";
 import WhyChooseUs from "./WhyChooseUs";
+import Testimonials from "./TestimonialsCard";
+import NewsletterCTASection from "./NewsletterCTASection";
 export {
     HeroText,
     HeroImage,
     UserDashboard,
     FeaturedCategoriesCard,
     TrendingProductsCard,
-    WhyChooseUs
+    WhyChooseUs,
+    Testimonials,
+    NewsletterCTASection
 }
