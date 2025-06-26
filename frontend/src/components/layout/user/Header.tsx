@@ -43,7 +43,7 @@ const Header: FC = () => {
   }, []);
 
   return (
-    <header className="h-18 w-full absolute z-50 top-0 border-b-2 items-center dark:bg-[#1B1B1F] bg-[#FAFAFA] shadow-lg">
+    <header className="h-18 w-full border-b-2 items-center dark:bg-[#1B1B1F] bg-[#FAFAFA] shadow-lg">
       <Layout className="flex items-center justify-between">
         {/* Logo */}
         <Logo />

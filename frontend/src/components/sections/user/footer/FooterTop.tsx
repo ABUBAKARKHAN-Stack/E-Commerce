@@ -1,6 +1,13 @@
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAuthContext } from '@/context/authContext';
+import { newsLetterSchema } from '@/schemas/news-letterSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SendHorizonalIcon } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
+import { z } from 'zod';
 
 
 const RenderFooterLinks = ({ heading, links }: { heading: string; links: any[] }) => {
@@ -24,6 +31,12 @@ const RenderFooterLinks = ({ heading, links }: { heading: string; links: any[] }
 
 const FooterTop = () => {
     const { user } = useAuthContext();
+    const form = useForm({
+        resolver: zodResolver(newsLetterSchema),
+        defaultValues: {
+            "news-letter": ""
+        }
+    });
 
     const accountLinks = [
         !user && { name: 'Login', link: '/sign-in' },
@@ -44,6 +57,10 @@ const FooterTop = () => {
         { name: 'Privacy Policy', link: '/privacy-policy' }
     ];
 
+    const onSubmit = (data: z.infer<typeof newsLetterSchema>) => {
+        console.log(data);
+    }
+
     return (
         <section
             className="flex sm:justify-between flex-wrap sm:flex-row flex-col gap-10 w-full"
@@ -63,10 +80,35 @@ const FooterTop = () => {
                     <p className="text-sm text-gray-900 dark:text-gray-300">
                         Subscribe for updates, offers & product tips.
                     </p>
-                    <Input
-                        placeholder="Enter your email"
-                        aria-label="Enter your email for newsletter"
-                    />
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className='z-50'>
+                            <div className="relative">
+                                <FormField
+                                    name='news-letter'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    placeholder="Enter your email"
+                                                    aria-label="Enter your email for newsletter"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button
+                                    type='submit'
+                                    variant={"ghost"}
+                                    className='absolute top-5.5 -right-0.5 rounded-full size-9 transform -translate-x-1/2 -translate-y-1/2'
+                                >
+                                    <SendHorizonalIcon className='size-5.5' />
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
                 </div>
             </div>
 

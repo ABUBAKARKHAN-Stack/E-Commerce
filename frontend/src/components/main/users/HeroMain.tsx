@@ -2,7 +2,7 @@ import { Layout } from "@/components/layout/shared";
 import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import {HeroText , HeroImage} from "@/components/sections/user"
+import { HeroText, HeroImage } from "@/components/sections/user"
 gsap.registerPlugin(useGSAP);
 
 const HeroMain = () => {
@@ -30,7 +30,7 @@ const HeroMain = () => {
         {
             heading: "Crystal-Clear Sound for Every Occasion",
             para: "Immerse yourself in high-quality audio with our premium range of headphones and speakers. Whether you're at home, work, or on the go, experience deep bass and crystal-clear sound like never before.",
-            image: "./products/headphones.png"
+            image: "./products/headphones.webp"
         }
     ];
 
@@ -45,8 +45,8 @@ const HeroMain = () => {
         tl.current
             .fromTo(
                 imageContainerRef.current,
-                { x: "100%", opacity: 0 , filter: "blur(20px)" },
-                { x: "0%", opacity: 1, duration: 1.5 , filter:"blur(0px)"}
+                { x: "100%", opacity: 0, filter: "blur(20px)" },
+                { x: "0%", opacity: 1, duration: 1.5, filter: "blur(0px)" }
             )
             .fromTo(
                 textContainerRef.current,
@@ -72,22 +72,24 @@ const HeroMain = () => {
             setCurrentIndex((prev) =>
                 prev < heroItems.length - 1 ? prev + 1 : 0
             );
-        }, 7000); 
+        }, 7000);
 
         return () => clearTimeout(timeout);
-    }, [currentIndex]); 
+    }, [currentIndex]);
 
     return (
-        <main className="w-full min-h-screen py-10 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl border-b-2 flex flex-col items-center justify-center">
-            {heroItems.slice(currentIndex, currentIndex + 1).map((item, i) => {
-                const { heading, para, image } = item;
-                return (
-                    <Layout ref={layoutRef} key={i} className="flex my-auto flex-col-reverse gap-y-20 justify-center md:gap-0 md:flex-row md:justify-between items-center">
-                         <HeroText heading={heading} para={para} ref={textContainerRef} />
-                         <HeroImage image={image} heading={heading} ref={imageContainerRef} />
-                    </Layout>
-                );
-            })}
+        <main className="w-full h-full min-h-[calc(70vh-80px)] py-16 md:py-24 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] flex justify-center items-center dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl border-b-2">
+            <Layout ref={layoutRef}>
+                {heroItems.slice(currentIndex, currentIndex + 1).map((item, i) => {
+                    const { heading, para, image } = item;
+                    return (
+                        <div key={i} className="flex md:justify-between justify-center md:flex-row flex-col-reverse items-center gap-4 px-4">
+                            <HeroText heading={heading} para={para} ref={textContainerRef} />
+                            <HeroImage image={image} heading={heading} ref={imageContainerRef} />
+                        </div>
+                    );
+                })}
+            </Layout>
         </main>
     );
 };

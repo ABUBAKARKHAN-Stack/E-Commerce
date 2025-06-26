@@ -1,7 +1,6 @@
 import { Layout } from '@/components/layout/shared'
 import { SectionHeader } from '@/components/reusable/user'
 import { NewsletterCTASection } from '@/components/sections/user'
-import React from 'react'
 
 const NewsletterCTASectionMain = () => {
     return (
@@ -14,7 +13,6 @@ const NewsletterCTASectionMain = () => {
                     mainHeading="Stay Ahead & Save Big"
                     subText="Subscribe for exclusive deals or jump right in and explore our latest tech drops."
                 />
-
                 <section className='mt-10'>
                     <NewsletterCTASection />
                 </section>
