@@ -1,32 +1,59 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
+} from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Pencil, Trash, Eye, PlusCircle, Star } from "lucide-react";
+import {
+    Pencil,
+    Trash,
+    Eye,
+    PlusCircle,
+    Star
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAdminProductContext } from "@/context/adminProductContext";
 import { Dialog } from "@radix-ui/react-dialog";
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
+
 import { AdminProductLoading } from "@/types/main.types";
 
 const AdminProducts = () => {
     const [search, setSearch] = useState("");
-    const { products, deleteProduct, loading } = useAdminProductContext();
+    const {
+        productsData,
+        deleteProduct,
+        loading
+    } = useAdminProductContext();
     const navigate = useNavigate();
-    console.log(products);
-
-
 
     const onDelete = (productId: string) => {
         deleteProduct(productId)
     }
 
+    console.log(productsData);
+    
+    
 
-
-    const filteredProducts = products?.filter((product) =>
+    const filteredProducts = productsData?.filter((product) =>
         product.name.toLowerCase().includes(search.toLowerCase())
     );
+
+
 
     if (loading === AdminProductLoading.GET_ALL) {
         return (
@@ -85,7 +112,7 @@ const AdminProducts = () => {
                                     </TableCell>
                                     <TableCell>{product.category}</TableCell>
                                     <TableCell>{product.thumbnails.length}</TableCell>
-                                    <TableCell className="flex gap-2">
+                                    <TableCell className="flex mt-1.5 gap-2">
                                         <Button onClick={() => navigate(`/admin/products/product/${product._id}`)} size="icon" variant="outline">
                                             <Eye className="w-4 h-4" />
                                         </Button>

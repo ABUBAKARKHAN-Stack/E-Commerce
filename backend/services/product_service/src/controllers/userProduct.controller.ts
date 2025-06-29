@@ -6,30 +6,110 @@ import redisClient from "../config/redis.config"
 import mongoose from "mongoose"
 import { getAllRedisProducts, getProductbyId, invalidateProductCache } from "../helper/redisProduct.helper"
 import { IProduct, IReviews } from "../types/main.types"
-import { updateTotalRatingAndReviews } from "../helper/userProduct.helper"
+import { sortProducts, updateTotalRatingAndReviews } from "../helper/userProduct.helper"
 
 
 const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) => {
-    const cachedProducts = await getAllRedisProducts()
+    const {
+        category,
+        search,
+        sortBy,
+        limit,
+        page
+    } = req.query; //* Extract query parameters from URL
 
+    let cachedProducts: IProduct[] = await getAllRedisProducts(); //* Fetch cached products from Redis
+
+    //? Apply Pagination
+    const pagination: any = {};
+    if (limit) pagination.limit = +limit.toString();
+    if (page) pagination.page = +page.toString();
+
+    //? If cached products exist, apply filtering, searching, and sorting on them
     if (cachedProducts.length > 0) {
         console.log("🚀 Fetched products from cache");
+        const totalCachedProducts = cachedProducts.length;
+
+        //* Apply search filter (case-insensitive)
+        if (search) {
+            const searchedWords = search.toString().toLowerCase();
+            cachedProducts = cachedProducts.filter((p) =>
+                p.name.toLowerCase().includes(searchedWords)
+            );
+        }
+
+        //* Apply category filter
+        if (category) {
+            cachedProducts = cachedProducts.filter((p) => p.category === category);
+        }
+
+        /*
+           ? Helper function to sort products based on sortBy value
+           * Apply sorting
+        */
+        cachedProducts = sortProducts(cachedProducts, sortBy);
+
+
+        let startIndex: number;
+        let endIndex: number;
+        startIndex = (pagination.page - 1) * pagination.limit;
+        endIndex = pagination.page * pagination.limit;
+
+        if (startIndex || endIndex) {
+            cachedProducts = cachedProducts.slice(startIndex, endIndex);
+        }
+
+        //* If no products match after filtering/sorting
+        if (cachedProducts.length === 0) {
+            throw new ApiError(404, "No products match your criteria");
+        }
+
+        //* Return final filtered and sorted products from cache
         res
             .status(200)
-            .json(new ApiResponse(200, "Products fetched successfully from cache", cachedProducts))
+            .json(new ApiResponse(200, "Products fetched from cache", {
+                products: cachedProducts,
+                // totalProducts: totalCachedProducts
+            }));
         return;
     }
 
-    const products = await productModel.find()
+    //* If no cache found, build MongoDB query and sort options
+    const query: any = {};
+    if (category) query.category = category;
+    if (search) query.name = { $regex: search, $options: 'i' }; //* Case-insensitive search
+
+    let sortOptions: any = {};
+    if (sortBy === "newest") sortOptions.createdAt = -1;
+    else if (sortBy === 'price-high-to-low') sortOptions.price = -1;
+    else if (sortBy === "price-low-to-high") sortOptions.price = 1;
+    else if (sortBy === 'z-a') sortOptions.name = -1;
+    else if (sortBy === 'a-z') sortOptions.name = 1;
+
+
+    //* Fetch products from DB with applied filters and sorting
+    const products = await productModel
+        .find(query)
+        .sort(sortOptions)
+        .limit(pagination.limit)
+        .skip((pagination.page - 1) * pagination.limit)
+
     if (products.length === 0) {
-        throw new ApiError(404, "Products not found")
+        throw new ApiError(404, "Products not found");
     }
-    await redisClient.set("products", JSON.stringify(products))
-    await redisClient.expire("products", 60 * 30)
+
+    const totalProducts = await productModel.countDocuments(query);
+
+    //* Store fetched products in Redis cache for future use
+    await redisClient.set("products", JSON.stringify(products));
+    await redisClient.expire("products", 60 * 30); //* Cache for 30 minutes
+
+    //* Send DB products as response
     res
         .status(200)
-        .json(new ApiResponse(200, "Products fetched successfully", products))
-})
+        .json(new ApiResponse(200, "Products fetched successfully", { products }));
+});
+
 
 const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
     const cachedProduct = await getProductbyId(req.params.id)
@@ -51,7 +131,7 @@ const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
         .status(200)
         .json(new ApiResponse(200, "Product fetched successfully", product))
 })
- 
+
 //? Category Controller Functions
 
 //* Get All Categories
@@ -236,7 +316,7 @@ const updateCart = expressAsyncHandler(async (req: Request, res: Response) => {
         .json(new ApiResponse(200, "Product updated successfully", product))
 })
 
-//? Review Controller Functions
+//? Review/Rating Controller Functions
 
 //* Create Review
 const createReview = expressAsyncHandler(async (req: Request, res: Response) => {

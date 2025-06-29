@@ -4,39 +4,47 @@ import {
     getProducts,
     getTopCategories,
     getSingleProduct,
-    getTopRatedProducts
+    getTopRatedProducts,
+    getCategories
 } from '@/API/userApi'
+import { IProduct } from "@/types/main.types";
+import { AxiosError } from "axios";
+
+
 
 type ProductContextType = {
     loading: string | null;
-    products: any[] | null;
-    getAllProducts: () => Promise<void>;
-    getProduct: (productId: string) => Promise<any>
+    getAllProducts: (query?: any) => Promise<any>;
+    productsData: IProduct[] | null;
+    setProductsData: (products: IProduct[]) => void;
+    getProduct: (productId: string) => Promise<any>;
     fetchCategories: () => Promise<void>;
     categories: string[] | null;
-    topRatedProducts: any[] | null;
+    fetchTopCategories: () => Promise<void>;
+    topCategories: string[] | null;
     fetchTopRatedProducts: () => Promise<void>;
-
-
+    topRatedProducts: any[] | null;
 };
-
 
 const ProductContext = createContext<ProductContextType | null>(null);
 
 const ProductProvider = ({ children }: { children: ReactNode }) => {
-    const [loading, setLoading] = useState<null | "get-products" | "get-product" | "top-categories" | "top-products">(null);
-    const [products, setProducts] = useState<any[] | null>(null);
-    const [categories, setCategories] = useState<string[] | null>(null)
-    const [topRatedProducts, setTopRatedProducts] = useState<any[] | null>(null)
+    const [loading, setLoading] = useState<null | "get-products" | "get-product" | "categories" | "top-categories" | "top-products">(null);
+    const [categories, setCategories] = useState<string[] | null>(null);
+    const [topCategories, setTopCategories] = useState<string[] | null>(null);
+    const [topRatedProducts, setTopRatedProducts] = useState<any[] | null>(null);
+    const [productsData, setProductsData] = useState<IProduct[] | null>(null);
 
 
-    const getAllProducts = async () => {
+    const getAllProducts = async (query?: any) => {
         try {
             setLoading("get-products")
-            const res = await getProducts();
-            setProducts(res.data.data);
+            const res = await getProducts(query);
+            const products = res.data?.data?.products;
+            return products;
         } catch (error) {
-            console.error(error);
+            const axiosError = error as AxiosError;
+            console.error("Failed to fetch products:", axiosError.message);
         } finally {
             setLoading(null)
         }
@@ -54,15 +62,23 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    useEffect(() => {
-        getAllProducts();
-    }, []);
-
     const fetchCategories = async () => {
+        try {
+            setLoading("categories")
+            const res = await getCategories();
+            setCategories(res.data.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setLoading(null)
+        }
+    }
+
+    const fetchTopCategories = async () => {
         try {
             setLoading("top-categories")
             const res = await getTopCategories();
-            setCategories(res.data.data);
+            setTopCategories(res.data.data);
         } catch (error) {
             console.log(error);
         } finally {
@@ -84,15 +100,19 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         fetchCategories();
-        fetchTopRatedProducts()
+        fetchTopCategories();
+        fetchTopRatedProducts();
     }, [])
 
     return (
         <ProductContext.Provider value={{
-            products,
             getAllProducts,
+            setProductsData,
+            productsData,
             fetchCategories,
             categories,
+            fetchTopCategories,
+            topCategories,
             fetchTopRatedProducts,
             topRatedProducts,
             getProduct,

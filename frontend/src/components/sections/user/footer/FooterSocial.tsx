@@ -34,7 +34,7 @@ const FooterSocial = () => {
                         to={link}
                         key={i}
                         aria-label={`ShopNex social link ${i + 1}`}
-                        className="p-2.5 dark:bg-orange-500 dark:hover:bg-orange-600/90 bg-cyan-500 hover:bg-cyan-600/90 transition-all hover:transform hover:scale-110 duration-200 ease-linear hover:-translate-y-1 rounded-full"
+                        className="p-2.5 dark:bg-orange-500 dark:hover:bg-orange-600/90 shadow-20px  dark:shadow-orange-400 shadow-cyan-400 dark:hover:shadow-orange-600 hover:shadow-cyan-600 bg-cyan-500 hover:bg-cyan-600/90 transition-all hover:transform hover:scale-110 duration-200 ease-linear hover:-translate-y-1 rounded-full"
                     >
                         {icon}
                     </Link>

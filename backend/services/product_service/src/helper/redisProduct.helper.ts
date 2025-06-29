@@ -64,7 +64,7 @@ export const updateProduct = async (productId: string, updatedProduct: any) => {
  */
 export const getAllRedisProducts = async () => {
     try {
-        const products = await redisClient.get("products");
+        const products = await redisClient.get("products");        
         return products ? JSON.parse(products) : [];
     } catch (error) {
         console.error("Error fetching products from Redis:", error);

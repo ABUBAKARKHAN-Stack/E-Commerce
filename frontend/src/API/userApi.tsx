@@ -50,8 +50,11 @@ const resetPasswordUser = async (data: any, params: any) => {
 }
 
 //* +++++++++++++++++++ User Product Api ++++++++++++++
-const getProducts = async () => {
+const getProducts = async (params?: any) => {
+  console.log(params,'from func');
+  
   return await userProductApi.get('/all', {
+    params: params ,
     withCredentials: true
   })
 }

@@ -38,6 +38,11 @@ export interface IResetpasswordQueryParams {
     queryParameters: object | null;
 }
 
+export interface IReview {
+    userId: string;
+    review?: string;
+    rating: number
+}
 
 export interface IProduct {
     _id: string;
@@ -45,9 +50,13 @@ export interface IProduct {
     description: string;
     price: number;
     category: string;
-    image: string;
+    thumbnails: string[];
     quantity: number;
+    avgRating: number;
+    totalReviews: number;
+    reviews: IReview[]
 }
+
 
 export const enum AdminProductLoading {
     ADD = "add",

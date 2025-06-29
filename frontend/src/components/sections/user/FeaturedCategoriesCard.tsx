@@ -1,6 +1,7 @@
 import { BlurFade } from '@/components/magicui/blur-fade';
 import { useProductContext } from '@/context/productContext';
 import { categoriesIconMap, staticCategoriesData } from '@/data/categories';
+import { formattedCategory } from '@/utils/formatters';
 import { FC, JSX } from 'react'
 import { Link } from 'react-router-dom';
 
@@ -28,9 +29,9 @@ const RenderCategoryCards: FC<RenderCategoryCardsProps> = ({
 }
 
 const FeaturedCategoriesCard = () => {
- const { categories } = useProductContext();
+ const { topCategories } = useProductContext();
   
-  if (!categories || categories.length === 0) {
+  if (!topCategories || topCategories.length === 0) {
     return staticCategoriesData.map(({ icon, title, category }, i) => {
       return (
         <RenderCategoryCards
@@ -45,8 +46,8 @@ const FeaturedCategoriesCard = () => {
   }
 
   return (
-    categories.map((category: string, i) => {
-      let title = category.replace("-", " ")
+    topCategories.map((category: string, i) => {
+      let title = formattedCategory(category);
       return (<RenderCategoryCards
         title={title}
         icon={categoriesIconMap[category] || categoriesIconMap["default"]}

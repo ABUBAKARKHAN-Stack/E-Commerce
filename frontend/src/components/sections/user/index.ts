@@ -6,6 +6,7 @@ import TrendingProductsCard from "./TrendingProductsCard";
 import WhyChooseUs from "./WhyChooseUs";
 import Testimonials from "./TestimonialsCard";
 import NewsletterCTASection from "./NewsletterCTASection";
+import SearchFilterSortProduct from "./SearchFilterSortProduct";
 export {
     HeroText,
     HeroImage,
@@ -14,5 +15,6 @@ export {
     TrendingProductsCard,
     WhyChooseUs,
     Testimonials,
-    NewsletterCTASection
+    NewsletterCTASection,
+    SearchFilterSortProduct
 }

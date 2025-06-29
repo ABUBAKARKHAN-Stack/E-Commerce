@@ -12,6 +12,7 @@ import TrendingProductsMain from "./TrendingProductsMain";
 import WhyChooseUsMain from "./WhyChooseUsMain";
 import TestimonialsMain from "./TestimonialsMain";
 import NewsletterCTASectionMain from "./NewsletterCTASectionMain";
+import ProductMain from "./ProductMain";
 
 export {
     HeroMain,
@@ -27,5 +28,6 @@ export {
     TrendingProductsMain,
     WhyChooseUsMain,
     TestimonialsMain,
-    NewsletterCTASectionMain
+    NewsletterCTASectionMain,
+    ProductMain
 }

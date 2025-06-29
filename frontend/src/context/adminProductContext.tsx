@@ -9,34 +9,37 @@ import {
     deleteProduct as removeProduct
 } from "@/API/adminApi";
 import { getProducts, getSingleProduct } from '@/API/userApi'
-import { AdminProductLoading } from "@/types/main.types";
-
+import { AdminProductLoading, IProduct } from "@/types/main.types";
+import { AxiosError } from "axios";
 
 type AdminProductContextType = {
     addProduct: (productData: z.infer<typeof productSchema>) => Promise<void>;
     deleteProduct: (productId: string) => Promise<void>;
     getProduct: (productId: string) => Promise<any>;
-    getAllProducts: () => Promise<void>;
+    getAllProducts: (query?: any) => Promise<any>;
+    productsData: IProduct[] | null;
     editProduct: (productId: string, updatedData: any) => Promise<void>;
-    products: any[] | null;
     removeThumbnail: (productId: string, thumbnailIndex: number) => Promise<void>;
     loading: string | null;
 };
 
+
 const AdminProductContext = createContext<AdminProductContextType | null>(null);
 
 const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
-    const [loading, setLoading] = useState<null | AdminProductLoading>(null);
-    const [products, setProducts] = useState<any[]>([])
+    const [loading, setLoading] = useState<AdminProductLoading | null>(null);
+    const [productsData, setProductsData] = useState<IProduct[] | null>(null);
 
 
-    const getAllProducts = async () => {
+    const getAllProducts = async (query?: any) => {
         try {
-            setLoading(AdminProductLoading.GET_ALL)
-            const res = await getProducts();
-            setProducts(res.data.data);
+            setLoading(AdminProductLoading.GET_ALL);
+            const res = await getProducts(query);
+            const products = res.data?.data?.products;
+            return products;
         } catch (error) {
-            console.error(error);
+            const axiosError = error as AxiosError;
+            console.error("Failed to fetch products:", axiosError.message);
         } finally {
             setLoading(null)
         }
@@ -138,13 +141,16 @@ const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     useEffect(() => {
-        getAllProducts();
+        ; (async () => {
+            const products = await getAllProducts();
+            setProductsData(products)
+        })()
     }, [])
 
 
     return (
         <AdminProductContext.Provider value={{
-            products,
+            productsData,
             addProduct,
             deleteProduct,
             editProduct,

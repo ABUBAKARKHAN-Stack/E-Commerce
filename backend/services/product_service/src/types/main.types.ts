@@ -11,7 +11,9 @@ interface IProduct extends Document {
     thumbnails: string[];
     reviews: IReviews[];
     avgRating: number;
-    totalReviews: number
+    totalReviews: number;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 interface IReviews extends Document {
