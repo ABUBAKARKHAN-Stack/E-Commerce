@@ -6,6 +6,7 @@ import ResetPasswordForm from "./ResetPasswordForm";
 import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import ThemeToggler from "./ThemeToggler";
+import ToolTip from "./ToolTip";
 
 
 export {
@@ -16,5 +17,6 @@ export {
     ResetPasswordForm,
     SignInForm,
     SignUpForm,
-    ThemeToggler
+    ThemeToggler,
+    ToolTip
 }

@@ -143,7 +143,7 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
     user.isVerified = true;
     await user.save()
 
-    res
+    res 
         .status(200)
         .json(new ApiResponse(200, "User verified successfully"))
 })

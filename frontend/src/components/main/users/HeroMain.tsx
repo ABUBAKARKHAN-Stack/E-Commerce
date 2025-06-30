@@ -2,12 +2,16 @@ import { Layout } from "@/components/layout/shared";
 import { useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { HeroText, HeroImage } from "@/components/sections/user"
+import { HeroText, HeroImage } from "@/components/sections/user";
+import { WaveDivider } from "@/components/reusable/user";
 gsap.registerPlugin(useGSAP);
 
 const HeroMain = () => {
     const imageContainerRef = useRef(null);
     const textContainerRef = useRef(null);
+    const waveDividerTopRef = useRef(null);
+    const waveDividerBottomRef = useRef(null);
+
     const layoutRef = useRef(null);
     const tl = useRef(gsap.timeline({ paused: true }));
 
@@ -37,11 +41,46 @@ const HeroMain = () => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
+
+
+    const [isFirst, setIsFirst] = useState(true);
     // Animation logic
     useGSAP(() => {
+        console.log(isFirst);
+
         // Restart timeline on index change
         tl.current.clear();
 
+        // Run this part only once
+        if (isFirst) {
+            tl.current
+                .fromTo([waveDividerTopRef.current, waveDividerBottomRef.current], {
+                    clipPath: 'inset(0 100% 0 0)',
+                    opacity: 0,
+                    y: 10
+                }, {
+                    clipPath: 'inset(0 0% 0 0)',
+                    opacity: 1,
+                    y: 0,
+                    duration: 2,
+                    ease: "power3.out",
+                    stagger: 0.12,
+                    delay: 0.2
+                })
+                // Subtle breath-like motion
+                .to([waveDividerTopRef.current, waveDividerBottomRef.current], {
+                    scaleX: 1.01,
+                    duration: 1,
+                    ease: "sine.inOut",
+                    yoyo: true,
+                    repeat: -1,
+                    stagger: 0.1
+                }, "-=0.5");
+
+            setIsFirst(false);
+        }
+
+        // Main slide animation
         tl.current
             .fromTo(
                 imageContainerRef.current,
@@ -57,7 +96,7 @@ const HeroMain = () => {
             .to(
                 imageContainerRef.current,
                 { x: "100%", opacity: 0, duration: 1.5 },
-                "+=3" // Hold the slide for a while before exit animation
+                "+=3"
             )
             .to(
                 textContainerRef.current,
@@ -67,7 +106,7 @@ const HeroMain = () => {
 
         tl.current.play();
 
-        // Set a timeout to update the index after the animation completes
+        // Update slide after 7s
         const timeout = setTimeout(() => {
             setCurrentIndex((prev) =>
                 prev < heroItems.length - 1 ? prev + 1 : 0
@@ -77,8 +116,15 @@ const HeroMain = () => {
         return () => clearTimeout(timeout);
     }, [currentIndex]);
 
+
+
     return (
-        <main className="w-full h-full min-h-[calc(70vh-80px)] py-16 md:py-24 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] flex justify-center items-center dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl border-b-2">
+        <main className="w-full h-full min-h-[calc(70vh-80px)] py-16 md:py-24 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] flex flex-col justify-center items-center dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl">
+            <WaveDivider
+                ref={waveDividerTopRef}
+                position='top'
+                svgClass="h-10 mt-[0.5px] sm:h-20"
+            />
             <Layout ref={layoutRef}>
                 {heroItems.slice(currentIndex, currentIndex + 1).map((item, i) => {
                     const { heading, para, image } = item;
@@ -90,6 +136,11 @@ const HeroMain = () => {
                     );
                 })}
             </Layout>
+            <WaveDivider
+                ref={waveDividerBottomRef}
+                position='bottom'
+                svgClass="h-10 sm:h-20"
+            />
         </main>
     );
 };

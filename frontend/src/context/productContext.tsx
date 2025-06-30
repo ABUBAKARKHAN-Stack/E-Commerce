@@ -39,7 +39,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const getAllProducts = async (query?: any) => {
         try {
             setLoading("get-products")
-            const res = await getProducts(query);
+            const res = await getProducts(query);            
             const products = res.data?.data?.products;
             return products;
         } catch (error) {

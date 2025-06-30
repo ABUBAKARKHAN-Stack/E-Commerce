@@ -40,7 +40,11 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
 
         //* Apply category filter
         if (category) {
-            cachedProducts = cachedProducts.filter((p) => p.category === category);
+            if (category === 'all') {
+                cachedProducts = cachedProducts;
+            } else {
+                cachedProducts = cachedProducts.filter((p) => p.category === category);
+            }
         }
 
         /*
@@ -76,7 +80,9 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
 
     //* If no cache found, build MongoDB query and sort options
     const query: any = {};
-    if (category) query.category = category;
+    if (category) {
+        category === 'all' ? {} : query.category = category;
+    };
     if (search) query.name = { $regex: search, $options: 'i' }; //* Case-insensitive search
 
     let sortOptions: any = {};
@@ -86,6 +92,7 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
     else if (sortBy === 'z-a') sortOptions.name = -1;
     else if (sortBy === 'a-z') sortOptions.name = 1;
 
+    console.log(query);
 
     //* Fetch products from DB with applied filters and sorting
     const products = await productModel
@@ -139,6 +146,7 @@ const getCategories = expressAsyncHandler(async (req: Request, res: Response) =>
     const cachedProducts = await getAllRedisProducts();
     if (cachedProducts.length > 0) {
         const categories = [...new Set(cachedProducts.map((p: IProduct) => p.category))];
+        categories.unshift('all');
         res
             .status(200)
             .json(new ApiResponse(200, "Categories Fetched from cache", categories));
@@ -155,13 +163,13 @@ const getCategories = expressAsyncHandler(async (req: Request, res: Response) =>
             .json(new ApiResponse(400, 'failed to fetch categories',))
         return;
     }
-    const categories = [...new Set(products.map((p) => p.category))]
+    let categories = [...new Set(products.map((p) => p.category))]
+    categories.unshift('all')
 
 
     res
         .status(200)
         .json(new ApiResponse(200, "Categories Fetched", categories))
-
 })
 
 //* Category with Products

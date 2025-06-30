@@ -16,6 +16,7 @@ import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip";
 import { useAuthContext } from "@/context/authContext";
 import { useNavigate } from "react-router-dom";
+import { ToolTip } from "@/components/reusable/shared";
 
 type Props = {
     setActiveTab?: (tab: string) => void;
@@ -104,23 +105,34 @@ const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => 
                 <nav className="w-full flex items-center justify-center">
                     <ul className="space-y-2">
                         {sideBarItems.map(({ icon, text, path }, i) => (
-                            <TooltipProvider key={i}>
-                                <Tooltip>
-                                    <TooltipTrigger className="flex items-center justify-center">
-                                        <li
-                                            className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
-                                            onClick={() => handleNavigation(path)}
-                                        >
-                                            {icon}
-                                            <TooltipContent>
-                                                <p>{text}</p>
-                                            </TooltipContent>
-                                        </li>
-                                    </TooltipTrigger>
-                                </Tooltip>
-                            </TooltipProvider>
+                            // <TooltipProvider key={i}>
+                            //     <Tooltip>
+                            //         <TooltipTrigger className="flex items-center justify-center">
+                            //             <li
+                            //                 className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
+                            //                 onClick={() => handleNavigation(path)}
+                            //             >
+                            //                 {icon}
+                            //                 <TooltipContent>
+                            //                     <p>{text}</p>
+                            //                 </TooltipContent>
+                            //             </li>
+                            //         </TooltipTrigger>
+                            //     </Tooltip>
+                            // </TooltipProvider>
+                            <ToolTip
+                                key={i}
+                                triggerValue={
+                                    <li
+                                        className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
+                                        onClick={() => handleNavigation(path)}>
+                                        {icon}
+                                    </li>
+                                }
+                                tooltip={text}
+                            />
                         ))}
-                        <TooltipProvider>
+                        {/* <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger className="flex items-center justify-center">
                                     <li
@@ -134,7 +146,17 @@ const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => 
                                     </li>
                                 </TooltipTrigger>
                             </Tooltip>
-                        </TooltipProvider>
+                        </TooltipProvider> */}
+                        <ToolTip
+                            triggerValue={
+                                <li
+                                    className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
+                                    onClick={async () => await logout(navigate)}>
+                                    <LogOut strokeWidth={3} className="w-5 h-5" />
+                                </li>
+                            }
+                            tooltip="SignOut"
+                        />
                     </ul>
                 </nav>
             </aside>

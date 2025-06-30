@@ -223,7 +223,7 @@ function SelectContent({
         style={{
           top: '100%',
           left: 0,
-          marginTop: '4px',
+          marginTop: '6px',
         }}
       >
         <div className="max-h-96 overflow-auto">
