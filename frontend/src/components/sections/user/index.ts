@@ -6,7 +6,7 @@ import TrendingProductsCard from "./TrendingProductsCard";
 import WhyChooseUs from "./WhyChooseUs";
 import Testimonials from "./TestimonialsCard";
 import NewsletterCTASection from "./NewsletterCTASection";
-import SearchFilterSortProduct from "./SearchFilterSortProduct";
+import SearchFilterSortProduct from "./product-filters/SearchFilterSortProduct";
 export {
     HeroText,
     HeroImage,

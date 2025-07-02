@@ -5,6 +5,13 @@ const formattedCategory = (c: string) => {
     return category
 }
 
+const formattedSelectValue = (s: string) => {
+    let selectValue = s.split("")
+        .map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(" ");
+
+    return selectValue
+}
+
 export {
     formattedCategory
 }

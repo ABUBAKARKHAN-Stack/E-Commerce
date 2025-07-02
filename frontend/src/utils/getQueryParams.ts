@@ -1,0 +1,22 @@
+import { ProductFilterParams  } from "@/types/main.types"
+
+const getQueryParams = ({
+    category,
+    maxPrice,
+    minPrice,
+    search,
+    sortBy
+}: ProductFilterParams ) => {
+    const queryParams: Record<string, string> = {};
+    if (search.trim()) queryParams.search = search;
+    if (category && category !== "all") queryParams.category = category;
+    if (minPrice) queryParams.minPrice = minPrice;
+    if (maxPrice) queryParams.maxPrice = maxPrice;
+    if (sortBy) queryParams.sortBy = sortBy;
+
+    return queryParams;
+}
+
+export {
+    getQueryParams
+}

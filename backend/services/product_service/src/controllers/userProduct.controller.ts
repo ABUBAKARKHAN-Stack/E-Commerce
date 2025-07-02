@@ -13,6 +13,8 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
     const {
         category,
         search,
+        minPrice,
+        maxPrice,
         sortBy,
         limit,
         page
@@ -24,6 +26,13 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
     const pagination: any = {};
     if (limit) pagination.limit = +limit.toString();
     if (page) pagination.page = +page.toString();
+
+    //? Make priceRange obj with type conversion into numbers
+    const priceRange: any = {};
+    if (minPrice) priceRange.minPrice = +minPrice;
+    if (maxPrice) priceRange.maxPrice = +maxPrice;
+
+
 
     //? If cached products exist, apply filtering, searching, and sorting on them
     if (cachedProducts.length > 0) {
@@ -45,6 +54,18 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
             } else {
                 cachedProducts = cachedProducts.filter((p) => p.category === category);
             }
+        }
+
+        //* Apply Price Range Filter
+        const { minPrice, maxPrice } = priceRange;
+        console.log(priceRange);
+        
+        if (minPrice && maxPrice) {
+            cachedProducts = cachedProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
+        } else if (minPrice) {
+            cachedProducts = cachedProducts.filter(p => p.price >= minPrice)
+        } else if (maxPrice) {
+            cachedProducts = cachedProducts.filter(p => p.price <= maxPrice)
         }
 
         /*
@@ -85,6 +106,14 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
     };
     if (search) query.name = { $regex: search, $options: 'i' }; //* Case-insensitive search
 
+    if (priceRange.minPrice && priceRange.maxPrice) {
+        query.price = { $gte: priceRange.minPrice, $lte: priceRange.maxPrice };
+    } else if (priceRange.minPrice) {
+        query.price = { $gte: priceRange.minPrice };
+    } else if (priceRange.maxPrice) {
+        query.price = { $lte: priceRange.maxPrice };
+    }
+
     let sortOptions: any = {};
     if (sortBy === "newest") sortOptions.createdAt = -1;
     else if (sortBy === 'price-high-to-low') sortOptions.price = -1;
@@ -92,7 +121,6 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
     else if (sortBy === 'z-a') sortOptions.name = -1;
     else if (sortBy === 'a-z') sortOptions.name = 1;
 
-    console.log(query);
 
     //* Fetch products from DB with applied filters and sorting
     const products = await productModel
@@ -108,8 +136,10 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
     const totalProducts = await productModel.countDocuments(query);
 
     //* Store fetched products in Redis cache for future use
-    await redisClient.set("products", JSON.stringify(products));
-    await redisClient.expire("products", 60 * 30); //* Cache for 30 minutes
+    if (redisClient?.status === 'ready') {
+        await redisClient?.set("products", JSON.stringify(products));
+        await redisClient?.expire("products", 60 * 30); //* Cache for 30 minutes
+    }
 
     //* Send DB products as response
     res

@@ -71,4 +71,12 @@ export interface NavItem {
     href: string;
 };
 
+export interface ProductFilterParams {
+    search: string;
+    category: string;
+    minPrice: string;
+    maxPrice: string;
+    sortBy: string;
+}
+
 
