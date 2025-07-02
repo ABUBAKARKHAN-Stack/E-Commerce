@@ -1,30 +1,27 @@
-import { removeBackgroundFromImageFile } from 'remove.bg';
-import { rootPath } from '../utils';
-import * as path from 'path'
+import { ApiError } from '../utils';
 import fs from 'fs'
+import axios from 'axios';
 
 
-const tempDir = path.join(rootPath, 'temp');
-const outputFile = path.join(tempDir, "removedBg.png");
+import FormData from 'form-data';
 
-
-if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir, { recursive: true });
-}
-
-export const removeBg = async (path: string) => {
+export const removeBg = async (filePath: string) => {
     try {
-        const upload = await removeBackgroundFromImageFile({
-            path,
-            apiKey: '9cUsoKy596SL6X9go6KXtK7x',
-            size: "auto",
-            type: "auto",
-        })
+        const formData = new FormData();
+        formData.append('image_file', fs.createReadStream(filePath));
+        const response = await axios.post('https://clipdrop-api.co/remove-background/v1', formData, {
+            headers: {
+                'x-api-key': 'f014538cb126544afe94d8cd97c2097df073c2429b28bdef98fff72b38dca94ddaa8547ca2e4741bff2876d904ebe731',
+                ...formData.getHeaders(), 
+            },
+            responseType: 'arraybuffer' 
+        });
 
-        return Buffer.from(upload.base64img, "base64");
-
-    } catch (error: any) {
-        console.log(error);
-        return;
+        console.log(response.data,'res');
+        
+        return response.data; 
+    } catch (error) {
+        console.error('Background removal failed:', error);
+        throw new ApiError(500,'error',error);
     }
-}
+};

@@ -119,7 +119,7 @@ const HeroMain = () => {
 
 
     return (
-        <main className="w-full h-full min-h-[calc(70vh-80px)] py-16 md:py-24 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] flex flex-col justify-center items-center dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl">
+        <main className="w-full min-w-screen overflow-x-hidden h-full min-h-[calc(70vh-80px)] py-16 md:py-24 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] flex flex-col justify-center items-center dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl">
             <WaveDivider
                 ref={waveDividerTopRef}
                 position='top'

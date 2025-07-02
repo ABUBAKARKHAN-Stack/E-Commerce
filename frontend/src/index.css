@@ -6,12 +6,11 @@
 
 html {
   font-family: 'poppins', sans-serif;
-  overflow-x: hidden !important;
-  overflow-y: scroll;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 
 :root {
   --background: #FAFAFA;
@@ -122,15 +121,16 @@ html {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --breakpoint-3xl: 1700px;
+  --breakpoint-1100: 1100px;
   --breakpoint-xsm: 550px;
   --breakpoint-xs: 490px;
   --breakpoint-xxs: 450px;
+  --breakpoint-xxxs: 400px;
   --shadow-6px: 0px 0px 6px var(--color);
   --shadow-8px: 0px 0px 8px var(--color);
   --shadow-10px: 0px 0px 10px var(--color);
   --shadow-20px: 0px 0px 20px var(--color);
   --drop-shadow-8px: 0px 0px 8px var(--tw-shadow-color);
-  --breakpoint-1100: 1100px;
 }
 
 @layer base {

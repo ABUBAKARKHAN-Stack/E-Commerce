@@ -6,7 +6,7 @@ import { Request, Response } from 'express'
 import { CreateProduct, IProduct } from "../types/main.types";
 import { uploadOnCloudinary, deleteOnCloudinary, thumbnailForProduct } from '../config/cloudinary.config'
 import mongoose from "mongoose";
-import { removeBg } from "../config/removebg.config";
+import {  removeBg } from "../config/removebg.config";
 
 const createProduct = expressAsyncHandler(async (req: Request, res: Response) => {
     let { name, description, price, quantity, category }: CreateProduct = req.body
@@ -27,21 +27,22 @@ const createProduct = expressAsyncHandler(async (req: Request, res: Response) =>
     const files = req.files as Express.Multer.File[]
     let thumbnails: string[] = [];
 
-
     for (const file of files) {
-        const imageBuffer = await removeBg(file.path);
+        const imageBuffer = await removeBg(file.path)
+
         if (!imageBuffer) {
             throw new ApiError(500, "Failed to process image. Please try uploading a different image.");
         }
         const response = await uploadOnCloudinary(imageBuffer);
         const thumbnailUrl = await thumbnailForProduct(response.public_id);
+
         thumbnails.push(thumbnailUrl);
     }
+
 
     if (spaceRegex.test(category.toLowerCase())) {
         category = category.replaceAll(" ", "-");
     }
-
 
     const product = await productModel.create({
         name,

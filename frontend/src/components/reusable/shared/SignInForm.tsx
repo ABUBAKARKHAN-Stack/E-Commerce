@@ -18,10 +18,11 @@ import { useAuthContext } from "@/context/authContext";
 import PasswordVisibilityToggler from "./PasswordVisibilityToggler";
 
 type Props = {
-    isAdmin: boolean
+    isAdmin: boolean;
+    isUsingInAuthDialog?: boolean;
 }
 
-const SignInForm: FC<Props> = ({ isAdmin }) => {
+const SignInForm: FC<Props> = ({ isAdmin, isUsingInAuthDialog = false }) => {
 
     const form = useForm<z.infer<typeof signinSchema>>({
         resolver: zodResolver(signinSchema),
@@ -32,7 +33,7 @@ const SignInForm: FC<Props> = ({ isAdmin }) => {
 
 
     const onSubmit = async (data: z.infer<typeof signinSchema>) => {
-        login(data, isAdmin, navigate)
+        login(data, isAdmin, navigate, isUsingInAuthDialog)
         console.log("Login Data:", data);
     };
 

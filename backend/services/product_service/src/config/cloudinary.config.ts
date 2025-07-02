@@ -33,8 +33,7 @@ const deleteOnCloudinary = async (publicId: string) => {
 const thumbnailForProduct = async (publicId: string) => {
     try {
         const response = cloudinary.url(publicId, {
-            crop: "thumb",
-            dpr: "auto"
+            dpr: "auto",
         })
         console.log("Thumbnail Generated", response);
         return response

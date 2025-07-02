@@ -13,7 +13,7 @@ type RoleType = "user" | "admin" | null;
 type AuthContextType = {
     user: IUser | IAdmin | null;
     role: RoleType;
-    login: (data: z.infer<typeof signinSchema>, isAdmin: boolean, navigate: (path: string) => void) => Promise<void>;
+    login: (data: z.infer<typeof signinSchema>, isAdmin: boolean, navigate: (path: string) => void, isUsingInAuthDialog?: boolean) => Promise<void>;
     fetchData: (role: RoleType) => Promise<void>;
     logout: (navigate: (path: string) => void) => Promise<void>;
     forgotPassword: (isAdmin: boolean, data: z.infer<typeof forgotPasswordSchema>) => Promise<void>;
@@ -23,17 +23,7 @@ type AuthContextType = {
 }
 
 
-const AuthContext = createContext<AuthContextType>({
-    user: null,
-    role: null,
-    login: (data: z.infer<typeof signinSchema>, isAdmin: boolean, navigate: (path: string) => void) => Promise.resolve(),
-    fetchData: (role: RoleType) => Promise.resolve(),
-    logout: (navigate: (path: string) => void) => Promise.resolve(),
-    forgotPassword: (isAdmin: boolean, data: z.infer<typeof forgotPasswordSchema>) => Promise.resolve(),
-    resetPassword: (isAdmin: boolean, data: z.infer<typeof resetPasswordSchema>, navigate: (path: string) => void, params: any) => Promise.resolve(),
-    setRole: (role: RoleType) => { },
-    loading: false,
-});
+const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<IUser | IAdmin | null>(null)
@@ -41,7 +31,12 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-    const login = async (data: z.infer<typeof signinSchema>, isAdmin: boolean, navigate: (path: string) => void) => {
+    const login = async (
+        data: z.infer<typeof signinSchema>,
+        isAdmin: boolean,
+        navigate: (path: string) => void,
+        isUsingInAuthDialog = false
+    ) => {
         try {
             setLoading(true)
             const res = isAdmin ? await loginAdmin(data) : await loginUser(data)
@@ -52,6 +47,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             } else if (res.data.data.userToken) {
                 localStorage.setItem("userToken", res.data.data.userToken)
                 setRole("user")
+                if (isUsingInAuthDialog) {
+                    successToast("User Logged in Successfully");
+                    return;
+                };
                 navigate("/")
             } else {
                 infoToast("Something went wrong")
@@ -171,7 +170,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const resetPassword = async (isAdmin: boolean, data: z.infer<typeof resetPasswordSchema>, navigate: (path: string) => void, params: any) => {
         try {
             setLoading(true)
-            const res = isAdmin ? await resetPasswordAdmin(data,params) : await resetPasswordUser(data, params);
+            const res = isAdmin ? await resetPasswordAdmin(data, params) : await resetPasswordUser(data, params);
             if (res.status === 200) {
                 successToast(res.data.message);
                 timeoutRef.current = setTimeout(() => {
@@ -192,7 +191,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 clearTimeout(timeoutRef.current);
             }
         }
-    },[])
+    }, [])
 
 
     return (
@@ -204,6 +203,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 const useAuthContext = () => {
     const context = useContext(AuthContext);
+    if (!context) throw new Error("useAuthContext must be used within a AuthProvider");
+
     return context;
 }
 export {

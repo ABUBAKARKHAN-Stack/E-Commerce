@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { History, Search, SearchIcon, Timer, X } from 'lucide-react';
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { History, Search, SearchIcon, X } from 'lucide-react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 type Props = {
     searchValue: string;
@@ -98,7 +98,7 @@ const SearchBar: FC<Props> = ({
                                 <div onClick={() => handleSearchClick(n)}
                                     className='flex cursor-default w-full py-2 items-center gap-x-4'>
                                     {last ? <History className='size-5 stroke-1' /> : <SearchIcon className='size-5 stroke-1' />}
-                                    <span>{n}</span>
+                                    <span className='line-clamp-1'>{n}</span>
                                 </div>
                                 {last && <div
                                     onClick={(e) => {
