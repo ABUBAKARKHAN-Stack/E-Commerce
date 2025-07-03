@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/context/authContext';
 import { successToast } from '@/utils/toastNotifications';
 import { RequireAuth } from '@/components/layout/user/RequireAuthForAction';
+import { useProductContext } from '@/context/productContext';
 
 type Props = {
     product: IProduct;
@@ -33,9 +34,11 @@ const ProductCard: FC<Props> = ({
         reviews
     } = product;
     const { theme } = useThemeContext();
-    const { user } = useAuthContext()
+    const { user } = useAuthContext();
+    const { wishlist } = useProductContext();
     const [quantityCount, setQuantityCount] = useState(1);
     const isDark = theme === "dark";
+
 
     const handleAddToCart = () => {
         if (!user) return;
@@ -47,7 +50,12 @@ const ProductCard: FC<Props> = ({
             <MagicCard gradientSize={150} gradientColor={isDark ? "#262626" : "#ecfeff"} gradientFrom={isDark ? '#F15136' : '#0891b2'} gradientTo={isDark ? '#FBA740' : '#06b6d4'} className={`${forHome ? 'w-48 xl:w-50' : "w-full min-h-96 "} shadow-md rounded-t`}>
                 <div>
                     <div className={`lg:group w-full h-48 xl:h-50 ${forHome ? 'w-48 xl:w-50' : "w-full"} relative top-px`}>
-                        <ProductCardHeaderButtons />
+
+                        <ProductCardHeaderButtons
+                            productId={_id}
+                            user={user as IUser}
+                            wishlist={wishlist}
+                        />
                         <CategoryBadge category={category} />
                         <div className='bg-gray-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center w-[99.5%] h-full p-4 rounded-t dark:bg-[#2c2c2e]'>
                             <img src={thumbnails[0]} alt={product.name + "Image"} className={`object-contain ${forHome ? 'size-39' : 'size-44'} drop-shadow-8px shadow-black`} />

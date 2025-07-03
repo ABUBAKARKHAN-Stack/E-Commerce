@@ -5,6 +5,7 @@ import { ApiError, ApiResponse, generateToken, sendEmail, publishEvent } from '.
 import { existing, emailTemplate } from '../helpers/index'
 import asyncHandler from 'express-async-handler'
 import validator from 'validator'
+import expressAsyncHandler from 'express-async-handler'
 
 
 //* Controller functions for user service
@@ -100,8 +101,6 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
         );
 
         throw new ApiError(400, "Your account is not verified. We've sent a verification link to your email. Please check your inbox and verify your email to continue.");
-
-
     }
 
     const token = generateToken({
@@ -143,7 +142,7 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
     user.isVerified = true;
     await user.save()
 
-    res 
+    res
         .status(200)
         .json(new ApiResponse(200, "User verified successfully"))
 })
@@ -204,7 +203,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
         const { user } = res.locals
         if (!user) {
             throw new ApiError(400, "User not found")
-        } 
+        }
         const isSame = await user.comparePassword(password)
         if (isSame) {
             throw new ApiError(400, "New password cannot be the same as the old password.")
@@ -212,7 +211,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const { user } = res.locals;
-    user.password = password; 
+    user.password = password;
     await user.save()
     res
         .status(200)
@@ -359,6 +358,32 @@ const deleteUser = asyncHandler(async (req: Request, res: Response) => {
         .json(new ApiResponse(200, "User deleted successfully"))
 })
 
+//? Get Wishlist
+const getWishList = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { _id } = res.locals.user;
+    
+    const user = await userModel.findById(_id).select('wishlist');
+
+    if (!user) {
+        throw new ApiError(404, 'User not found')
+    }
+
+    const wishlist = user.wishlist;
+    if (!wishlist || wishlist.length === 0) {
+        res
+            .status(200)
+            .json(
+                new ApiResponse(200, 'No products found in wishlist', { wishlist: [] })
+            );
+        return;
+    }
+
+
+    res
+        .status(200)
+        .json(new ApiResponse(200, 'Wishlist Fetched', { wishlist }))
+})
+
 
 export {
     createUser,
@@ -370,5 +395,6 @@ export {
     updateUser,
     updateUserPassword,
     logoutUser,
-    deleteUser
+    deleteUser,
+    getWishList
 }

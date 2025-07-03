@@ -39,11 +39,11 @@ const staticTrendingProductsData: StaticTrendingProductsData[] = [
 
 const cardActionButtonsData = [
         {
-            icon: <Heart size={16} className='m-auto' />,
+            icon: <Heart size={18} className='m-auto' />,
             tooltip: "Add to Wishlist"
         },
         {
-            icon: <Eye size={16} className='m-auto' />,
+            icon: <Eye size={18} className='m-auto' />,
             tooltip: "View Details"
         }
     ]

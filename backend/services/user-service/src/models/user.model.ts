@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IUser } from "../types/main.types";
 import bcrypt from 'bcrypt';
 
@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         default: "user"
     },
+    wishlist: [String],
     isVerified: {
         type: Boolean,
         default: false

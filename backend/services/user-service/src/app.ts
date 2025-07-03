@@ -17,7 +17,7 @@ app.use(cookieparser())
 //* Importing  user routes
 import userRoutes from './routes/user.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
-import { cartEventConsumer } from './utils/kafka';
+import { cartEventConsumer, wishListEventConsumer } from './utils/kafka';
 
 app.use("/", userRoutes); 
 
@@ -25,7 +25,8 @@ app.use("/", userRoutes);
 import cartRoutes from './routes/cart.routes';
 app.use("/", cartRoutes);
 Promise.all([
-    cartEventConsumer()
+    cartEventConsumer(),
+    wishListEventConsumer()
 ])
     .then(() => {
         console.log("All consumers are running");

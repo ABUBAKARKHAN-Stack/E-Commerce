@@ -1,31 +1,51 @@
-import { cardActionButtonsData } from "@/data/trendingProducts";
 import { ToolTip } from "../shared";
 import {
   RequireAuth
 } from "@/components/layout/user/RequireAuthForAction";
+import { FC, useEffect, useState } from "react";
+import { IUser } from "@/types/main.types";
+import WishlistButton from "@/components/ui/wishlist-button";
+import { Eye, HeartIcon } from "lucide-react";
 
-const ProductCardHeaderButtons = () => {
+type Props = {
+  productId: string;
+  user: IUser;
+  wishlist: string[]
+}
+
+const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
+  const [isInWishList, setIsInWishList] = useState(false);
+
+
+
+  useEffect(() => {
+    setIsInWishList(wishlist.includes(productId));
+  }, [wishlist, productId])
+
   return (
-    <div className='flex lg:group-hover:opacity-100 lg:opacity-0 opacity-100 transition-opacity ease-linear duration-300 absolute left-1 top-1.5 z-10 flex-row gap-x-1.5'>
-      {cardActionButtonsData.map(({ icon, tooltip }, i) => {
-        const isAddedToWishList = tooltip.toLowerCase().includes('wishlist');
-        return (
 
-          <ToolTip
-            key={i}
-            triggerValue={
-              <button className='dark:bg-white hover:dark:bg-orange-500 transition-all ease-linear cursor-pointer dark:text-black hover:dark:text-white  text-white hover:scale-105 duration-300 bg-black hover:text-white hover:bg-cyan-500 shadow-xs dark:shadow-white shadow-black dark:hover:shadow-orange-500 hover:shadow-cyan-500 size-6 rounded-full'>
-                {isAddedToWishList ? <RequireAuth>
-                  <span>{icon}</span>
-                </RequireAuth> : <span>{icon}</span>}
-              </button>
-            }
-            tooltip={tooltip}
-          />
-        )
-      })}
+
+    <div className='flex lg:group-hover:opacity-100 lg:opacity-0 opacity-100 transition-opacity ease-linear duration-300 absolute left-1 top-2 z-10 flex-col gap-y-1.5'>
+      <RequireAuth>
+        <WishlistButton
+          icon={<HeartIcon size={18} />}
+          isInWishList={wishlist.includes(productId)}
+          productId={productId}
+          userLoggedIn={!!user}
+        />
+      </RequireAuth>
+      <ToolTip
+        triggerValue={
+          <button
+            className="flex items-center justify-center size-7 rounded-full text-white transition-all duration-300 ease-in-out dark:bg-white hover:dark:bg-orange-500 dark:text-black hover:dark:text-white bg-black hover:bg-cyan-500 hover:text-white shadow-black dark:shadow-white hover:shadow-cyan-500 dark:hover:shadow-orange-500 hover:scale-105 cursor-pointer"
+          >
+            <Eye size={18} className='m-auto' />
+          </button>
+        }
+        tooltip="View Details"
+      />
     </div>
-  );
-};
+  )
+}
 
 export default ProductCardHeaderButtons;

@@ -1,14 +1,18 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
 
 import {
     getProducts,
     getTopCategories,
     getSingleProduct,
     getTopRatedProducts,
-    getCategories
+    getCategories,
+    addToWishList,
+    getWishList as getWishListApi,
+    removeFromWishList
 } from '@/API/userApi'
 import { IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
+import { errorToast, successToast } from "@/utils/toastNotifications";
 
 
 
@@ -24,6 +28,11 @@ type ProductContextType = {
     topCategories: string[] | null;
     fetchTopRatedProducts: () => Promise<void>;
     topRatedProducts: any[] | null;
+    addProductIntoWishlist: (productId: string) => Promise<void>;
+    removeProductFromWishlist: (productId: string) => Promise<void>;
+    getWishList: () => Promise<void>;
+    wishlist: string[];
+    setWishlist: Dispatch<SetStateAction<string[]>>;
 };
 
 const ProductContext = createContext<ProductContextType | null>(null);
@@ -34,12 +43,12 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const [topCategories, setTopCategories] = useState<string[] | null>(null);
     const [topRatedProducts, setTopRatedProducts] = useState<any[] | null>(null);
     const [productsData, setProductsData] = useState<IProduct[] | null>(null);
-
+    const [wishlist, setWishlist] = useState<string[]>([]);
 
     const getAllProducts = async (query?: any) => {
         try {
             setLoading("get-products")
-            const res = await getProducts(query);            
+            const res = await getProducts(query);
             const products = res.data?.data?.products;
             return products;
         } catch (error) {
@@ -104,6 +113,58 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         fetchTopRatedProducts();
     }, [])
 
+    const addProductIntoWishlist = async (productId: string) => {
+        try {
+            const res = await addToWishList(productId);
+            if (res.status === 200) {
+                successToast(res.data.message);
+                setWishlist((prev) => [...prev, res.data.data.productId])
+            }
+        } catch (error) {
+            const err = error as AxiosError;
+            const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist"; //TODO: Fix it later TYPE Error
+            errorToast(errMsg)
+        }
+    }
+
+    const removeProductFromWishlist = async (productId: string) => {
+        try {
+            const res = await removeFromWishList(productId);
+            console.log(res.data.data);
+
+            if (res.status === 200) {
+                successToast(res.data.message);
+                setWishlist((prev) => {
+                    const index = prev.findIndex((id) => id === res.data.data.productId);
+                    console.log(index);
+
+                    prev.splice(index, 1)
+                    return [...prev]
+                })
+            }
+        } catch (error) {
+            const err = error as AxiosError;
+            const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist"; //TODO: Fix it later TYPE Error
+            errorToast(errMsg)
+        }
+    }
+
+    const getWishList = async () => {
+        try {
+            const res = await getWishListApi();
+            if (res.status === 200) {
+                setWishlist(res.data.data.wishlist);
+            }
+        } catch (error) {
+            console.log(error);
+            setWishlist([]);
+        }
+    }
+
+    useEffect(() => {
+        getWishList();
+    }, [])
+
     return (
         <ProductContext.Provider value={{
             getAllProducts,
@@ -115,6 +176,11 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
             topCategories,
             fetchTopRatedProducts,
             topRatedProducts,
+            addProductIntoWishlist,
+            removeProductFromWishlist,
+            getWishList,
+            wishlist,
+            setWishlist,
             getProduct,
             loading
         }}>

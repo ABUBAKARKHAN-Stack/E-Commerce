@@ -59,7 +59,7 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
         //* Apply Price Range Filter
         const { minPrice, maxPrice } = priceRange;
         console.log(priceRange);
-        
+
         if (minPrice && maxPrice) {
             cachedProducts = cachedProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
         } else if (minPrice) {
@@ -243,7 +243,6 @@ const topCategories = expressAsyncHandler(async (req: Request, res: Response) =>
         .json(new ApiResponse(200, "Top Categories Fetched", categories))
 
 })
-
 
 //? Cart Controller Functions
 
@@ -548,6 +547,87 @@ const topProducts = expressAsyncHandler(async (req: Request, res: Response) => {
 
 })
 
+//? Wishlist Controller Functions
+
+//* Add Product into Wishlist 
+const addToWishList = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { productId } = req.body;
+    const { user } = res.locals;
+
+
+    if (!productId) {
+        throw new ApiError(404, "Product ID is required.")
+    }
+    const userId = user.userId;
+
+    if (!userId) {
+        throw new ApiError(404, "User ID is required.")
+    }
+
+    const product = await productModel.findById(productId);
+
+    if (!product) {
+        throw new ApiError(404, 'Product not found');
+    }
+
+    const wishlistPayload = {
+        userId,
+        productId
+    }
+
+    try {
+        await publishEvent('add-to-wishlist', 'added-in-wishlist', wishlistPayload);
+        console.log('Add to Wishlist Event Send...');
+    } catch (error) {
+        throw new ApiError(402, "Failed to sent wishlist event.")
+    }
+
+    res
+        .status(200)
+        .json(new ApiResponse(200, "Product Added into wishlist", wishlistPayload));
+
+})
+
+//* Remove Product from Wishlist
+
+const removeFromWishList = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { productId } = req.params;
+    const { user } = res.locals;
+
+
+    if (!productId) {
+        throw new ApiError(404, "Product ID is required.")
+    }
+
+    const product = await productModel.findById(productId);
+
+    if (!product) {
+        throw new ApiError(404, "Product not found.");
+    }
+    const userId = user.userId;
+
+    if (!userId) {
+        throw new ApiError(404, "User ID is required.")
+    }
+
+
+    const wishlistPayload = {
+        productId,
+        userId
+    }
+
+    try {
+        await publishEvent('remove-from-wishlist', 'removed-from-wishlist', wishlistPayload);
+        console.log('Remove from Wishlist Event Send...');
+    } catch (error) {
+        throw new ApiError(402, "Failed to sent wishlist event.")
+    }
+
+    res
+        .status(200)
+        .json(new ApiResponse(200, "Product Removed from wishlist", wishlistPayload));
+})
+
 
 
 export {
@@ -564,4 +644,6 @@ export {
     deleteReview,
     getAllReviews,
     topProducts,
+    addToWishList,
+    removeFromWishList
 }

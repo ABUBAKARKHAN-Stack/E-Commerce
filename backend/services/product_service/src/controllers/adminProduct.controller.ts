@@ -75,7 +75,7 @@ const updateProduct = expressAsyncHandler(async (req: Request, res: Response) =>
     const spaceRegex = /\s/;
 
     if (!name && !description && !price && !quantity && !category) {
-        throw new ApiError(400, "At least one field is required")
+        throw new ApiError(400, "At least one field is required") 
     }
     if (price) {
         if (price !== undefined && (isNaN(price) || price <= 0)) {

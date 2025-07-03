@@ -51,10 +51,10 @@ const resetPasswordUser = async (data: any, params: any) => {
 
 //* +++++++++++++++++++ User Product Api ++++++++++++++
 const getProducts = async (params?: any) => {
-  console.log(params,'from func');
-  
+  console.log(params, 'from func');
+
   return await userProductApi.get('/all', {
-    params: params ,
+    params: params,
     withCredentials: true
   })
 }
@@ -79,6 +79,24 @@ const getTopRatedProducts = async () => {
   return await userProductApi.get('/top-rated');
 }
 
+const addToWishList = async (productId: string) => {
+  return await userProductApi.post('/add-to-wishlist', { productId }, {
+    withCredentials: true
+  })
+}
+
+const removeFromWishList = async (productId: string) => {
+  return await userProductApi.delete(`/remove-from-wishlist/${productId}`, {
+    withCredentials: true
+  })
+}
+
+const getWishList = async () => {
+  return await userApi.get('/wishlist', {
+    withCredentials: true
+  })
+}
+
 export {
   createUser,
   loginUser,
@@ -91,5 +109,8 @@ export {
   getSingleProduct,
   getCategories,
   getTopCategories,
-  getTopRatedProducts
+  getTopRatedProducts,
+  addToWishList,
+  removeFromWishList,
+  getWishList,
 }
