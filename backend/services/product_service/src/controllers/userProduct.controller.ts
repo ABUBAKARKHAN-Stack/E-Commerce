@@ -37,7 +37,6 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
     //? If cached products exist, apply filtering, searching, and sorting on them
     if (cachedProducts.length > 0) {
         console.log("🚀 Fetched products from cache");
-        const totalCachedProducts = cachedProducts.length;
 
         //* Apply search filter (case-insensitive)
         if (search) {
@@ -58,7 +57,6 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
 
         //* Apply Price Range Filter
         const { minPrice, maxPrice } = priceRange;
-        console.log(priceRange);
 
         if (minPrice && maxPrice) {
             cachedProducts = cachedProducts.filter(p => p.price >= minPrice && p.price <= maxPrice);
@@ -75,26 +73,21 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
         cachedProducts = sortProducts(cachedProducts, sortBy);
 
 
-        let startIndex: number;
-        let endIndex: number;
-        startIndex = (pagination.page - 1) * pagination.limit;
-        endIndex = pagination.page * pagination.limit;
-
-        if (startIndex || endIndex) {
-            cachedProducts = cachedProducts.slice(startIndex, endIndex);
-        }
-
         //* If no products match after filtering/sorting
         if (cachedProducts.length === 0) {
             throw new ApiError(404, "No products match your criteria");
         }
+        const startIndex = (pagination.page - 1) * pagination.limit;
+        const endIndex = pagination.page * pagination.limit;
+        const paginatedProducts = cachedProducts.slice(startIndex, endIndex);
+
 
         //* Return final filtered and sorted products from cache
         res
             .status(200)
             .json(new ApiResponse(200, "Products fetched from cache", {
-                products: cachedProducts,
-                // totalProducts: totalCachedProducts
+                products: paginatedProducts,
+                totalProducts: cachedProducts.length
             }));
         return;
     }
@@ -127,24 +120,31 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
         .find(query)
         .sort(sortOptions)
         .limit(pagination.limit)
-        .skip((pagination.page - 1) * pagination.limit)
+        .skip((pagination.page - 1) * pagination.limit);
+
+    const totalProducts = await productModel.countDocuments(query)
 
     if (products.length === 0) {
         throw new ApiError(404, "Products not found");
     }
 
-    const totalProducts = await productModel.countDocuments(query);
 
     //* Store fetched products in Redis cache for future use
     if (redisClient?.status === 'ready') {
-        await redisClient?.set("products", JSON.stringify(products));
+        const fullFilteredProducts = await productModel
+            .find(query)
+            .sort(sortOptions)
+        await redisClient?.set("products", JSON.stringify(fullFilteredProducts));
         await redisClient?.expire("products", 60 * 30); //* Cache for 30 minutes
     }
 
     //* Send DB products as response
     res
         .status(200)
-        .json(new ApiResponse(200, "Products fetched successfully", { products }));
+        .json(new ApiResponse(200, "Products fetched successfully", {
+            products,
+            totalProducts
+        }));
 });
 
 

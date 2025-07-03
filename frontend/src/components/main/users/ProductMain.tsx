@@ -3,18 +3,22 @@ import { SectionHeader, WaveDivider } from '@/components/reusable/user'
 import { SearchFilterSortProduct } from '@/components/sections/user';
 import { useProductContext } from '@/context/productContext'
 import { ProductCard } from '@/components/reusable/user';
-import { Separator } from '@/components/ui/separator';
 import { BlurFade } from '@/components/magicui/blur-fade';
+import { useState } from 'react';
+import { Pagination } from '@/components/reusable/shared';
 
 const ProductMain = () => {
-    const { productsData } = useProductContext();
-    console.log(productsData);
+    const { productsData, totalProducts } = useProductContext();
+    const [limit, setLimit] = useState(4);
+    const [page, setPage] = useState(1);
 
-    // if (productsData === null) {
-    //     return (
-    //         <div className='w-full h-[70vh] text-7xl border-b-2 font-bold flex justify-center items-center'>Products Not Found</div>
-    //     )
-    // }
+
+
+    if (productsData === null) {
+        return (
+            <div className='w-full h-[70vh] text-7xl border-b-2 font-bold flex justify-center items-center'>Products Not Found</div>
+        )
+    }
 
     return (
         <main
@@ -45,6 +49,10 @@ const ProductMain = () => {
                         delay={0.75}
                     > */}
                     <SearchFilterSortProduct
+                        page={page}
+                        setPage={setPage}
+                        limit={limit}
+                        setLimit={setLimit}
                     />
                     {/* </BlurFade> */}
 
@@ -64,6 +72,13 @@ const ProductMain = () => {
                             </BlurFade>
                         ))}
                     </div>
+
+                    <Pagination
+                        limit={limit}
+                        page={page}
+                        setPage={setPage}
+                        totalProducts={totalProducts}
+                    />
                 </section>
             </Layout>
         </main>

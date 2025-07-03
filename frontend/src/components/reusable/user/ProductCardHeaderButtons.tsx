@@ -19,7 +19,7 @@ const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
 
 
   useEffect(() => {
-    setIsInWishList(wishlist.includes(productId));
+    setIsInWishList(wishlist?.includes(productId));
   }, [wishlist, productId])
 
   return (
@@ -29,7 +29,7 @@ const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
       <RequireAuth>
         <WishlistButton
           icon={<HeartIcon size={18} />}
-          isInWishList={wishlist.includes(productId)}
+          isInWishList={wishlist?.includes(productId)}
           productId={productId}
           userLoggedIn={!!user}
         />

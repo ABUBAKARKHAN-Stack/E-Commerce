@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { Filter, } from "lucide-react";
 import { useProductContext } from '@/context/productContext';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -6,9 +6,22 @@ import { getQueryParams } from '@/utils/getQueryParams';
 import SearchBar from './SearchBar';
 import FilterToggleButton from './FilterToggleButton';
 import FilterPanel from './FilterPanel';
+import { Pagination } from '@/components/reusable/shared';
 
+type Props = {
+    limit: number;
+    setLimit: Dispatch<SetStateAction<number>>;
+    page: number;
+    setPage: Dispatch<SetStateAction<number>>;
 
-const SearchFilterSortProduct = () => {
+}
+
+const SearchFilterSortProduct: FC<Props> = ({
+    limit,
+    setLimit,
+    page,
+    setPage
+}) => {
     const [search, setSearch] = useState<string>("");
     const [category, setCategory] = useState<string>("all");
     const [minPrice, setMinPrice] = useState('');
@@ -26,7 +39,7 @@ const SearchFilterSortProduct = () => {
 
     const filterSort = async (params: any) => {
         const products = await getAllProducts(params);
-        setProductsData(products)
+        setProductsData(products);
     }
 
     const handleFilterRemove = () => {
@@ -59,6 +72,8 @@ const SearchFilterSortProduct = () => {
             minPrice: debouncedMinPrice,
             maxPrice: debouncedMaxPrice,
             sortBy,
+            limit,
+            page
         });
     }, [
         debouncedSearch,
@@ -66,20 +81,29 @@ const SearchFilterSortProduct = () => {
         debouncedMaxPrice,
         category,
         sortBy,
+        page
     ])
+
+
 
     useEffect(() => {
         if (!isInitialized) return;
         getActiveFiltersCount();
-        localStorage.setItem('filter/sort', JSON.stringify(queryParams));
+        localStorage.setItem('filter/sort', JSON.stringify({
+            search: queryParams.search,
+            category: queryParams.category,
+            minPrice: queryParams.minPrice,
+            maxPrice: queryParams.maxPrice,
+            sortBy: queryParams.sortBy
+        }));
         filterSort(queryParams);
-
     }, [
         debouncedSearch,
         debouncedMinPrice,
         debouncedMaxPrice,
         category,
         sortBy,
+        page,
         isInitialized
     ]);
 
@@ -99,7 +123,6 @@ const SearchFilterSortProduct = () => {
     }
 
     return (
-
         <div className="w-full space-y-6">
 
             {/* Section Title */}
@@ -143,6 +166,7 @@ const SearchFilterSortProduct = () => {
                 filterCount={filterCount}
                 onFilterRemove={handleFilterRemove}
             />
+
         </div >
 
     )

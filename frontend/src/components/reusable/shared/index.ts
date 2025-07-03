@@ -7,6 +7,7 @@ import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import ThemeToggler from "./ThemeToggler";
 import ToolTip from "./ToolTip";
+import Pagination from "./Pagination";
 
 
 export {
@@ -18,5 +19,6 @@ export {
     SignInForm,
     SignUpForm,
     ThemeToggler,
-    ToolTip
+    ToolTip,
+    Pagination
 }

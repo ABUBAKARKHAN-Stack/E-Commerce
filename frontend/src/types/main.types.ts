@@ -77,6 +77,14 @@ export interface ProductFilterParams {
     minPrice: string;
     maxPrice: string;
     sortBy: string;
+    limit: number;
+    page:number
+}
+
+export interface ApiError {
+    status: number;
+    message:string;
+    error: object
 }
 
 

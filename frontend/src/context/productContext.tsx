@@ -10,7 +10,7 @@ import {
     getWishList as getWishListApi,
     removeFromWishList
 } from '@/API/userApi'
-import { IProduct } from "@/types/main.types";
+import { ApiError, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
@@ -20,7 +20,7 @@ type ProductContextType = {
     loading: string | null;
     getAllProducts: (query?: any) => Promise<any>;
     productsData: IProduct[] | null;
-    setProductsData: (products: IProduct[]) => void;
+    setProductsData: Dispatch<SetStateAction<IProduct[]>>;
     getProduct: (productId: string) => Promise<any>;
     fetchCategories: () => Promise<void>;
     categories: string[] | null;
@@ -33,6 +33,8 @@ type ProductContextType = {
     getWishList: () => Promise<void>;
     wishlist: string[];
     setWishlist: Dispatch<SetStateAction<string[]>>;
+    totalProducts: number;
+    setTotalProducts: Dispatch<SetStateAction<number>>
 };
 
 const ProductContext = createContext<ProductContextType | null>(null);
@@ -42,17 +44,20 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const [categories, setCategories] = useState<string[] | null>(null);
     const [topCategories, setTopCategories] = useState<string[] | null>(null);
     const [topRatedProducts, setTopRatedProducts] = useState<any[] | null>(null);
-    const [productsData, setProductsData] = useState<IProduct[] | null>(null);
+    const [productsData, setProductsData] = useState<IProduct[]>([]);
     const [wishlist, setWishlist] = useState<string[]>([]);
+    const [totalProducts, setTotalProducts] = useState(0);
 
     const getAllProducts = async (query?: any) => {
         try {
             setLoading("get-products")
             const res = await getProducts(query);
             const products = res.data?.data?.products;
-            return products;
+            const totalProducts = res.data.data.totalProducts;
+            setTotalProducts(totalProducts);
+            return products
         } catch (error) {
-            const axiosError = error as AxiosError;
+            const axiosError = error as AxiosError<ApiError>;
             console.error("Failed to fetch products:", axiosError.message);
         } finally {
             setLoading(null)
@@ -121,8 +126,8 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
                 setWishlist((prev) => [...prev, res.data.data.productId])
             }
         } catch (error) {
-            const err = error as AxiosError;
-            const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist"; //TODO: Fix it later TYPE Error
+            const err = error as AxiosError<ApiError>;
+            const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist";
             errorToast(errMsg)
         }
     }
@@ -143,8 +148,8 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
                 })
             }
         } catch (error) {
-            const err = error as AxiosError;
-            const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist"; //TODO: Fix it later TYPE Error
+            const err = error as AxiosError<ApiError>;
+            const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist";
             errorToast(errMsg)
         }
     }
@@ -182,6 +187,8 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
             wishlist,
             setWishlist,
             getProduct,
+            totalProducts,
+            setTotalProducts,
             loading
         }}>
             {children}
