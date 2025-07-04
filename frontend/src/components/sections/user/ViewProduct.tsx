@@ -13,7 +13,7 @@ import { ArrowLeftToLineIcon, ArrowRight, ArrowRightCircle, DollarSign, Minus, P
 import { Link } from 'react-router-dom';
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { RequireAuth } from '@/components/layout/user/RequireAuthForAction';
-import { CategoryBadge, ProductCardHeaderButtons, ProductQuantitySelector } from '@/components/reusable/user';
+import { AddToCartButton, CategoryBadge, ProductCardHeaderButtons, ProductQuantitySelector } from '@/components/reusable/user';
 import { Layout } from '@/components/layout/shared';
 
 type Props = {
@@ -26,6 +26,7 @@ const ViewProduct: FC<Props> = ({ isOpen, onOpenChange, productId }) => {
     const { getProduct } = useProductContext();
     const [product, setProduct] = useState<IProduct | null>(null);
     const [currentImageSrc, setCurrentImageSrc] = useState('');
+    const [quantityCount, setQuantityCount] = useState(1);
 
     useEffect(() => {
         (async () => {
@@ -146,18 +147,18 @@ const ViewProduct: FC<Props> = ({ isOpen, onOpenChange, productId }) => {
                                 </div>
                                 <ProductQuantitySelector
                                     productQuantity={product.quantity}
+                                    quantityCount={quantityCount}
+                                    setQuantityCount={setQuantityCount}
                                 />
                             </div>
                         </div>
 
                         {/* Add to Cart Button */}
                         <div className="flex justify-center items-center mt-6">
-                            <RequireAuth>
-                                <Button
-                                    className='rounded-none text-base w-full py-3'>
-                                    Add to Cart <ShoppingCart strokeWidth={2.5} className='size-5' />
-                                </Button>
-                            </RequireAuth>
+                            <AddToCartButton
+                                productId={product._id}
+                                quantity={quantityCount}
+                            />
                         </div>
                     </div>
                 </div>

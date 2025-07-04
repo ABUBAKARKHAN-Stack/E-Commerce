@@ -4,7 +4,7 @@ import ProductCardHeaderButtons from "./ProductCardHeaderButtons";
 import ProductCard from "./ProductCard";
 import WaveDivider from "./WaveDivider";
 import ProductQuantitySelector from "./ProductQuantitySelector";
-
+import AddToCartButton from "./AddToCartButton";
 
 export {
     SectionHeader,
@@ -12,5 +12,6 @@ export {
     ProductCardHeaderButtons,
     ProductCard,
     WaveDivider,
-    ProductQuantitySelector
+    ProductQuantitySelector,
+    AddToCartButton
 }

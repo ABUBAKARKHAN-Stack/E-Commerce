@@ -1,17 +1,13 @@
 import mongoose from "mongoose";
 import { cartModel } from "../models/cart.model";
 
-const handleCartCreation = async ({ userId, product, }: { userId: mongoose.Schema.Types.ObjectId, product: any }) => {
+const handleCartCreation = async ({ userId, product, }: { userId: string, product: any }) => {
     try {
         const cart = await cartModel.findOne({ user: userId });
         if (cart) {
             const existingProduct = cart.products.find((p) => p.productId === product.productId);
-            if (existingProduct?.thumbnail && existingProduct?.thumbnail !== product.thumbnail) {
-                console.log("Thumbnail changed");
-                existingProduct!.thumbnail += product.thumbnail;
-            }
             if (existingProduct) {
-                existingProduct.quantity += product.quantity;
+                existingProduct.quantity += +product.quantity;
             } else {
                 cart.products.push(product);
             }

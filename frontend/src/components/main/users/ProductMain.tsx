@@ -16,6 +16,7 @@ const ProductMain = () => {
     const isDesktop = useMediaQuery('(min-width: 1366px)');
     const [limit, setLimit] = useState(4);
     const [page, setPage] = useState(1);
+    
 
     const getDynamicLimit = () => {
         if (isMobile) return 4;

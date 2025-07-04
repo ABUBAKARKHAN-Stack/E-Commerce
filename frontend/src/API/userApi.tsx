@@ -97,6 +97,18 @@ const getWishList = async () => {
   })
 }
 
+
+const addToCart = async (productId: string, quantity: number) => {
+  return await userProductApi.post(`add-to-cart/${productId}`, { quantity }, {
+    withCredentials: true
+  })
+}
+
+const getCartDetails = async () => {
+  return await userApi.get('cart/details', {
+    withCredentials: true
+  })
+}
 export {
   createUser,
   loginUser,
@@ -113,4 +125,6 @@ export {
   addToWishList,
   removeFromWishList,
   getWishList,
+  addToCart,
+  getCartDetails
 }

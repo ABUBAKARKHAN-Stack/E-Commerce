@@ -260,29 +260,34 @@ const addToCart = expressAsyncHandler(async (req: Request, res: Response) => {
         { _id: productId, quantity: { $gte: quantity } },
         { $inc: { quantity: -quantity } },
         { new: true }
-    ).select("name price quantity thumbnails");
+    ).select("price quantity name");
 
     if (!product) {
         throw new ApiError(400, "Product not found or insufficient stock");
     }
 
-    const cartedProducts = {
+    const cartedProductsPayload = {
         product: {
             productId: (product._id as mongoose.Types.ObjectId).toString(),
-            name: product.name,
             price: product.price,
-            quantity,
-            thumbnail: product.thumbnails[0],
+            quantity: +quantity,
         },
         userId,
     };
 
-    // ✅ Send response before publishing event
-    res.status(200).json(new ApiResponse(200, "Product added to cart successfully", cartedProducts));
+    try {
+        await publishEvent("cart-creation", "created_cart", cartedProductsPayload)
+        console.log("Event published successfully", cartedProductsPayload)
+    } catch (error) {
+        console.error('Error publishing product created event:', error)
+    }
 
-    publishEvent("cart-creation", "created_cart", cartedProducts)
-        .then(() => console.log("Event published successfully", cartedProducts))
-        .catch((error) => console.error('Error publishing product created event:', error));
+    res
+        .status(200)
+        .json(new ApiResponse(200, `${product.name} added to your cart successfully!`,
+            cartedProductsPayload
+        ));
+
 });
 
 //* Remove from cart

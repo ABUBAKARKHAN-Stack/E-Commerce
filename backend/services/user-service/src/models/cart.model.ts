@@ -1,5 +1,20 @@
 import { Schema, model } from "mongoose";
-import { ICart } from "../types/main.types";
+import { ICart, ICartProduct } from "../types/main.types";
+
+const cartProductSchema = new Schema<ICartProduct>({
+    productId: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    quantity: {
+        type: Number,
+        required: true
+    }
+})
 
 const cartSchema = new Schema<ICart>({
     user: {
@@ -7,36 +22,13 @@ const cartSchema = new Schema<ICart>({
         ref: "User",
         required: true,
     },
-    products: [
-        {
-            productId: {
-                type: String,
-                required: true,
-            },
-            name: {
-                type: String,
-                required: true,
-            },
-            price: {
-                type: Number,
-                required: true,
-            },
-            quantity: {
-                type: Number,
-                required: true,
-            },
-            thumbnail: {
-                type: String,
-                default: "",
-            }
-        },
-    ],
+    products: [cartProductSchema],
     totalAmount: {
         type: Number,
         required: true,
         default: 0,
     }
-});
+}); 
 
 cartSchema.pre("save", function (next) {
     this.totalAmount = this.products.reduce((acc, product) => {

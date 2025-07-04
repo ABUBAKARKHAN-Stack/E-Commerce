@@ -40,7 +40,7 @@ const getCartDetails = expressAsyncHandler(async (req: Request, res: Response) =
 
     const cart = await cartModel.findOne({
         user: userId
-    })
+    }).select('totalAmount products.productId')
 
     if (!cart) {
         throw new ApiError(404, "Cart not found")
@@ -54,7 +54,7 @@ const getCartDetails = expressAsyncHandler(async (req: Request, res: Response) =
 const proceedToCheckout = expressAsyncHandler(async (req: Request, res: Response) => {
     const { _id } = res.locals.user;
     const userId = _id;
-    
+
     const cart = await cartModel.aggregate([
         {
             $match: {

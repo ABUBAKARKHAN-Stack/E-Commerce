@@ -3,14 +3,14 @@ import { useThemeContext } from '@/context/themeContext'
 import ProductCardHeaderButtons from './ProductCardHeaderButtons';
 import CategoryBadge from './CategoryBadge';
 import { Button } from '@/components/ui/button';
-import {  ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart, Star } from 'lucide-react';
 import { IProduct, IUser } from '@/types/main.types';
 import { FC, useState } from 'react';
 import { useAuthContext } from '@/context/authContext';
-import { successToast } from '@/utils/toastNotifications';
 import { RequireAuth } from '@/components/layout/user/RequireAuthForAction';
 import { useProductContext } from '@/context/productContext';
 import ProductQuantitySelector from './ProductQuantitySelector';
+import AddToCartButton from './AddToCartButton';
 
 type Props = {
     product: IProduct;
@@ -31,18 +31,18 @@ const ProductCard: FC<Props> = ({
         _id,
         description,
         quantity,
-        reviews
+        // reviews
     } = product;
     const { theme } = useThemeContext();
     const { user } = useAuthContext();
-    const { wishlist } = useProductContext();
+    const { wishlist, addToCart } = useProductContext();
     const [quantityCount, setQuantityCount] = useState(1);
     const isDark = theme === "dark";
 
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async (productId: string, quantity: number) => {
         if (!user) return;
-        successToast("Products Added :)")
+        await addToCart(productId, quantity)
     }
 
     return (
@@ -62,13 +62,10 @@ const ProductCard: FC<Props> = ({
                         </div>
                     </div>
                     <div className={`${forHome ? "flex justify-center items-center" : "hidden"}`}>
-                        <RequireAuth>
-                            <Button
-                                onClick={handleAddToCart}
-                                className='rounded-none w-[99%]'>
-                                Add to Cart <ShoppingCart strokeWidth={2.5} className='size-4.5' />
-                            </Button>
-                        </RequireAuth>
+                        <AddToCartButton
+                            productId={_id}
+                            quantity={quantityCount}
+                        />
                     </div>
                 </div>
                 <div className='w-full p-3 space-y-2 mt-2 text-sm'>
@@ -103,18 +100,17 @@ const ProductCard: FC<Props> = ({
                             <p>(Pieces)</p>
                         </div>
                         <ProductQuantitySelector
+                            quantityCount={quantityCount}
+                            setQuantityCount={setQuantityCount}
                             productQuantity={quantity}
                         />
                     </div>}
 
                     <div className={`${!forHome ? "flex justify-center items-center mt-4" : "hidden"}`}>
-                        <RequireAuth>
-                            <Button
-                                onClick={handleAddToCart}
-                                className='rounded-none text-base w-full'>
-                                Add to Cart <ShoppingCart strokeWidth={2.5} className='size-5' />
-                            </Button>
-                        </RequireAuth>
+                        <AddToCartButton
+                            productId={_id}
+                            quantity={quantityCount}
+                        />
                     </div>
                 </div>
             </MagicCard>

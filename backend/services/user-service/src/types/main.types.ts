@@ -16,17 +16,15 @@ interface IUser extends Document {
     hashedPassword: (password: string) => Promise<string>;
 }
 
-interface ICartProduct extends Document {
+interface ICartProduct {
     productId: string;
-    name: string;
-    price: number;
+    price:number;
     quantity: number;
-    thumbnail: string;
 }
 
 interface ICart extends Document {
     user: mongoose.Schema.Types.ObjectId;
-    products: ICartProduct[],
+    products: ICartProduct[];
     totalAmount: number;
 }
 

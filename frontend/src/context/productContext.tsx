@@ -8,13 +8,18 @@ import {
     getCategories,
     addToWishList,
     getWishList as getWishListApi,
-    removeFromWishList
+    removeFromWishList,
+    addToCart as addToCartApi,
+    getCartDetails as getCartDetailsApi
 } from '@/API/userApi'
 import { ApiError, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
-
+type CartDetails = {
+    products: string[];
+    totalAmount: number
+}
 
 type ProductContextType = {
     loading: string | null;
@@ -34,7 +39,11 @@ type ProductContextType = {
     wishlist: string[];
     setWishlist: Dispatch<SetStateAction<string[]>>;
     totalProducts: number;
-    setTotalProducts: Dispatch<SetStateAction<number>>
+    setTotalProducts: Dispatch<SetStateAction<number>>;
+    addToCart: (productId: string, quantity: number) => Promise<void>;
+    getCartDetails: () => Promise<void>;
+    cartDetails: CartDetails | {};
+    setCartDetails: Dispatch<SetStateAction<CartDetails | {}>>
 };
 
 const ProductContext = createContext<ProductContextType | null>(null);
@@ -47,6 +56,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const [productsData, setProductsData] = useState<IProduct[]>([]);
     const [wishlist, setWishlist] = useState<string[]>([]);
     const [totalProducts, setTotalProducts] = useState(0);
+    const [cartDetails, setCartDetails] = useState({});
 
     const getAllProducts = async (query?: any) => {
         try {
@@ -172,6 +182,40 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         getWishList();
     }, [])
 
+
+    const addToCart = async (productId: string, quantity: number) => {
+        try {
+            const res = await addToCartApi(productId, quantity);
+            if (res.status === 200) {
+                successToast(res.data.message)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getCartDetails = async () => {
+        try {
+            const res = await getCartDetailsApi();
+            if (res.status === 200) {
+                const totalAmount = res.data.data.totalAmount as number;
+                const products = res.data.data.products as string[];
+                const payload = {
+                    totalAmount,
+                    products
+                }
+                setCartDetails((prev) => {
+                    if (typeof prev === 'object') return payload;
+                })
+            }
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
+    useEffect(() => { getCartDetails() }, [])
+
     return (
         <ProductContext.Provider value={{
             getAllProducts,
@@ -189,6 +233,10 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
             wishlist,
             setWishlist,
             getProduct,
+            addToCart,
+            cartDetails,
+            setCartDetails,
+            getCartDetails,
             totalProducts,
             setTotalProducts,
             loading
