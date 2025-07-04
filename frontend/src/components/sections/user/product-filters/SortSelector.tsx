@@ -51,7 +51,7 @@ const SortSelector: FC<Props> = ({
                     <SortAsc className="size-5 stroke-2" />
                     <span>Sort Products:</span>
                 </div>
-                <Separator className='w-full' />
+                <Separator className='w-full bg-accent-foreground/10' />
             </div>
             <Select
                 options={selectOptions}

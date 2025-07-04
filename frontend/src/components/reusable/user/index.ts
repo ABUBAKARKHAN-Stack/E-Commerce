@@ -3,6 +3,7 @@ import CategoryBadge from "./CategoryBadge";
 import ProductCardHeaderButtons from "./ProductCardHeaderButtons";
 import ProductCard from "./ProductCard";
 import WaveDivider from "./WaveDivider";
+import ProductQuantitySelector from "./ProductQuantitySelector";
 
 
 export {
@@ -10,5 +11,6 @@ export {
     CategoryBadge,
     ProductCardHeaderButtons,
     ProductCard,
-    WaveDivider
+    WaveDivider,
+    ProductQuantitySelector
 }

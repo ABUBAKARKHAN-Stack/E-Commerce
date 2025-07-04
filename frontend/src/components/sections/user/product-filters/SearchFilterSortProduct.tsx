@@ -81,9 +81,9 @@ const SearchFilterSortProduct: FC<Props> = ({
         debouncedMaxPrice,
         category,
         sortBy,
+        limit,
         page
     ])
-
 
 
     useEffect(() => {
@@ -103,6 +103,7 @@ const SearchFilterSortProduct: FC<Props> = ({
         debouncedMaxPrice,
         category,
         sortBy,
+        limit,
         page,
         isInitialized
     ]);

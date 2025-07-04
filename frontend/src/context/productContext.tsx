@@ -21,7 +21,7 @@ type ProductContextType = {
     getAllProducts: (query?: any) => Promise<any>;
     productsData: IProduct[] | null;
     setProductsData: Dispatch<SetStateAction<IProduct[]>>;
-    getProduct: (productId: string) => Promise<any>;
+    getProduct: (productId: string) => Promise<IProduct | null>;
     fetchCategories: () => Promise<void>;
     categories: string[] | null;
     fetchTopCategories: () => Promise<void>;
@@ -68,7 +68,9 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         try {
             setLoading("get-product")
             const res = await getSingleProduct(productId);
-            return res.data.data;
+            if (res.status === 200) return res.data.data;
+            return null;
+
         } catch (error) {
             console.error(error);
         } finally {

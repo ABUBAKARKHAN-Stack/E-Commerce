@@ -6,6 +6,7 @@ import { FC, useEffect, useState } from "react";
 import { IUser } from "@/types/main.types";
 import WishlistButton from "@/components/ui/wishlist-button";
 import { Eye, HeartIcon } from "lucide-react";
+import { ViewProduct } from "@/components/sections/user";
 
 type Props = {
   productId: string;
@@ -15,6 +16,7 @@ type Props = {
 
 const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
   const [isInWishList, setIsInWishList] = useState(false);
+  const [isViewing, setIsViewing] = useState(false);
 
 
 
@@ -37,6 +39,7 @@ const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
       <ToolTip
         triggerValue={
           <button
+            onClick={() => setIsViewing(true)}
             className="flex items-center justify-center size-7 rounded-full text-white transition-all duration-300 ease-in-out dark:bg-white hover:dark:bg-orange-500 dark:text-black hover:dark:text-white bg-black hover:bg-cyan-500 hover:text-white shadow-black dark:shadow-white hover:shadow-cyan-500 dark:hover:shadow-orange-500 hover:scale-105 cursor-pointer"
           >
             <Eye size={18} className='m-auto' />
@@ -44,6 +47,11 @@ const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
         }
         tooltip="View Details"
       />
+      {isViewing && <ViewProduct
+        isOpen={isViewing}
+        onOpenChange={setIsViewing}
+        productId={productId}
+      />}
     </div>
   )
 }

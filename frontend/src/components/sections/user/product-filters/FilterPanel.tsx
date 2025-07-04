@@ -64,24 +64,29 @@ const FilterPanel: FC<Props> = ({
                                 duration: 0.35,
                                 ease: "easeInOut",
                             }}
-                            className='h-full w-full max-h-96 overflow-y-scroll border-2 dark:border-orange-500 border-cyan-500 rounded-lg space-y-4 px-4 py-6 dark:bg-[#18181b]/90 bg-[#FAFAFA]/90 backdrop-blur-2xl  scrollbar-thin md:scrollbar scrollbar-corner-white dark:scrollbar-thumb-orange-500 scrollbar-thumb-cyan-500 scrollbar-track-transparent scrollbar-custom'>
+                            className='h-full w-full max-h-96 overflow-y-scroll border-2 dark:border-orange-500 border-cyan-500 rounded-lg space-y-4 px-4 py-6 bg-accent scrollbar-thin md:scrollbar scrollbar-corner-white dark:scrollbar-thumb-orange-500 scrollbar-thumb-cyan-500 scrollbar-track-transparent scrollbar-custom'>
 
                             <div className='flex justify-between dark:text-white text-gray-950 items-center'>
                                 <h2 className='tracking-wide font-bold text-lg'>Filter/Sort Products</h2>
                                 <Button
                                     onClick={() => setIsOpen(false)}
-                                    variant={'outline'}>
+                                    size={"icon"}
+                                >
                                     <X className='size-6' />
                                 </Button>
                             </div>
-                            <Separator />
+                            <Separator
+                                className='bg-accent-foreground/10'
+                            />
 
                             <CategoryFilter
                                 categories={categories}
                                 categoryValue={category}
                                 setCategoryValue={setCategory}
                             />
-                            <Separator />
+                            <Separator
+                                className='bg-accent-foreground/10'
+                            />
 
                             <PriceRange
                                 minPriceValue={minPrice}
@@ -89,7 +94,10 @@ const FilterPanel: FC<Props> = ({
                                 maxPriceValue={maxPrice}
                                 setMaxPriceValue={setMaxPrice}
                             />
-                            <Separator />
+                            <Separator
+                                className='bg-accent-foreground/10'
+                            />
+
 
                             <SortSelector
                                 sortByValue={sortBy}

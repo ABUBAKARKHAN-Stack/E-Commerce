@@ -24,7 +24,7 @@ const PriceRange: FC<Props> = ({
                     <DollarSign className="size-5 stroke-2" />
                     Price Range
                 </h3>
-                <Separator className='w-full' />
+                <Separator className='w-full bg-accent-foreground/10' />
             </div>
 
             <div className="w-full space-y-3">

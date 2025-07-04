@@ -3,14 +3,14 @@ import { useThemeContext } from '@/context/themeContext'
 import ProductCardHeaderButtons from './ProductCardHeaderButtons';
 import CategoryBadge from './CategoryBadge';
 import { Button } from '@/components/ui/button';
-import { Minus, Plus, ShoppingCart, Star } from 'lucide-react';
+import {  ShoppingCart, Star } from 'lucide-react';
 import { IProduct, IUser } from '@/types/main.types';
 import { FC, useState } from 'react';
-import { Separator } from '@/components/ui/separator';
 import { useAuthContext } from '@/context/authContext';
 import { successToast } from '@/utils/toastNotifications';
 import { RequireAuth } from '@/components/layout/user/RequireAuthForAction';
 import { useProductContext } from '@/context/productContext';
+import ProductQuantitySelector from './ProductQuantitySelector';
 
 type Props = {
     product: IProduct;
@@ -102,32 +102,9 @@ const ProductCard: FC<Props> = ({
                             <p>Quantity</p>
                             <p>(Pieces)</p>
                         </div>
-                        <div className='flex h-9 border-2 dark:text-white text-black rounded-md w-full'>
-                            <Button
-                                size={"sm"}
-                                variant={"secondary"}
-                                className='focus-visible:ring bg-transparent rounded-r-none h-full w-full flex items-center justify-center'
-                                onClick={() => {
-                                    if (quantity > quantityCount) setQuantityCount((prev) => prev = prev + 1);
-                                }}
-                                disabled={quantityCount >= quantity}
-                            ><Plus className='size-5 stroke-3 dark:text-orange-400 text-cyan-400' /></Button>
-                            <Separator orientation="vertical" />
-                            <div className='flex justify-center items-center w-full h-full'>
-                                <span className='block text-base font-semibold'>{quantityCount}</span>
-                            </div>
-                            <Separator orientation="vertical" />
-                            <Button
-                                size={"sm"}
-                                variant={"secondary"}
-                                className='bg-transparent focus-visible:ring rounded-l-none h-full w-full flex items-center justify-center'
-                                disabled={quantityCount === 1}
-                                onClick={() => {
-                                    if (quantityCount <= 1) return;
-                                    setQuantityCount((prev) => prev = prev - 1)
-                                }}
-                            ><Minus className='size-5 stroke-3 dark:text-orange-400 text-cyan-400' /></Button>
-                        </div>
+                        <ProductQuantitySelector
+                            productQuantity={quantity}
+                        />
                     </div>}
 
                     <div className={`${!forHome ? "flex justify-center items-center mt-4" : "hidden"}`}>

@@ -4,15 +4,32 @@ import { SearchFilterSortProduct } from '@/components/sections/user';
 import { useProductContext } from '@/context/productContext'
 import { ProductCard } from '@/components/reusable/user';
 import { BlurFade } from '@/components/magicui/blur-fade';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pagination } from '@/components/reusable/shared';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 const ProductMain = () => {
     const { productsData, totalProducts } = useProductContext();
+    const isMobile = useMediaQuery('(max-width: 640px)');
+    const isTablet = useMediaQuery('(min-width: 640px) and (max-width: 1024px)');
+    const isLaptop = useMediaQuery('(min-width: 1024px) and (max-width: 1366px)');
+    const isDesktop = useMediaQuery('(min-width: 1366px)');
     const [limit, setLimit] = useState(4);
     const [page, setPage] = useState(1);
 
-
+    const getDynamicLimit = () => {
+        if (isMobile) return 4;
+        if (isTablet) return 6;
+        if (isLaptop) return 8;
+        if (isDesktop) return 10;
+        return 6;
+    }
+    useEffect(() => {
+        const newLimit = getDynamicLimit();
+        if (newLimit !== limit) {
+            setLimit(Number(newLimit));
+        }
+    }, [isDesktop, isLaptop, isMobile, isTablet])
 
     if (productsData === null) {
         return (
@@ -22,7 +39,7 @@ const ProductMain = () => {
 
     return (
         <main
-            className='min-w-screen w-full overflow-x-hidden  h-full py-10 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F]  
+            className='min-w-screen w-full overflow-x-hidden h-full py-10 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F]  
             backdrop-blur-xl relative border-b-2
     '>
             <Layout>
@@ -42,46 +59,57 @@ const ProductMain = () => {
                         className='-z-10'
                     />
                 </BlurFade>
-                <section className='mt-10 relative z-50 w-full'>
-                    {/* <BlurFade
+                <section className='mt-10 w-full'>
+                    <BlurFade
                         inView
                         direction='down'
-                        delay={0.75}
-                    > */}
-                    <SearchFilterSortProduct
-                        page={page}
-                        setPage={setPage}
-                        limit={limit}
-                        setLimit={setLimit}
-                    />
-                    {/* </BlurFade> */}
+                        delay={0.25 * 3}
+                        className='relative z-10'
+                    >
+                        <SearchFilterSortProduct
+                            page={page}
+                            setPage={setPage}
+                            limit={limit}
+                            setLimit={setLimit}
+                        />
+                    </BlurFade>
 
-                    <div
-                        className='grid grid-cols-1 xxs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-x-6 gap-y-10 mt-6'>
+                    <BlurFade
+                        inView
+                        direction='right'
+                        delay={page <= 1 ? 0.25 * 4 : 0.25}
+                        key={page}
+                        className='grid grid-cols-1 xxs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 mt-6'>
                         {productsData?.map((p, i) => (
                             <BlurFade
                                 key={p._id}
                                 inView
-                                direction='right'
-                                delay={0.25 + i * 0.05}
+                                direction='up'
+                                delay={0.1 * i}
                             >
+
                                 <ProductCard
                                     forHome={false}
                                     product={p}
                                 />
                             </BlurFade>
                         ))}
-                    </div>
-
-                    <Pagination
-                        limit={limit}
-                        page={page}
-                        setPage={setPage}
-                        totalProducts={totalProducts}
-                    />
+                    </BlurFade>
+                    <BlurFade
+                        inView
+                        inViewMargin='-100px'
+                        direction='down'
+                        className='mt-6 w-full'>
+                        <Pagination
+                            limit={limit}
+                            page={page}
+                            setPage={setPage}
+                            totalProducts={totalProducts}
+                        />
+                    </BlurFade>
                 </section>
             </Layout>
-        </main>
+        </main >
 
     )
 }

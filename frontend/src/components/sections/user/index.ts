@@ -7,6 +7,7 @@ import WhyChooseUs from "./WhyChooseUs";
 import Testimonials from "./TestimonialsCard";
 import NewsletterCTASection from "./NewsletterCTASection";
 import SearchFilterSortProduct from "./product-filters/SearchFilterSortProduct";
+import ViewProduct from "./ViewProduct";
 export {
     HeroText,
     HeroImage,
@@ -16,5 +17,6 @@ export {
     WhyChooseUs,
     Testimonials,
     NewsletterCTASection,
-    SearchFilterSortProduct
+    SearchFilterSortProduct,
+    ViewProduct
 }
