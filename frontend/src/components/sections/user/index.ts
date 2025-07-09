@@ -8,6 +8,7 @@ import Testimonials from "./TestimonialsCard";
 import NewsletterCTASection from "./NewsletterCTASection";
 import SearchFilterSortProduct from "./product-filters/SearchFilterSortProduct";
 import ViewProduct from "./ViewProduct";
+
 export {
     HeroText,
     HeroImage,
@@ -18,5 +19,5 @@ export {
     Testimonials,
     NewsletterCTASection,
     SearchFilterSortProduct,
-    ViewProduct
+    ViewProduct,
 }

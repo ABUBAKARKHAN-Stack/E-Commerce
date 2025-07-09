@@ -1,5 +1,5 @@
 import { kafka } from '../config/kafka.config'
-import { handleCartCreation, } from '../helpers/cart.helper'
+import { handleCartCreation, handleProductDeletionFromCart, } from '../helpers/cart.helper'
 import { addToWishList, removeFromWishList } from '../helpers/wishlist.helper';
 
 const publishEvent = async<Data>(topicName: string, messageKey: string, value: Data) => {
@@ -48,14 +48,19 @@ const cartEventConsumer = async () => {
                     console.log("Invalid message value received");
                     return;
                 }
-                const { userId, product } = messageValue;
-                console.log(messageKey);
+                const { userId, product, productId } = messageValue;
                 switch (messageKey) {
                     case "created_cart":
                         await handleCartCreation({ userId, product });
                         break;
                     case "updated_cart":
                         await handleCartCreation({ userId, product });
+                        break;
+                    case "removed_product":
+                        await handleProductDeletionFromCart({
+                            userId,
+                            productId
+                        })
                         break;
                     default:
                         console.log("Invalid message key");

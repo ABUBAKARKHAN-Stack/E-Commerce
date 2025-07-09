@@ -13,6 +13,7 @@ import WhyChooseUsMain from "./WhyChooseUsMain";
 import TestimonialsMain from "./TestimonialsMain";
 import NewsletterCTASectionMain from "./NewsletterCTASectionMain";
 import ProductMain from "./ProductMain";
+import CartMain from "./CartMain";
 
 export {
     HeroMain,
@@ -29,5 +30,6 @@ export {
     WhyChooseUsMain,
     TestimonialsMain,
     NewsletterCTASectionMain,
-    ProductMain
+    ProductMain,
+    CartMain
 }

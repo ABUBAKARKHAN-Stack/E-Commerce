@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { cartModel } from "../models/cart.model";
 
 const handleCartCreation = async ({ userId, product, }: { userId: string, product: any }) => {
@@ -25,4 +24,43 @@ const handleCartCreation = async ({ userId, product, }: { userId: string, produc
     }
 };
 
-export { handleCartCreation };
+const handleProductDeletionFromCart = async ({
+    productId,
+    userId
+}: { productId: string, userId: string }) => {
+
+    if (!productId) {
+        console.log("Product Id is required");
+        return;
+    }
+    try {
+        const cart = await cartModel.findOne({ user: userId })
+
+        if (!cart) {
+            console.log('Cart not found');
+            return;
+        }
+
+        const index = cart.products.findIndex((p) => p.productId === productId);
+
+        if (index === -1) {
+            console.log('Product index not found');
+            return;
+        }
+
+        cart.products.splice(index, 1);
+        await cart.save();
+
+        console.log('Product removed from cart successfully');
+    } catch (error) {
+        console.log('Error Removing product from cart', error);
+
+    }
+
+}
+
+export {
+    handleCartCreation,
+    handleProductDeletionFromCart
+
+};

@@ -2,6 +2,7 @@ import { Router } from "express"
 import {
     addToCart,
     addToWishList,
+    bulkProducts,
     categoryWithProduct,
     createReview,
     deleteReview,
@@ -21,7 +22,8 @@ import { userAuth } from "../middlewares/auth.middlewares"
 const router = Router()
 
 //? ✅ Product Routes
-router.get("/all", getAllProducts);                 // Get all products
+router.get("/all", getAllProducts);                // Get all products
+router.post('/bulk', userAuth,bulkProducts);
 router.get("/categories", getCategories);           // Get all categories
 router.get("/top-rated", topProducts);              
 router.get('/top-categories', topCategories)            // Get top-rated products

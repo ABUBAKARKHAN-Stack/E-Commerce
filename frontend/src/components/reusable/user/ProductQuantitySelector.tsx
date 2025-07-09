@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Minus, Plus } from 'lucide-react';
-import { Dispatch, FC, SetStateAction, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 type Props = {
     productQuantity: number;
@@ -16,7 +16,14 @@ const ProductQuantitySelector: FC<Props> = ({
 }) => {
 
 
-    
+    const [quantityInput, setQuantityInput] = useState(1);
+
+    useEffect(() => {
+        if (quantityInput >= 1 && quantityInput <= productQuantity) {
+            setQuantityCount(quantityInput);
+        }
+    }, [quantityInput])
+
 
     return (
         <div className='flex h-9 border-2 dark:text-white text-black rounded-md w-full'>
@@ -31,7 +38,17 @@ const ProductQuantitySelector: FC<Props> = ({
             ><Plus className='size-5 stroke-3 dark:text-orange-400 text-cyan-400' /></Button>
             <Separator orientation="vertical" />
             <div className='flex justify-center items-center w-full h-full'>
-                <span className='block text-base font-semibold'>{quantityCount}</span>
+                <input
+                    type="text"
+                    className="focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[2px] w-full h-full outline-none text-center font-semibold"
+                    value={quantityInput}
+                    onChange={(e) => {
+                        const value = +e.target.value
+                        if (value <= productQuantity) {
+                            setQuantityInput(value)
+                        }
+                    }}
+                />
             </div>
             <Separator orientation="vertical" />
             <Button

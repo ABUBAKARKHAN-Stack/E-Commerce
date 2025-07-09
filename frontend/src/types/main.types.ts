@@ -57,6 +57,10 @@ export interface IProduct {
     reviews: IReview[]
 }
 
+export interface ICartedProduct extends IProduct {
+    cartedProductQunatity: number
+}
+
 
 export const enum AdminProductLoading {
     ADD = "add",
@@ -78,12 +82,12 @@ export interface ProductFilterParams {
     maxPrice: string;
     sortBy: string;
     limit: number;
-    page:number
+    page: number
 }
 
 export interface ApiError {
     status: number;
-    message:string;
+    message: string;
     error: object
 }
 

@@ -10,6 +10,8 @@ import {
     getWishList as getWishListApi,
     removeFromWishList,
     addToCart as addToCartApi,
+    removeFromCart as removeFromCartApi,
+    updateCart as updateCartApi,
     getCartDetails as getCartDetailsApi
 } from '@/API/userApi'
 import { ApiError, IProduct } from "@/types/main.types";
@@ -17,7 +19,7 @@ import { AxiosError } from "axios";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
 type CartDetails = {
-    products: string[];
+    products: { products: any[], totalAmount: number }[];
     totalAmount: number
 }
 
@@ -41,9 +43,13 @@ type ProductContextType = {
     totalProducts: number;
     setTotalProducts: Dispatch<SetStateAction<number>>;
     addToCart: (productId: string, quantity: number) => Promise<void>;
-    getCartDetails: () => Promise<void>;
+    removeFromCart: (productId: string, revalidate: () => void) => Promise<void>;
+    updateCart: (productId: string, quantity: number, revalidate: () => void) => Promise<void>;
+    getCartDetails: () => Promise<CartDetails | null>;
     cartDetails: CartDetails | {};
-    setCartDetails: Dispatch<SetStateAction<CartDetails | {}>>
+    setCartDetails: Dispatch<SetStateAction<CartDetails | {}>>;
+    cartProductsCount: number;
+    setCartProductsCount: Dispatch<SetStateAction<number>>;
 };
 
 const ProductContext = createContext<ProductContextType | null>(null);
@@ -56,7 +62,10 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const [productsData, setProductsData] = useState<IProduct[]>([]);
     const [wishlist, setWishlist] = useState<string[]>([]);
     const [totalProducts, setTotalProducts] = useState(0);
-    const [cartDetails, setCartDetails] = useState({});
+    const [cartDetails, setCartDetails] = useState<CartDetails | {}>({});
+    const [cartProductsCount, setCartProductsCount] = useState(0);
+
+    //* Products Related Functions
 
     const getAllProducts = async (query?: any) => {
         try {
@@ -130,6 +139,8 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         fetchTopRatedProducts();
     }, [])
 
+    //* Wishlist Related Functions
+
     const addProductIntoWishlist = async (productId: string) => {
         try {
             const res = await addToWishList(productId);
@@ -182,39 +193,87 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         getWishList();
     }, [])
 
+    //* Cart Related Functions
 
     const addToCart = async (productId: string, quantity: number) => {
         try {
             const res = await addToCartApi(productId, quantity);
+
+
             if (res.status === 200) {
-                successToast(res.data.message)
+                successToast(res.data.message);
+                const cart = await getCartDetails();
+                setCartProductsCount(cart?.products?.length || 0);
             }
         } catch (error) {
-            console.log(error);
+            const err = error as AxiosError<ApiError>
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg);
+        }
+    }
+
+    const updateCart = async (productId: string, quantity: number, revalidate: () => void) => {
+        try {
+            const res = await updateCartApi(productId, quantity);
+            if (res.status === 200) {
+                successToast(res.data.message)
+                revalidate();
+            }
+        } catch (error) {
+            const err = error as AxiosError<ApiError>
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg);
+        }
+    }
+
+    const removeFromCart = async (productId: string, revalidate: () => void) => {
+        try {
+            const res = await removeFromCartApi(productId);
+            if (res.status === 202) {
+                successToast("Product Removed from cart");
+                revalidate();
+                const cart = await getCartDetails();
+                setCartProductsCount(cart?.products?.length || 0);
+            }
+        } catch (error) {
+            const err = error as AxiosError<ApiError>
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg);
         }
     }
 
     const getCartDetails = async () => {
         try {
             const res = await getCartDetailsApi();
+
             if (res.status === 200) {
                 const totalAmount = res.data.data.totalAmount as number;
-                const products = res.data.data.products as string[];
+                const products = res.data.data.products as any[];
+
                 const payload = {
                     totalAmount,
                     products
-                }
-                setCartDetails((prev) => {
-                    if (typeof prev === 'object') return payload;
-                })
+                };
+
+                setCartDetails(payload);
+                return payload;
             }
+
+            return null;
         } catch (error) {
             console.log(error);
-
+            return null;
         }
-    }
+    };
 
-    useEffect(() => { getCartDetails() }, [])
+    useEffect(() => {
+        ; (
+            async () => {
+                const cart = await getCartDetails();
+                setCartProductsCount(cart?.products?.length || 0);
+            }
+        )()
+    }, [])
 
     return (
         <ProductContext.Provider value={{
@@ -234,9 +293,13 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
             setWishlist,
             getProduct,
             addToCart,
+            updateCart,
+            removeFromCart,
             cartDetails,
             setCartDetails,
             getCartDetails,
+            cartProductsCount,
+            setCartProductsCount,
             totalProducts,
             setTotalProducts,
             loading

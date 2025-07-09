@@ -8,6 +8,7 @@ import UserEmailVerificationPage from "./UserEmailVerificationPage";
 import HomePage from "./HomePage";
 import AboutPage from "./AboutPage";
 import ProductsPage from "./ProductsPage";
+import CartPage from "./CartPage";
 
 export {
     UserDashboardPage,
@@ -19,5 +20,6 @@ export {
     UserEmailVerificationPage,
     HomePage,
     AboutPage,
-    ProductsPage
+    ProductsPage,
+    CartPage
 };

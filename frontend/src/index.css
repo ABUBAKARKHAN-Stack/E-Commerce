@@ -128,8 +128,9 @@ html {
   --breakpoint-xxxs: 400px;
   --shadow-6px: 0px 0px 6px var(--color);
   --shadow-8px: 0px 0px 8px var(--color);
-  --shadow-10px: 0px 0px 10px var(--color);
+  --shadow-10px: 0px 0px 10px 5px var(--color);
   --shadow-20px: 0px 0px 20px var(--color);
+  --shadow-30px: 0px 0px 30px  var(--color);
   --drop-shadow-2px: 0px 0px 2px var(--tw-shadow-color);
   --drop-shadow-8px: 0px 0px 8px var(--tw-shadow-color);
 }

@@ -50,7 +50,6 @@ const ProductCard: FC<Props> = ({
             <MagicCard gradientSize={150} gradientColor={isDark ? "#262626" : "#ecfeff"} gradientFrom={isDark ? '#F15136' : '#0891b2'} gradientTo={isDark ? '#FBA740' : '#06b6d4'} className={`${forHome ? 'w-48 xl:w-50' : "w-full min-h-96 "} shadow-md rounded-t`}>
                 <div>
                     <div className={`lg:group w-full h-48 xl:h-50 ${forHome ? 'w-48 xl:w-50' : "w-full"} relative top-px`}>
-
                         <ProductCardHeaderButtons
                             productId={_id}
                             user={user as IUser}

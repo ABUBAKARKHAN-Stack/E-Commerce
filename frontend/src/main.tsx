@@ -26,7 +26,8 @@ import {
   UserForgotPasswordPage,
   UserProfilePage,
   UserEmailVerificationPage,
-  UserResetPasswordPage
+  UserResetPasswordPage,
+  CartPage
 
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
@@ -34,6 +35,7 @@ import { UserAuthLayout } from '@/components/layout/user'
 import { AdminAuthLayout, AdminRoot } from '@/components/layout/admin'
 import { AuthProvider } from './context/authContext'
 import { ProductProvider } from './context/productContext'
+import { cartLoader } from './utils/loaders/cartLoader'
 
 
 
@@ -128,6 +130,14 @@ const router = createBrowserRouter([
       </UserAuthLayout>
     ),
   },
+  {
+    path: '/cart',
+    element: <UserAuthLayout authenticationRequired>
+      <CartPage />
+    </UserAuthLayout>,
+    loader: cartLoader,
+
+  },
 
   //! Public Routes (No Auth Required For Admin)
   {
@@ -196,9 +206,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-        <ProductProvider>
-          <RouterProvider router={router} />
-        </ProductProvider>
+          <ProductProvider>
+            <RouterProvider router={router} />
+          </ProductProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode >,

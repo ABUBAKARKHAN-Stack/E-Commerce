@@ -77,9 +77,17 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
         if (cachedProducts.length === 0) {
             throw new ApiError(404, "No products match your criteria");
         }
-        const startIndex = (pagination.page - 1) * pagination.limit;
-        const endIndex = pagination.page * pagination.limit;
+        let startIndex;
+        let endIndex;
+        if (pagination.page && pagination.limit) {
+            startIndex = (pagination.page - 1) * pagination.limit
+            endIndex = pagination.page * pagination.limit;
+        }
+
         const paginatedProducts = cachedProducts.slice(startIndex, endIndex);
+
+        console.log(paginatedProducts, startIndex, endIndex);
+
 
 
         //* Return final filtered and sorted products from cache
@@ -169,6 +177,42 @@ const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
         .json(new ApiResponse(200, "Product fetched successfully", product))
 })
 
+const bulkProducts = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { bulk_ids }: { bulk_ids: string[] } = req.body;
+
+    if (!Array.isArray(bulk_ids) || bulk_ids.length === 0) {
+        throw new ApiError(400, "Bulk Product IDs must be a non-empty array");
+    }
+
+    let cachedProducts: IProduct[] = await getAllRedisProducts();
+    if (cachedProducts.length > 0) {
+        cachedProducts = bulk_ids
+            .map(id => cachedProducts.filter(p => p._id === id)).map((([p]) => p));
+        if (cachedProducts.length > 0) {
+            res
+                .status(200)
+                .json(new ApiResponse(200, "Bulk Products From cache", cachedProducts));
+        }
+        return;
+    }
+    const product = await productModel.find({
+        _id: {
+            $in: bulk_ids
+        }
+    }).lean()
+    if (!product) {
+        throw new ApiError(404, 'Products not found')
+    }
+    if (product.length === 0) {
+        throw new ApiError(200, 'Products not available')
+
+    }
+    res
+        .status(200)
+        .json(new ApiResponse(200, "Bulk Products fetched", product))
+
+})
+
 //? Category Controller Functions
 
 //* Get All Categories
@@ -256,11 +300,7 @@ const addToCart = expressAsyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "Quantity must be greater than 0");
     }
 
-    const product = await productModel.findOneAndUpdate(
-        { _id: productId, quantity: { $gte: quantity } },
-        { $inc: { quantity: -quantity } },
-        { new: true }
-    ).select("price quantity name");
+    const product = await productModel.findById(productId).select("price quantity name");
 
     if (!product) {
         throw new ApiError(400, "Product not found or insufficient stock");
@@ -302,11 +342,9 @@ const removeFromCart = expressAsyncHandler(async (req: Request, res: Response) =
     const cartedProducts = { productId, userId };
 
     try {
-        // Publish event to Kafka
         await publishEvent("product-removal", "removed_product", cartedProducts);
         console.log("✅ Event published successfully", cartedProducts);
 
-        // Respond immediately (error handling is done asynchronously)
         res
             .status(202)
             .json(new ApiResponse(202, "Product removal request sent"));
@@ -322,40 +360,33 @@ const updateCart = expressAsyncHandler(async (req: Request, res: Response) => {
     const { userId } = res.locals.user;
     const { quantity } = req.body;
 
-    if (quantity <= 0) {
-        throw new ApiError(400, "Quantity must be greater than 0");
-    }
     if (!mongoose.Types.ObjectId.isValid(productId)) {
         throw new ApiError(400, "Invalid product ID");
     }
-    const product = await productModel.findOneAndUpdate(
-        { _id: productId, quantity: { $gte: quantity } },
-        { $inc: { quantity: -quantity } },
-        { new: true }
-    ).select("name price quantity thumbnails");
+    const product = await productModel.findById(productId).select("name price quantity");
 
     if (!product) {
         throw new ApiError(400, "Product not found or insufficient stock");
     }
 
-    const cartedProducts = {
+
+    const cartedProductsPayload = {
         product: {
             productId: (product._id as mongoose.Types.ObjectId).toString(),
-            name: product.name,
             price: product.price,
-            quantity,
-            thumbnail: product.thumbnails[0],
+            quantity: +quantity,
         },
         userId,
     };
 
-    await publishEvent("cart-update", "updated_cart", cartedProducts)
-        .then(() => console.log("✅ Event published successfully", cartedProducts))
+
+    await publishEvent("cart-update", "updated_cart", cartedProductsPayload)
+        .then(() => console.log("✅ Event published successfully", cartedProductsPayload))
         .catch((error) => console.error('Error publishing product created event:', error));
 
     res
         .status(200)
-        .json(new ApiResponse(200, "Product updated successfully", product))
+        .json(new ApiResponse(200, `${product.name} Quantity Updated Successfully`, product))
 })
 
 //? Review/Rating Controller Functions
@@ -638,6 +669,7 @@ const removeFromWishList = expressAsyncHandler(async (req: Request, res: Respons
 export {
     getAllProducts,
     getProduct,
+    bulkProducts,
     addToCart,
     updateCart,
     removeFromCart,

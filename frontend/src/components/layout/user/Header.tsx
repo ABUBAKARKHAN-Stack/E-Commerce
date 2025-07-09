@@ -12,10 +12,13 @@ import {
   MobileMenu,
   UserMenu
 } from '@/components/sections/user/header';
+import { useProductContext } from "@/context/productContext";
 
 const Header: FC = () => {
   //* Get user and logout method from auth context
   const { user, logout } = useAuthContext();
+
+  const { cartProductsCount } = useProductContext()
 
   //* Dynamically generate navigation items, conditionally show Wishlist if user is logged in
   const navItems: NavItem[] = [
@@ -30,7 +33,7 @@ const Header: FC = () => {
     <header className="h-18 w-full border-b-2 items-center dark:bg-[#1B1B1F] bg-[#FAFAFA] shadow-lg">
       {/* Wrapper Layout for consistent spacing */}
       <Layout className="flex items-center justify-between">
-        
+
         {/* === Brand Logo === */}
         <Logo />
 
@@ -39,7 +42,7 @@ const Header: FC = () => {
 
         {/* === Right Section: Cart, User Menu, Mobile Menu === */}
         <div className="flex items-center space-x-4">
-          
+
           {/* === Cart Icon with Badge (hidden on mobile) === */}
           <NavLink
             to="/cart"
@@ -51,7 +54,7 @@ const Header: FC = () => {
                 className="h-6 w-6 transition-colors duration-300 hover:text-cyan-600/90 dark:hover:text-orange-600/90"
               />
               <span className="absolute -top-2 -right-2 text-[10px] bg-red-500 text-white font-bold w-5 h-5 flex justify-center items-center rounded-full">
-                3 {/* Example cart count; should be dynamic in real app */}
+                {cartProductsCount}
               </span>
             </div>
           </NavLink>

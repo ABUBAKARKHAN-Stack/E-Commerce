@@ -104,11 +104,30 @@ const addToCart = async (productId: string, quantity: number) => {
   })
 }
 
+const updateCart = async (productId: string, quantity: number) => {
+  return await userProductApi.put(`update-cart/${productId}`, { quantity }, {
+    withCredentials: true
+  })
+}
+
+const removeFromCart = async (productId: string) => {
+  return await userProductApi.delete(`remove-from-cart/${productId}`, {
+    withCredentials: true
+  })
+}
+
 const getCartDetails = async () => {
   return await userApi.get('cart/details', {
     withCredentials: true
   })
 }
+
+const getBulkProducts = async (productIds: string[]) => {
+  return await userProductApi.post('/bulk', {
+    bulk_ids: productIds
+  }, { withCredentials: true })
+}
+
 export {
   createUser,
   loginUser,
@@ -126,5 +145,8 @@ export {
   removeFromWishList,
   getWishList,
   addToCart,
-  getCartDetails
+  updateCart,
+  removeFromCart,
+  getCartDetails,
+  getBulkProducts
 }
