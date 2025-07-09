@@ -44,7 +44,7 @@ const Header: FC = () => {
         <div className="flex items-center space-x-4">
 
           {/* === Cart Icon with Badge (hidden on mobile) === */}
-          <NavLink
+          {user && <NavLink
             to="/cart"
             className="relative hidden md:block"
             aria-label="View your cart"
@@ -57,7 +57,7 @@ const Header: FC = () => {
                 {cartProductsCount}
               </span>
             </div>
-          </NavLink>
+          </NavLink>}
 
           {/* === User Profile Dropdown or Sign In === */}
           <UserMenu

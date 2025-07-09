@@ -1,13 +1,16 @@
 import { Layout } from '@/components/layout/shared';
 import { BlurFade } from '@/components/magicui/blur-fade';
 import { SectionHeader } from '@/components/reusable/user';
-import { CartCard, CartSummary } from '@/components/sections/user/cart'
+import { CartCard, CartSummary, EmptyCart } from '@/components/sections/user/cart'
 import { useLoaderData } from 'react-router-dom';
 
 const CartMain = () => {
     const { productsFromCart, totalAmount } = useLoaderData();
 
-  
+    if (!productsFromCart) {
+        return <EmptyCart />
+    }
+
 
     return (
         <main

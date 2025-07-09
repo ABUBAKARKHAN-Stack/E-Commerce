@@ -27,15 +27,16 @@ import {
   UserProfilePage,
   UserEmailVerificationPage,
   UserResetPasswordPage,
-  CartPage
-
+  CartPage,
+  ProductPage
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
 import { UserAuthLayout } from '@/components/layout/user'
 import { AdminAuthLayout, AdminRoot } from '@/components/layout/admin'
-import { AuthProvider } from './context/authContext'
-import { ProductProvider } from './context/productContext'
-import { cartLoader } from './utils/loaders/cartLoader'
+import { AuthProvider } from '@/context/authContext'
+import { ProductProvider } from '@/context/productContext'
+import { cartLoader } from '@/utils/loaders/cartLoader'
+import { CartErrorPage } from '@/pages/users/error'
 
 
 
@@ -112,6 +113,14 @@ const router = createBrowserRouter([
       </AdminAuthLayout>
     ),
   },
+   {
+    path: "/product/:productId",
+    element: (
+      <AdminAuthLayout authenticationRequired={false}>
+        <ProductPage />
+      </AdminAuthLayout>
+    ),
+  },
 
   //! Protected Routes (Require Auth For Users)
   {
@@ -136,6 +145,7 @@ const router = createBrowserRouter([
       <CartPage />
     </UserAuthLayout>,
     loader: cartLoader,
+    errorElement: <CartErrorPage />
 
   },
 

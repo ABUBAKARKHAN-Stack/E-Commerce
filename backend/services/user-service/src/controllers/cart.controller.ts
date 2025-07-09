@@ -11,11 +11,18 @@ const getCartDetails = expressAsyncHandler(async (req: Request, res: Response) =
 
     const cart = await cartModel.findOne({
         user: userId
-    }).select('totalAmount products.productId products.quantity')
+    }).select('totalAmount products.productId products.quantity');
+    
 
-    if (!cart) {
-        throw new ApiError(404, "Cart not found")
-    }    
+    if (!cart || (cart.totalAmount <= 0 && cart.products.length === 0)) {
+        res
+            .status(200)
+            .json(new ApiResponse(200, 'Cart is empty', {
+                products: [],
+                totalAmount: 0
+            }));
+        return;
+    }
 
     res
         .status(200)

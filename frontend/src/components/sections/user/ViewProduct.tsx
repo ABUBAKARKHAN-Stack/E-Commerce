@@ -166,7 +166,7 @@ const ViewProduct: FC<Props> = ({ isOpen, onOpenChange, productId }) => {
                 {/* View Full Page */}
                 <div className="mt-6 flex justify-end">
                     <Link
-                        to={`/products/${product._id}`}
+                        to={`/product/${product._id}`}
                         className="flex items-center gap-x-1 text-sm font-semibold text-cyan-600 dark:text-orange-400 hover:underline transition-all duration-200 ease-linear hover:scale-110 transform hover:-translate-x-2"
                     >
                         View Full Page <ArrowRightCircle className='size-5' />

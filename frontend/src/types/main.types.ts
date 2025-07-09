@@ -85,7 +85,7 @@ export interface ProductFilterParams {
     page: number
 }
 
-export interface ApiError {
+export interface ApiErrorType {
     status: number;
     message: string;
     error: object

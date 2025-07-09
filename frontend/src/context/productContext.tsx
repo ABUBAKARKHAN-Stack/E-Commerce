@@ -14,7 +14,7 @@ import {
     updateCart as updateCartApi,
     getCartDetails as getCartDetailsApi
 } from '@/API/userApi'
-import { ApiError, IProduct } from "@/types/main.types";
+import { ApiErrorType, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
@@ -76,7 +76,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
             setTotalProducts(totalProducts);
             return products
         } catch (error) {
-            const axiosError = error as AxiosError<ApiError>;
+            const axiosError = error as AxiosError<ApiErrorType>;
             console.error("Failed to fetch products:", axiosError.message);
         } finally {
             setLoading(null)
@@ -149,7 +149,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
                 setWishlist((prev) => [...prev, res.data.data.productId])
             }
         } catch (error) {
-            const err = error as AxiosError<ApiError>;
+            const err = error as AxiosError<ApiErrorType>;
             const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist";
             errorToast(errMsg)
         }
@@ -171,7 +171,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
                 })
             }
         } catch (error) {
-            const err = error as AxiosError<ApiError>;
+            const err = error as AxiosError<ApiErrorType>;
             const errMsg = err?.response?.data?.message || "Error Adding Product into Wishlist";
             errorToast(errMsg)
         }
@@ -206,7 +206,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
                 setCartProductsCount(cart?.products?.length || 0);
             }
         } catch (error) {
-            const err = error as AxiosError<ApiError>
+            const err = error as AxiosError<ApiErrorType>
             const errMsg = err.response?.data.message || "Something went wrong";
             errorToast(errMsg);
         }
@@ -220,7 +220,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
                 revalidate();
             }
         } catch (error) {
-            const err = error as AxiosError<ApiError>
+            const err = error as AxiosError<ApiErrorType>
             const errMsg = err.response?.data.message || "Something went wrong";
             errorToast(errMsg);
         }
@@ -236,7 +236,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
                 setCartProductsCount(cart?.products?.length || 0);
             }
         } catch (error) {
-            const err = error as AxiosError<ApiError>
+            const err = error as AxiosError<ApiErrorType>
             const errMsg = err.response?.data.message || "Something went wrong";
             errorToast(errMsg);
         }
