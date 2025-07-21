@@ -12,7 +12,9 @@ import {
     addToCart as addToCartApi,
     removeFromCart as removeFromCartApi,
     updateCart as updateCartApi,
-    getCartDetails as getCartDetailsApi
+    getCartDetails as getCartDetailsApi,
+    proceedToCheckout as proceedToCheckoutApi,
+    completeCheckout as completeCheckoutApi
 } from '@/API/userApi'
 import { ApiErrorType, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
@@ -36,7 +38,7 @@ type ProductContextType = {
     fetchTopRatedProducts: () => Promise<void>;
     topRatedProducts: any[] | null;
     addProductIntoWishlist: (productId: string) => Promise<void>;
-    removeProductFromWishlist: (productId: string) => Promise<void>;
+    removeProductFromWishlist: (productId: string, revalidate: () => void) => Promise<void>;
     getWishList: () => Promise<void>;
     wishlist: string[];
     setWishlist: Dispatch<SetStateAction<string[]>>;
@@ -50,6 +52,8 @@ type ProductContextType = {
     setCartDetails: Dispatch<SetStateAction<CartDetails | {}>>;
     cartProductsCount: number;
     setCartProductsCount: Dispatch<SetStateAction<number>>;
+    proceedToCheckout: (navigate: (path: string) => void) => Promise<void>;
+    completeCheckout: (totalAmount: number) => Promise<string>;
 };
 
 const ProductContext = createContext<ProductContextType | null>(null);
@@ -155,20 +159,18 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    const removeProductFromWishlist = async (productId: string) => {
+    const removeProductFromWishlist = async (productId: string, revalidate: () => void) => {
         try {
             const res = await removeFromWishList(productId);
-            console.log(res.data.data);
 
             if (res.status === 200) {
                 successToast(res.data.message);
                 setWishlist((prev) => {
                     const index = prev.findIndex((id) => id === res.data.data.productId);
-                    console.log(index);
-
                     prev.splice(index, 1)
                     return [...prev]
-                })
+                });
+                if (window.location.pathname === '/wishlist') revalidate();
             }
         } catch (error) {
             const err = error as AxiosError<ApiErrorType>;
@@ -275,6 +277,34 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         )()
     }, [])
 
+    //* Order Related Functions 
+
+    const proceedToCheckout = async (navigate: (path: string) => void) => {
+        try {
+            const res = await proceedToCheckoutApi();
+            if (res.status === 200) navigate('/checkout');
+            console.log(res.data.data.orderId);
+        } catch (error) {
+            const err = error as AxiosError<ApiErrorType>
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg);
+        }
+    }
+
+    const completeCheckout = async (totalAmount: number) => {
+        try {
+            const res = await completeCheckoutApi(totalAmount);
+            if (res.status === 200) return res.data.data.clientSecret;
+
+        } catch (error) {
+            const err = error as AxiosError<ApiErrorType>
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg);
+        }
+    }
+
+
+
     return (
         <ProductContext.Provider value={{
             getAllProducts,
@@ -302,6 +332,8 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
             setCartProductsCount,
             totalProducts,
             setTotalProducts,
+            proceedToCheckout,
+            completeCheckout,
             loading
         }}>
             {children}

@@ -5,16 +5,23 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useProductContext } from '@/context/productContext';
 import { IProduct } from '@/types/main.types';
-import { ArrowLeftToLineIcon, ArrowRight, ArrowRightCircle, DollarSign, Minus, Plus, ShoppingCart, Star } from 'lucide-react';
+import { ArrowRightCircle, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
-import { RequireAuth } from '@/components/layout/user/RequireAuthForAction';
-import { AddToCartButton, CategoryBadge, ProductCardHeaderButtons, ProductQuantitySelector } from '@/components/reusable/user';
-import { Layout } from '@/components/layout/shared';
+import {
+    Dispatch,
+    FC,
+    SetStateAction,
+    useEffect,
+    useState
+} from 'react';
+import {
+    AddToCartButton,
+    CategoryBadge,
+    ProductImageSelector,
+    ProductQuantitySelector
+} from '@/components/reusable/user';
 
 type Props = {
     isOpen: boolean;
@@ -29,7 +36,7 @@ const ViewProduct: FC<Props> = ({ isOpen, onOpenChange, productId }) => {
     const [quantityCount, setQuantityCount] = useState(1);
 
     useEffect(() => {
-        (async () => {
+        ; (async () => {
             try {
                 const res = await getProduct(productId);
                 setProduct(res);
@@ -76,23 +83,11 @@ const ViewProduct: FC<Props> = ({ isOpen, onOpenChange, productId }) => {
                                 />
                             </div>
                         </div>
-                        <div className='flex gap-x-5'>
-                            {
-                                product.thumbnails.map((src) => {
-                                    return (
-                                        <div key={src}
-                                            role="button"
-                                            onClick={() => setCurrentImageSrc(src)}
-                                            className={`xxs:size-28 size-20 border-2 border-accent-foreground/90 hover:cursor-pointer bg-accent-foreground/90 hover:bg-accent-foreground p-2 transition-[color,box-shadow] rounded-lg ${currentImageSrc === src && 'border-ring ring-ring/50 ring-[3px] dark:bg-orange-500/20 dark:hover:bg-orange-500/30 bg-cyan-500/20 hover:bg-cyan-500/30 shadow-xs'}`}>
-                                            <img
-                                                src={src}
-                                                className='object-cover drop-shadow-2px shadow-accent'
-                                            />
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
+                        <ProductImageSelector
+                            thumbnails={product.thumbnails}
+                            currentImageSrc={currentImageSrc}
+                            setCurrentImageSrc={setCurrentImageSrc}
+                        />
                     </div>
 
                     {/* Product Info */}
@@ -156,6 +151,7 @@ const ViewProduct: FC<Props> = ({ isOpen, onOpenChange, productId }) => {
                         {/* Add to Cart Button */}
                         <div className="flex justify-center items-center mt-6">
                             <AddToCartButton
+                                stock={product.quantity}
                                 productId={product._id}
                                 quantity={quantityCount}
                             />
@@ -166,7 +162,7 @@ const ViewProduct: FC<Props> = ({ isOpen, onOpenChange, productId }) => {
                 {/* View Full Page */}
                 <div className="mt-6 flex justify-end">
                     <Link
-                        to={`/product/${product._id}`}
+                        to={`/products/${product._id}`}
                         className="flex items-center gap-x-1 text-sm font-semibold text-cyan-600 dark:text-orange-400 hover:underline transition-all duration-200 ease-linear hover:scale-110 transform hover:-translate-x-2"
                     >
                         View Full Page <ArrowRightCircle className='size-5' />

@@ -6,4 +6,6 @@ export const env = {
     EMAIL_USER: process.env.EMAIL_USER,
     EMAIL_PASS: process.env.EMAIL_PASS,
     NODE_ENV: process.env.NODE_ENV,
+    STRIPE_SK: process.env.STRIPE_SK,
+    STRIPE_WEBHOOK_SK: process.env.STRIPE_WEBHOOK_SECRET
 }

@@ -10,6 +10,8 @@ import AboutPage from "./AboutPage";
 import ProductsPage from "./ProductsPage";
 import CartPage from "./CartPage";
 import ProductPage from "./ProductPage";
+import WishlistPage from "./WishlistPage";
+import CheckoutPage from "./CheckoutPage";
 
 export {
     UserDashboardPage,
@@ -23,5 +25,7 @@ export {
     AboutPage,
     ProductsPage,
     ProductPage,
-    CartPage
+    CartPage,
+    WishlistPage,
+    CheckoutPage
 };

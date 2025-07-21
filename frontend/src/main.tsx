@@ -28,7 +28,9 @@ import {
   UserEmailVerificationPage,
   UserResetPasswordPage,
   CartPage,
-  ProductPage
+  ProductPage,
+  WishlistPage,
+  CheckoutPage
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
 import { UserAuthLayout } from '@/components/layout/user'
@@ -36,7 +38,10 @@ import { AdminAuthLayout, AdminRoot } from '@/components/layout/admin'
 import { AuthProvider } from '@/context/authContext'
 import { ProductProvider } from '@/context/productContext'
 import { cartLoader } from '@/utils/loaders/cartLoader'
-import { CartErrorPage } from '@/pages/users/error'
+import { CartErrorPage, CheckoutErrorPage } from '@/pages/users/error'
+import { wishlistLoader } from './utils/loaders/wishlistLoader'
+import WishlistErrorPage from './pages/users/error/WishlistErrorPage'
+import { orderDetailsLoader } from './utils/loaders/orderDetailsLoader'
 
 
 
@@ -113,8 +118,8 @@ const router = createBrowserRouter([
       </AdminAuthLayout>
     ),
   },
-   {
-    path: "/product/:productId",
+  {
+    path: "/products/:productId",
     element: (
       <AdminAuthLayout authenticationRequired={false}>
         <ProductPage />
@@ -146,7 +151,22 @@ const router = createBrowserRouter([
     </UserAuthLayout>,
     loader: cartLoader,
     errorElement: <CartErrorPage />
-
+  },
+  {
+    path: '/checkout',
+    element: <UserAuthLayout authenticationRequired>
+      <CheckoutPage />
+    </UserAuthLayout>,
+    loader: orderDetailsLoader,
+    errorElement: <CheckoutErrorPage />
+  },
+  {
+    path: '/wishlist',
+    element: <UserAuthLayout authenticationRequired>
+      <WishlistPage />
+    </UserAuthLayout>,
+    loader: wishlistLoader,
+    errorElement: <WishlistErrorPage />
   },
 
   //! Public Routes (No Auth Required For Admin)
@@ -216,9 +236,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider>
       <AuthProvider>
-          <ProductProvider>
-            <RouterProvider router={router} />
-          </ProductProvider>
+        <ProductProvider>
+          <RouterProvider router={router} />
+        </ProductProvider>
       </AuthProvider>
     </ThemeProvider>
   </StrictMode >,

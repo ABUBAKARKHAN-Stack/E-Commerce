@@ -41,7 +41,8 @@ export interface IResetpasswordQueryParams {
 export interface IReview {
     userId: string;
     review?: string;
-    rating: number
+    rating: number;
+    createdAt: Date
 }
 
 export interface IProduct {

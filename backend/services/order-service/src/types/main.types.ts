@@ -4,26 +4,20 @@ import { Document, Schema } from "mongoose";
 
 enum OrderStatus {
     PENDING = "pending",
-    DELIVERED = "confirmed",
+    CONFIRMED = "confirmed",
     CANCELLED = "cancelled",
 }
 
-interface Products {
-    name:string;
-    price:number;
-    quantity:number
-}
 
 interface ICart {
-    _id: Schema.Types.ObjectId;
-    products: Products[];
+    totalAmount: number;
+    products: {productId: string; quantity: number}[];
 }
 
 interface IOrder extends Document {
     orderId: string;
-    user: Schema.Types.ObjectId;
+    userId: string;
     cart: ICart;
-    total: number;
     status: OrderStatus;
 }
 

@@ -37,10 +37,24 @@ const consumeCartEvent = async () => {
         await consumer.subscribe({ topics: ["cart-checkout"], fromBeginning: false });
         console.log('Waiting for messages...');
         await consumer.run({
-            eachMessage: async ({ topic, message }) => {
-                const data = JSON.parse(message.value?.toString() || '{}');
-                console.log('Received message from Kafka topic...');
-                await createOrder(data);
+            eachMessage: async ({ topic, message, }) => {
+                const key = message.key?.toString();
+                const messageValue = JSON.parse(message.value?.toString() || '{}');
+
+                if (!messageValue) {
+                    console.log("Invalid message value received");
+                    return;
+                }
+                switch (key) {
+                    case 'checkout':
+                        await createOrder(messageValue);
+                        break;
+
+                    default:
+                        console.log("Invalid message key");
+                        break;
+                }
+
             }
         })
     } catch (error) {

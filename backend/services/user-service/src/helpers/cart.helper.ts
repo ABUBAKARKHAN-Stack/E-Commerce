@@ -59,8 +59,25 @@ const handleProductDeletionFromCart = async ({
 
 }
 
+const handleClearCart = async ({ userId }: { userId: string }) => {
+    if (!userId) {
+        console.log("User Id not received");
+        return;
+    }
+    try {
+        await cartModel.findOneAndDelete({
+            user: userId
+        })
+        console.log('Cart Cleared...');
+    } catch (error) {
+        console.log('Error Clearing cart', error);
+
+    }
+}
+
 export {
     handleCartCreation,
-    handleProductDeletionFromCart
+    handleProductDeletionFromCart,
+    handleClearCart
 
 };

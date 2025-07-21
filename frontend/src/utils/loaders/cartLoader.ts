@@ -2,6 +2,7 @@ import { getBulkProducts, getCartDetails } from "@/API/userApi";
 import { ApiErrorType, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
 import { ApiError } from "../ApiError";
+import { redirect } from "react-router-dom";
 
 const cartLoader = async () => {
     try {
@@ -42,6 +43,9 @@ const cartLoader = async () => {
 
         const errStatus = err.response?.status || 500
         const errMsg = err.response?.data.message || "Something went wrong";
+        if (errStatus === 401 || errStatus === 403) {
+            return redirect("/sign-in");
+        }
         throw new ApiError(errStatus, errMsg, err.response?.data)
     }
 }

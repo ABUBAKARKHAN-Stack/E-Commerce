@@ -1,4 +1,6 @@
-import { userApi, userProductApi } from './apiClients'
+import { z } from 'zod'
+import { orderApi, userApi, userProductApi } from './apiClients'
+import { addReviewSchema } from '@/schemas/add-reviewSchema'
 
 //* User APIS
 
@@ -128,6 +130,52 @@ const getBulkProducts = async (productIds: string[]) => {
   }, { withCredentials: true })
 }
 
+
+const getReviews = async (productId: string) => {
+  return await userProductApi.get(`/${productId}/reviews`)
+}
+
+const createReview = async (productId: string, data: z.infer<typeof addReviewSchema>) => {
+  return await userProductApi.post(`/${productId}/reviews`, data, {
+    withCredentials: true
+  })
+}
+
+const updateReview = async (productId: string, data: z.infer<typeof addReviewSchema>) => {
+  return await userProductApi.put(`/${productId}/reviews`, {
+    updatedReview: data.review,
+    updatedRating: data.rating
+  }, {
+    withCredentials: true
+  })
+}
+
+const deleteReview = async (productId: string) => {
+  return await userProductApi.delete(`/${productId}/reviews`, {
+    withCredentials: true
+  })
+}
+
+const proceedToCheckout = async () => {
+  return await userApi.get('/cart/checkout', {
+    withCredentials: true
+  })
+}
+
+const getPendingOrderDetails = async () => {
+  return await orderApi.get('/pending', {
+    withCredentials: true
+  })
+}
+
+const completeCheckout = async (totalAmount: number) => {
+  return await orderApi.post('/complete-checkout', {
+    totalAmountInUSD: totalAmount
+  }, {
+    withCredentials: true
+  })
+}
+
 export {
   createUser,
   loginUser,
@@ -148,5 +196,12 @@ export {
   updateCart,
   removeFromCart,
   getCartDetails,
-  getBulkProducts
+  getBulkProducts,
+  getReviews,
+  createReview,
+  updateReview,
+  deleteReview,
+  proceedToCheckout,
+  getPendingOrderDetails,
+  completeCheckout
 }

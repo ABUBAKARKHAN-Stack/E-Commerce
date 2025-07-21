@@ -11,10 +11,11 @@ import { ViewProduct } from "@/components/sections/user";
 type Props = {
   productId: string;
   user: IUser;
-  wishlist: string[]
+  wishlist: string[];
+  usingLoaderData?: boolean;
 }
 
-const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
+const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist, usingLoaderData = false }) => {
   const [isInWishList, setIsInWishList] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
 
@@ -34,6 +35,7 @@ const ProductCardHeaderButtons: FC<Props> = ({ productId, user, wishlist }) => {
           isInWishList={wishlist?.includes(productId)}
           productId={productId}
           userLoggedIn={!!user}
+          usingLoaderData={usingLoaderData}
         />
       </RequireAuth>
       <ToolTip

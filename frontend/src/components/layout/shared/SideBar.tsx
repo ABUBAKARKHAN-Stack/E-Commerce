@@ -1,19 +1,17 @@
 "use client";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import {
     LayoutDashboard,
     ShoppingBag,
     Heart,
     ShoppingCart,
     User,
-    Settings,
     LogOut,
     LifeBuoy,
     Package,
 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip";
 import { useAuthContext } from "@/context/authContext";
 import { useNavigate } from "react-router-dom";
 import { ToolTip } from "@/components/reusable/shared";
@@ -105,21 +103,7 @@ const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => 
                 <nav className="w-full flex items-center justify-center">
                     <ul className="space-y-2">
                         {sideBarItems.map(({ icon, text, path }, i) => (
-                            // <TooltipProvider key={i}>
-                            //     <Tooltip>
-                            //         <TooltipTrigger className="flex items-center justify-center">
-                            //             <li
-                            //                 className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
-                            //                 onClick={() => handleNavigation(path)}
-                            //             >
-                            //                 {icon}
-                            //                 <TooltipContent>
-                            //                     <p>{text}</p>
-                            //                 </TooltipContent>
-                            //             </li>
-                            //         </TooltipTrigger>
-                            //     </Tooltip>
-                            // </TooltipProvider>
+                           
                             <ToolTip
                                 key={i}
                                 triggerValue={
@@ -132,21 +116,6 @@ const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => 
                                 tooltip={text}
                             />
                         ))}
-                        {/* <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger className="flex items-center justify-center">
-                                    <li
-                                        className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
-                                        onClick={async () => await logout(navigate)}
-                                    >
-                                        <LogOut strokeWidth={3} className="w-5 h-5" />
-                                        <TooltipContent>
-                                            <p>SignOut</p>
-                                        </TooltipContent>
-                                    </li>
-                                </TooltipTrigger>
-                            </Tooltip>
-                        </TooltipProvider> */}
                         <ToolTip
                             triggerValue={
                                 <li

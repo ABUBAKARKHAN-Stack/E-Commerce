@@ -1,7 +1,10 @@
+import { proceedToCheckout } from '@/API/userApi';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { useProductContext } from '@/context/productContext';
 import { CheckCircle, CheckCircle2, Lock } from 'lucide-react';
 import React, { FC } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
     totalAmount: number;
@@ -12,6 +15,16 @@ const CartSummary: FC<Props> = ({
     totalAmount,
     totalProducts
 }) => {
+
+    const { proceedToCheckout } = useProductContext();
+    const navigate = useNavigate();
+
+    const handleProceedToCheckout = () => {
+        proceedToCheckout(navigate);
+    }
+
+
+
     return (
         <div className='flex flex-col w-full p-8 border-2 rounded-2xl bg-gradient-to-br from-background/90 dark:to-background/70 backdrop-blur-sm shadow-10px shadow-black/10 dark:shadow-black/40 space-y-8'>
             {/* Header */}
@@ -43,7 +56,7 @@ const CartSummary: FC<Props> = ({
                             <div className='w-2 h-2 bg-cyan-500 dark:bg-orange-400 rounded-full'></div>
                             <h2 className='text-gray-700 dark:text-gray-300 text-lg font-medium'>Subtotal</h2>
                         </div>
-                        <h2 className='text-gray-900 dark:text-orange-200 font-bold text-xl'>${totalAmount}</h2>
+                        <h2 className='text-gray-900 dark:text-orange-200 font-bold text-xl'>${totalAmount.toFixed(2)}</h2>
                     </div>
 
                     {/* Shipping */}
@@ -54,7 +67,7 @@ const CartSummary: FC<Props> = ({
                         </div>
                         <div className='flex items-center gap-2'>
                             <span className='text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full'>Standard</span>
-                            <h2 className='text-gray-900 dark:text-orange-200 font-bold text-xl'>$50</h2>
+                            <h2 className='text-gray-900 dark:text-orange-200 font-bold text-xl'>$50.00</h2>
                         </div>
                     </div>
                 </div>
@@ -79,7 +92,7 @@ const CartSummary: FC<Props> = ({
                     </div>
                     <div className='flex items-center gap-2'>
                         <div className='text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-orange-400 dark:to-orange-500'>
-                            ${totalAmount + 50}
+                            ${Number(totalAmount + 50).toFixed(2)}
                         </div>
                     </div>
                 </div>
@@ -87,7 +100,9 @@ const CartSummary: FC<Props> = ({
 
             {/* Checkout Button */}
             <div className='pt-4'>
-                <Button className='text-lg font-semibold py-6 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-orange-500 dark:to-orange-600 hover:from-cyan-600 hover:to-cyan-700 dark:hover:from-orange-600 dark:hover:to-orange-700 text-white shadow-lg shadow-cyan-500/30 dark:shadow-orange-500/30 hover:shadow-xl hover:shadow-cyan-500/40 dark:hover:shadow-orange-500/40 transform hover:scale-[1.02] w-fit transition-all duration-300 border-0'>
+                <Button
+                    onClick={handleProceedToCheckout}
+                    className='text-lg font-semibold py-6 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-orange-500 dark:to-orange-600 hover:from-cyan-600 hover:to-cyan-700 dark:hover:from-orange-600 dark:hover:to-orange-700 text-white shadow-lg shadow-cyan-500/30 dark:shadow-orange-500/30 hover:shadow-xl hover:shadow-cyan-500/40 dark:hover:shadow-orange-500/40 transform hover:scale-[1.02] w-fit transition-all duration-300 border-0'>
                     <div className='flex items-center justify-center gap-3'>
                         <CheckCircle2 className='size-5' />
                         Proceed To Checkout

@@ -1,5 +1,5 @@
 import { kafka } from '../config/kafka.config'
-import { handleCartCreation, handleProductDeletionFromCart, } from '../helpers/cart.helper'
+import { handleCartCreation, handleClearCart, handleProductDeletionFromCart, } from '../helpers/cart.helper'
 import { addToWishList, removeFromWishList } from '../helpers/wishlist.helper';
 
 const publishEvent = async<Data>(topicName: string, messageKey: string, value: Data) => {
@@ -34,7 +34,7 @@ const cartEventConsumer = async () => {
     await consumer.connect();
     console.log('Subscribing to topic...');
     await consumer.subscribe({
-        topics: ["cart-creation", "cart-update", "product-removal"],
+        topics: ["cart-creation", "cart-update", "product-removal", "cart-clear"],
         fromBeginning: false,
     });
 
@@ -61,6 +61,11 @@ const cartEventConsumer = async () => {
                             userId,
                             productId
                         })
+                        break;
+                    case "cleared-cart":
+                        console.log(userId);
+                        
+                        await handleClearCart({ userId })
                         break;
                     default:
                         console.log("Invalid message key");
@@ -109,10 +114,8 @@ const wishListEventConsumer = async () => {
 }
 
 
-
-
 export {
     publishEvent,
     cartEventConsumer,
-    wishListEventConsumer
+    wishListEventConsumer,
 }

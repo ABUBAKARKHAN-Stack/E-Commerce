@@ -20,6 +20,7 @@ interface IReviews extends Document {
     userId: string;
     review?: string;
     rating: number;
+    createdAt: Date
 }
 
 interface CreateProduct {

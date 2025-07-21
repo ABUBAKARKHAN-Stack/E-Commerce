@@ -372,13 +372,13 @@ const getWishList = expressAsyncHandler(async (req: Request, res: Response) => {
     if (!wishlist || wishlist.length === 0) {
         res
             .status(200)
-            .json(
+            .json( 
                 new ApiResponse(200, 'No products found in wishlist', { wishlist: [] })
             );
         return;
     }
 
-
+ 
     res
         .status(200)
         .json(new ApiResponse(200, 'Wishlist Fetched', { wishlist }))

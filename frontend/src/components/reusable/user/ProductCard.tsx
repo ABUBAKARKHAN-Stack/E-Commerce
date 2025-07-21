@@ -2,12 +2,10 @@ import { MagicCard } from '@/components/magicui/magic-card'
 import { useThemeContext } from '@/context/themeContext'
 import ProductCardHeaderButtons from './ProductCardHeaderButtons';
 import CategoryBadge from './CategoryBadge';
-import { Button } from '@/components/ui/button';
-import { ShoppingCart, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { IProduct, IUser } from '@/types/main.types';
 import { FC, useState } from 'react';
 import { useAuthContext } from '@/context/authContext';
-import { RequireAuth } from '@/components/layout/user/RequireAuthForAction';
 import { useProductContext } from '@/context/productContext';
 import ProductQuantitySelector from './ProductQuantitySelector';
 import AddToCartButton from './AddToCartButton';
@@ -15,11 +13,13 @@ import AddToCartButton from './AddToCartButton';
 type Props = {
     product: IProduct;
     forHome: boolean;
+    usingLoaderData?: boolean;
 }
 
 const ProductCard: FC<Props> = ({
     product,
-    forHome
+    forHome,
+    usingLoaderData = false
 }) => {
     const {
         category,
@@ -35,15 +35,9 @@ const ProductCard: FC<Props> = ({
     } = product;
     const { theme } = useThemeContext();
     const { user } = useAuthContext();
-    const { wishlist, addToCart } = useProductContext();
+    const { wishlist } = useProductContext();
     const [quantityCount, setQuantityCount] = useState(1);
     const isDark = theme === "dark";
-
-
-    const handleAddToCart = async (productId: string, quantity: number) => {
-        if (!user) return;
-        await addToCart(productId, quantity)
-    }
 
     return (
         <>
@@ -54,6 +48,7 @@ const ProductCard: FC<Props> = ({
                             productId={_id}
                             user={user as IUser}
                             wishlist={wishlist}
+                            usingLoaderData={usingLoaderData}
                         />
                         <CategoryBadge category={category} />
                         <div className='bg-gray-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center w-[99.5%] h-full p-4 rounded-t dark:bg-[#2c2c2e]'>
@@ -62,6 +57,7 @@ const ProductCard: FC<Props> = ({
                     </div>
                     <div className={`${forHome ? "flex justify-center items-center" : "hidden"}`}>
                         <AddToCartButton
+                            stock={quantity}
                             productId={_id}
                             quantity={quantityCount}
                         />
@@ -107,6 +103,7 @@ const ProductCard: FC<Props> = ({
 
                     <div className={`${!forHome ? "flex justify-center items-center mt-4" : "hidden"}`}>
                         <AddToCartButton
+                            stock={quantity}
                             productId={_id}
                             quantity={quantityCount}
                         />

@@ -1,7 +1,6 @@
 import { Layout } from '@/components/layout/shared'
 import { BlurFade } from '@/components/magicui/blur-fade'
 import { ShoppingBag, ShoppingCart } from 'lucide-react'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 const EmptyCart = () => {
@@ -9,7 +8,6 @@ const EmptyCart = () => {
         <main
             className='min-w-screen w-full min-h-[75vh] overflow-x-hidden h-full py-10 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] backdrop-blur-xl relative border-b-2
             '>
-
             <Layout className='flex flex-col justify-center items-center   space-y-6'>
                 <BlurFade
                     inView
@@ -39,10 +37,10 @@ const EmptyCart = () => {
                             Your Cart is Empty
                         </h1>
                         <p className='text-lg md:text-xl text-gray-600 dark:text-gray-300 w-full sm:w-3/4 mx-auto leading-relaxed font-medium'>
-                            Looks like you haven't added any items to your cart yet. Start shopping to see your items here!
+                            It looks like you haven’t added anything to your cart yet. Start shopping to see your items here!
                         </p>
                         <p className='text-sm text-gray-500 dark:text-gray-400 font-light'>
-                            Discover amazing products and add them to your cart to get started.
+                            Explore our collection and add products to your cart to get started.
                         </p>
                     </div>
                 </BlurFade>

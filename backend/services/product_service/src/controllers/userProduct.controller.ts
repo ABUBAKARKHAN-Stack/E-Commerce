@@ -397,7 +397,7 @@ const createReview = expressAsyncHandler(async (req: Request, res: Response) => 
     const { productId } = req.params;
 
 
-    if (!rating) {
+    if (!rating || !review) {
         throw new ApiError(400, "Please provide a rating to submit your review.");
     }
 
@@ -421,7 +421,7 @@ const createReview = expressAsyncHandler(async (req: Request, res: Response) => 
 
     product.reviews.push({
         userId,
-        review: review,
+        review,
         rating
     } as IReviews)
 
@@ -444,7 +444,7 @@ const updateReview = expressAsyncHandler(async (req: Request, res: Response) => 
     const { updatedReview, updatedRating } = req.body;
     const { productId } = req.params;
 
-    if (!updatedRating) {
+    if (!updatedRating || !updatedReview) {
         throw new ApiError(400, "Rating is required to update the review.");
     }
 
@@ -522,7 +522,8 @@ const getAllReviews = expressAsyncHandler(async (req: Request, res: Response) =>
     const reviews = product.reviews.map((r) => {
         return {
             review: r.review,
-            rating: r.rating
+            rating: r.rating,
+            createdAt: r.createdAt
         }
     })
 
@@ -663,7 +664,6 @@ const removeFromWishList = expressAsyncHandler(async (req: Request, res: Respons
         .status(200)
         .json(new ApiResponse(200, "Product Removed from wishlist", wishlistPayload));
 })
-
 
 
 export {

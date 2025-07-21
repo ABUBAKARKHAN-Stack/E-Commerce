@@ -26,7 +26,8 @@ import cartRoutes from './routes/cart.routes';
 app.use("/", cartRoutes);
 Promise.all([
     cartEventConsumer(),
-    wishListEventConsumer()
+    wishListEventConsumer(),
+    
 ])
     .then(() => {
         console.log("All consumers are running");
@@ -35,7 +36,7 @@ Promise.all([
         console.log("Error while running consumers :: ", error);
     })
 
-const PORT = env.PORT || 3001;
+const PORT = env.PORT ||  3001;
 
 app.use(errorHandler);
 

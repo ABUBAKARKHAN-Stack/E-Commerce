@@ -5,6 +5,8 @@ import ProductCard from "./ProductCard";
 import WaveDivider from "./WaveDivider";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 import AddToCartButton from "./AddToCartButton";
+import ProductImageSelector from "./ProductImageSelector";
+import AddReviewForm from "./AddReviewForm";
 
 export {
     SectionHeader,
@@ -13,5 +15,7 @@ export {
     ProductCard,
     WaveDivider,
     ProductQuantitySelector,
-    AddToCartButton
+    AddToCartButton,
+    ProductImageSelector,
+    AddReviewForm
 }

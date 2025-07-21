@@ -80,3 +80,49 @@ export const productFields = [
         type: "file",
     },
 ] as const;
+
+export const addressFields = [
+    {
+        label: "Full Name",
+        name: "fullName",
+        type: "text",
+        placeholder: "John Doe",
+    },
+    {
+        label: "Address Line 1",
+        name: "addressLine1",
+        type: "text",
+        placeholder: "123 Main Street",
+    },
+    {
+        label: "Address Line 2",
+        name: "addressLine2",
+        type: "text",
+        placeholder: "Apartment, suite, etc. (optional)",
+    },
+    {
+        label: "City",
+        name: "city",
+        type: "text",
+        placeholder: "Karachi",
+    },
+    {
+        label: "State / Province",
+        name: "state",
+        type: "text",
+        placeholder: "Sindh",
+    },
+    {
+        label: "Country",
+        name: "country",
+        type: "text",
+        placeholder: "Pakistan",
+    },
+    {
+        label: "ZIP / Postal Code",
+        name: "zipCode",
+        type: "text",
+        placeholder: "74000",
+    },
+   
+] as const;

@@ -2,16 +2,20 @@ import { X } from "lucide-react";
 import { FC } from "react";
 import { useProductContext } from "@/context/productContext";
 import { ToolTip } from "@/components/reusable/shared";
+import { useRevalidator } from "react-router-dom";
 
 type Props = {
     productId: string;
     icon: React.ReactNode;
     isInWishList: boolean;
     userLoggedIn: boolean;
+    usingLoaderData?: boolean
 };
 
 const WishlistButton: FC<Props> = ({ productId, icon, isInWishList, userLoggedIn }) => {
     const { addProductIntoWishlist, removeProductFromWishlist } = useProductContext();
+    const { revalidate } = useRevalidator();
+
 
     const handleAddToWishlist = () => {
         if (!userLoggedIn || isInWishList) return;
@@ -21,7 +25,7 @@ const WishlistButton: FC<Props> = ({ productId, icon, isInWishList, userLoggedIn
     const handleRemoveFromWishlist = (e: React.MouseEvent) => {
         e.stopPropagation();
         e.preventDefault();
-        removeProductFromWishlist(productId);
+        removeProductFromWishlist(productId, revalidate);
     };
 
 

@@ -5,13 +5,18 @@ import cookieparser from 'cookie-parser'
 import { env } from './config/env';
 import { consumeCartEvent } from './utils';
 const app = express();
+
+import { stripeWebhookHandler } from './controllers/order.controller';
+
+app.post('/webhook', express.raw({ type: 'application/json' }), stripeWebhookHandler);
+
 app.use(json({
     limit: '50mb'
 }));
 app.use(urlencoded({
     extended: true
 }));
- 
+
 app.use(cookieparser())
 
 import orderRoutes from './routes/order.routes';
@@ -21,10 +26,10 @@ app.use('/', orderRoutes);
 const PORT = env.PORT || 3001;
 
 Promise.all([
-    consumeCartEvent() 
+    consumeCartEvent()
 ])
     .then(() => {
-        console.log("Connected to Kafka");        
+        console.log("Connected to Kafka");
     })
     .catch((error) => {
         console.log("Error connecting to Kafka :: ", error);
@@ -37,10 +42,10 @@ app.use(errorHandler);
 connectDb()
     .then(() => {
         app.listen(PORT, () => {
-            console.log(`User service is running on port ${PORT}`);
+            console.log(`Order service is running on port ${PORT}`);
         })
     })
     .catch((error) => {
-        console.log("Error connecting to user database :: ", error);
+        console.log("Error connecting to order database :: ", error);
     })
 

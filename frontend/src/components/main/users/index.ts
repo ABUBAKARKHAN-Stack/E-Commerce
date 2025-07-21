@@ -12,8 +12,12 @@ import TrendingProductsMain from "./TrendingProductsMain";
 import WhyChooseUsMain from "./WhyChooseUsMain";
 import TestimonialsMain from "./TestimonialsMain";
 import NewsletterCTASectionMain from "./NewsletterCTASectionMain";
-import ProductMain from "./ProductMain";
+import ProductsMain from "./ProductsMain";
+import ProductMain from "./SingleProduct/ProductMain";
+import ProductReviewsMain from "./SingleProduct/ProductReviewsMain";
 import CartMain from "./CartMain";
+import WishlistMain from "./WishlistMain";
+import CheckoutMain from "./CheckoutMain";
 
 export {
     HeroMain,
@@ -30,6 +34,10 @@ export {
     WhyChooseUsMain,
     TestimonialsMain,
     NewsletterCTASectionMain,
+    ProductsMain,
     ProductMain,
-    CartMain
+    ProductReviewsMain,
+    CartMain,
+    WishlistMain,
+    CheckoutMain
 }

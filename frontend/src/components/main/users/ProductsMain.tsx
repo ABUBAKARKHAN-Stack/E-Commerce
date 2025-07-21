@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { Pagination } from '@/components/reusable/shared';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-const ProductMain = () => {
+const ProductsMain = () => {
     const { productsData, totalProducts } = useProductContext();
     const isMobile = useMediaQuery('(max-width: 640px)');
     const isTablet = useMediaQuery('(min-width: 640px) and (max-width: 1024px)');
@@ -16,7 +16,7 @@ const ProductMain = () => {
     const isDesktop = useMediaQuery('(min-width: 1366px)');
     const [limit, setLimit] = useState(4);
     const [page, setPage] = useState(1);
-    
+
 
     const getDynamicLimit = () => {
         if (isMobile) return 4;
@@ -115,4 +115,4 @@ const ProductMain = () => {
     )
 }
 
-export default ProductMain
+export default ProductsMain
