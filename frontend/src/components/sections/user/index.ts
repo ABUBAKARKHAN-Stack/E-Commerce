@@ -10,6 +10,7 @@ import SearchFilterSortProduct from "./product-filters/SearchFilterSortProduct";
 import ViewProduct from "./ViewProduct";
 import ProductImagesGallery from "./ProductImagesGallery";
 import ProductReviewsList from "./ProductReviewsList";
+import TrackOrderForm from "./TrackOrder/TrackOrderForm";
 
 export {
     HeroText,
@@ -23,5 +24,6 @@ export {
     SearchFilterSortProduct,
     ViewProduct,
     ProductImagesGallery,
-    ProductReviewsList
+    ProductReviewsList,
+    TrackOrderForm
 }

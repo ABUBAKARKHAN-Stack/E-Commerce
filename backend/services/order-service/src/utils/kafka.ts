@@ -28,13 +28,13 @@ const publishEvent = async<Data>(topicName: string, messageKey: string, value: D
     }
 }
 
-const consumeCartEvent = async () => {
-    const consumer = kafka.consumer({ groupId: 'order-service-group' });
+const consumeCheckoutEvent = async () => {
+    const consumer = kafka.consumer({ groupId: 'checkout-service-group' });
     try {
         console.log('Connecting to consumer...');
         await consumer.connect();
         console.log('Subscribing to topic...');
-        await consumer.subscribe({ topics: ["cart-checkout"], fromBeginning: false });
+        await consumer.subscribe({ topics: ["cart.checkout"], fromBeginning: false });
         console.log('Waiting for messages...');
         await consumer.run({
             eachMessage: async ({ topic, message, }) => {
@@ -65,5 +65,5 @@ const consumeCartEvent = async () => {
 
 export {
     publishEvent,
-    consumeCartEvent
+    consumeCheckoutEvent
 }

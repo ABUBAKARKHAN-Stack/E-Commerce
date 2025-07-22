@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import orderModel from "../models/order.model";
-import { ApiResponse, ApiError, publishEvent } from "../utils/";
+import { ApiResponse, ApiError } from "../utils";
+import { publishEvent } from '../utils/kafka'
 import { Request, Response } from "express";
 import { stripeClient } from "../config/stripe.config";
 import { env } from "../config/env";
@@ -12,7 +13,7 @@ import { OrderStatus } from "../types/main.types";
 const getPendingOrder = expressAsyncHandler(async (req: Request, res: Response) => {
     const { userId } = res.locals.user;
 
-    const order = await orderModel.findOne({ userId, status: OrderStatus.PENDING });
+    const order = await orderModel.findOne({ userId, status: OrderStatus.PENDING }).lean();
     if (!order) {
         throw new ApiError(404, "Order not found");
     }
@@ -20,6 +21,36 @@ const getPendingOrder = expressAsyncHandler(async (req: Request, res: Response) 
         .status(200)
         .json(new ApiResponse(200, "Order fetched successfully", order));
 });
+
+const getConfirmedOrder = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { orderId } = req.query;
+    const userId = res.locals.user.userId;
+
+
+    if (!orderId) {
+        throw new ApiError(400, 'Order ID is required');
+    }
+
+
+    const order = await orderModel.findOne({
+        orderId,
+        status: OrderStatus.CONFIRMED
+    }).lean();
+
+
+    if (!order) {
+        throw new ApiError(404, 'No confirmed order found with the provided ID');
+    }
+
+
+
+    if (order.userId !== userId) {
+        throw new ApiError(403, "You're not allowed to view this order");
+    }
+    res
+        .status(200)
+        .json(new ApiResponse(200, 'Order fetched successfully', order));
+})
 
 const completeCheckout = expressAsyncHandler(async (req: Request, res: Response) => {
     const { totalAmountInUSD } = req.body;
@@ -51,13 +82,11 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
 
     res
         .status(200)
-        .json(new ApiResponse(200, 'Payment Intent Created', { clientSecret: paymentIntent.client_secret }))
+        .json(new ApiResponse(200, 'Payment Intent Created', { clientSecret: paymentIntent.client_secret, orderId: order.orderId }))
 })
 
 const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Response) => {
     const sig = req.headers['stripe-signature'];
-
-
     let event;
 
     try {
@@ -87,10 +116,14 @@ const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Respo
                     .send("Missing metadata");
                 return;
             }
-           await orderModel.findOneAndUpdate({
+            await orderModel.findOneAndUpdate({
                 orderId,
-            }, { status: OrderStatus.CONFIRMED }, { new: true });
-            await publishEvent("cart-clear", 'cleared-cart', {userId});
+            }, {
+                status: OrderStatus.CONFIRMED, confirmedAt: new Date(),
+            }, { new: true });
+            await publishEvent("cart.clear", 'cleared-cart', { userId });
+            await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId }); //* For User
+            await publishEvent('order.admin.confirmed', 'admin-confirmed', { orderId }); //* For Admin
             break;
         case 'payment_intent.created':
             console.log("Payment intent created");
@@ -105,6 +138,7 @@ const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Respo
 
 export {
     getPendingOrder,
+    getConfirmedOrder,
     completeCheckout,
     stripeWebhookHandler
 }

@@ -11,7 +11,8 @@ const orderSchema = new Schema<IOrder>({
         }],
         totalAmount: { type: Number, required: true },
     },
-    status: { type: String, enum: Object.values(OrderStatus), default: OrderStatus.PENDING }
-})
+    status: { type: String, enum: Object.values(OrderStatus), default: OrderStatus.PENDING },
+    confirmedAt: { type: Date, default: null }
+}, { timestamps: true })
 const orderModel = model<IOrder>("Order", orderSchema);
 export default orderModel;

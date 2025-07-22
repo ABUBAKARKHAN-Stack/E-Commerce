@@ -54,9 +54,9 @@ const proceedToCheckout = expressAsyncHandler(async (req: Request, res: Response
         throw new ApiError(404, "Cart not found");
     }
 
-    await publishEvent("cart-checkout", "checkout", cart[0]);
+    await publishEvent("cart.checkout", "checkout", cart[0]);
 
-    res
+    res 
         .status(200)
         .json(new ApiResponse(200, "Proceeding to checkout", cart[0]))
 })

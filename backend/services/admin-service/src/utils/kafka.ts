@@ -1,17 +1,17 @@
 import { adminModel } from "../models/admin.model";
 import kafka from "../config/kafka.config";
 
-export const productEventsConsumer = async () => {
+const productEventsConsumer = async () => {
     try {
         console.log("Creating a Kafka consumer...");
-        const consumer = kafka.consumer({ groupId: "product-service-group" });
+        const consumer = kafka.consumer({ groupId: "product-admin-service-group" });
 
         console.log("Connecting Kafka consumer...");
         await consumer.connect();
         console.log("Kafka consumer connected ✅");
 
         console.log("Subscribing to topics...");
-        await consumer.subscribe({ topics: ["product-creation", "product-deletion"], fromBeginning: false });
+        await consumer.subscribe({ topics: ["product.creation", "product.deletion"], fromBeginning: false });
         console.log("Subscription successful 🎯");
 
         console.log("Starting Kafka consumer...");
@@ -74,7 +74,7 @@ export const productEventsConsumer = async () => {
     }
 };
 
-export const userEventsConsumer = async () => {
+const userEventsConsumer = async () => {
     try {
         console.log("Creating a Kafka consumer...");
         const consumer = kafka.consumer({
@@ -132,5 +132,44 @@ export const userEventsConsumer = async () => {
     } catch (error) {
         console.error("❌ Kafka Consumer Error:", error);
     }
+}
+
+const orderEventsConsumer = async () => {
+    const consumer = kafka.consumer({
+        groupId: "order-admin-service-group"
+    });
+
+    await consumer.connect();
+
+    await consumer.subscribe({
+        topics: ['order.admin.confirmed'],
+        fromBeginning: true
+    })
+
+    await consumer.run({
+        eachMessage: async ({ topic, partition, message }) => {
+            try {
+                const user = JSON.parse(message.value!.toString())
+                if (!user && !user._id) {
+                    console.error("⚠️ Empty user data received");
+                    return;
+                }
+                const messageKey = message.key?.toString()
+                switch (messageKey) {
+                    case "": break;
+                    default:
+                        console.log(`❌ Unknown message key: ${messageKey}`);
+                        break;
+                }
+            } catch (error) {
+                console.error("❌ Error processing message:", error);
+            }
+        }
+    })
+}
+
+export {
+    productEventsConsumer,
+    userEventsConsumer
 }
 

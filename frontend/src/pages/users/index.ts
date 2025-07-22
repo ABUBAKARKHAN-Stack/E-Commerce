@@ -12,6 +12,8 @@ import CartPage from "./CartPage";
 import ProductPage from "./ProductPage";
 import WishlistPage from "./WishlistPage";
 import CheckoutPage from "./CheckoutPage";
+import CheckoutSuccessPage from "./CheckoutSuccessPage";
+import TrackOrderPage from "./TrackOrderPage";
 
 export {
     UserDashboardPage,
@@ -27,5 +29,7 @@ export {
     ProductPage,
     CartPage,
     WishlistPage,
-    CheckoutPage
+    CheckoutPage,
+    CheckoutSuccessPage,
+    TrackOrderPage
 };

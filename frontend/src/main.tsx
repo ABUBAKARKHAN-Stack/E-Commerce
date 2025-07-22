@@ -30,7 +30,9 @@ import {
   CartPage,
   ProductPage,
   WishlistPage,
-  CheckoutPage
+  CheckoutPage,
+  CheckoutSuccessPage,
+  TrackOrderPage
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
 import { UserAuthLayout } from '@/components/layout/user'
@@ -38,10 +40,11 @@ import { AdminAuthLayout, AdminRoot } from '@/components/layout/admin'
 import { AuthProvider } from '@/context/authContext'
 import { ProductProvider } from '@/context/productContext'
 import { cartLoader } from '@/utils/loaders/cartLoader'
-import { CartErrorPage, CheckoutErrorPage } from '@/pages/users/error'
+import { CartErrorPage, CheckoutErrorPage, CheckoutSuccessErrorPage, TrackOrderErrorPage } from '@/pages/users/error'
 import { wishlistLoader } from './utils/loaders/wishlistLoader'
 import WishlistErrorPage from './pages/users/error/WishlistErrorPage'
-import { orderDetailsLoader } from './utils/loaders/orderDetailsLoader'
+import { confirmOrderDetailsLoader, pendingOrderDetailsLoader } from './utils/loaders/orderDetailsLoader'
+import { OrderProvider } from './context/orderContext'
 
 
 
@@ -157,8 +160,24 @@ const router = createBrowserRouter([
     element: <UserAuthLayout authenticationRequired>
       <CheckoutPage />
     </UserAuthLayout>,
-    loader: orderDetailsLoader,
+    loader: pendingOrderDetailsLoader,
     errorElement: <CheckoutErrorPage />
+  },
+  {
+    path: '/checkout/success',
+    element: <UserAuthLayout authenticationRequired>
+      <CheckoutSuccessPage />
+    </UserAuthLayout>,
+    loader: confirmOrderDetailsLoader,
+    errorElement: <CheckoutSuccessErrorPage />
+  },
+  {
+    path: '/track-order',
+    element: <UserAuthLayout authenticationRequired>
+      <TrackOrderPage />
+    </UserAuthLayout>,
+    loader: confirmOrderDetailsLoader,
+    errorElement: <TrackOrderErrorPage />
   },
   {
     path: '/wishlist',
@@ -237,7 +256,9 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
       <AuthProvider>
         <ProductProvider>
-          <RouterProvider router={router} />
+          <OrderProvider>
+            <RouterProvider router={router} />
+          </OrderProvider>
         </ProductProvider>
       </AuthProvider>
     </ThemeProvider>

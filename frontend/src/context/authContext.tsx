@@ -84,8 +84,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
 
-
-
     const logout = async (navigate: (path: string) => void) => {
         try {
             if (role === "user") {
@@ -204,7 +202,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 const useAuthContext = () => {
     const context = useContext(AuthContext);
     if (!context) throw new Error("useAuthContext must be used within a AuthProvider");
-
     return context;
 }
 export {

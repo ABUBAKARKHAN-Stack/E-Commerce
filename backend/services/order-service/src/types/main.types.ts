@@ -19,6 +19,7 @@ interface IOrder extends Document {
     userId: string;
     cart: ICart;
     status: OrderStatus;
+    confirmedAt: Date
 }
 
 interface JwtUpdtedPayload extends JwtPayload {

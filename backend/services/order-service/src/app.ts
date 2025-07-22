@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { connectDb } from './config/connectDb';
 import cookieparser from 'cookie-parser'
 import { env } from './config/env';
-import { consumeCartEvent } from './utils';
+import { consumeCheckoutEvent } from './utils/kafka';
 const app = express();
 
 import { stripeWebhookHandler } from './controllers/order.controller';
@@ -26,7 +26,7 @@ app.use('/', orderRoutes);
 const PORT = env.PORT || 3001;
 
 Promise.all([
-    consumeCartEvent()
+    consumeCheckoutEvent()
 ])
     .then(() => {
         console.log("Connected to Kafka");

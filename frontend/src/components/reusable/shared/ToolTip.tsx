@@ -17,7 +17,7 @@ const ToolTip: FC<Props> = ({
 }) => {
     return (
         <TooltipProvider>
-            <Tooltip>
+            <Tooltip >
                 <TooltipTrigger asChild>
                     {triggerValue}
                 </TooltipTrigger>

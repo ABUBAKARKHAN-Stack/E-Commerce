@@ -45,7 +45,7 @@ const FooterTop = () => {
         { name: 'Dashboard', link: '/user/dashboard' },
         { name: 'Cart', link: '/cart' },
         { name: 'Wishlist', link: '/wishlist' },
-        { name: 'Order', link: '/orders' }
+        { name: 'Track Your Order', link: '/track-order' }
     ].filter(Boolean);
 
 

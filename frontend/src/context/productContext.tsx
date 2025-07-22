@@ -53,7 +53,7 @@ type ProductContextType = {
     cartProductsCount: number;
     setCartProductsCount: Dispatch<SetStateAction<number>>;
     proceedToCheckout: (navigate: (path: string) => void) => Promise<void>;
-    completeCheckout: (totalAmount: number) => Promise<string>;
+    completeCheckout: (totalAmount: number) => Promise<{ clientSecret: string, orderId: string }>;
 };
 
 const ProductContext = createContext<ProductContextType | null>(null);
@@ -294,7 +294,7 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
     const completeCheckout = async (totalAmount: number) => {
         try {
             const res = await completeCheckoutApi(totalAmount);
-            if (res.status === 200) return res.data.data.clientSecret;
+            if (res.status === 200) return res.data.data;
 
         } catch (error) {
             const err = error as AxiosError<ApiErrorType>

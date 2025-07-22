@@ -1,7 +1,6 @@
 import { OrderStatus } from "../types/main.types";
 import orderModel from "../models/order.model";
 import { customAlphabet } from "nanoid";
-import { publishEvent } from "../utils";
 
 const createOrder = async (orderData: any) => {
     try {
@@ -20,8 +19,7 @@ const createOrder = async (orderData: any) => {
             const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
             const nanoid = customAlphabet(alphabet, 8);
             const orderId = nanoid(8)
-            console.log(orderData, orderId);
-            const order = await orderModel.create({
+            await orderModel.create({
                 orderId,
                 userId: orderData.user,
                 cart: {
@@ -29,7 +27,7 @@ const createOrder = async (orderData: any) => {
                     totalAmount: +orderData.totalAmount + 50
                 }
             });
-            console.log(order, 'Order Created Successfully');
+            console.log('Order Created Successfully');
         }
 
 

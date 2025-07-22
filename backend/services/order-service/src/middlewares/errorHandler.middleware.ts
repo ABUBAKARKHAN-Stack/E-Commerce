@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/index";
 import { env } from "../config/env";
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 
 const errorHandler = (
     err: Error,
@@ -9,13 +10,24 @@ const errorHandler = (
     next: NextFunction
 ): void => {
 
-    // Handle custom ApiError
+    //* Handle custom ApiError
     if (err instanceof ApiError) {
         res.status(err.statusCode).json({
             statusCode: err.statusCode,
             message: err.message,
             error: err.error || null,
         });
+        return;
+    }
+
+    //* Handle JWT errors
+    if (err instanceof TokenExpiredError) {
+        res.status(401).json(new ApiError(401, "Unauthorized: Token expired"));
+        return;
+    }
+
+    if (err instanceof JsonWebTokenError) {
+        res.status(401).json(new ApiError(401, "Unauthorized: Invalid token"));
         return;
     }
 

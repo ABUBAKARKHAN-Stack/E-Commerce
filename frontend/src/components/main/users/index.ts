@@ -18,6 +18,8 @@ import ProductReviewsMain from "./SingleProduct/ProductReviewsMain";
 import CartMain from "./CartMain";
 import WishlistMain from "./WishlistMain";
 import CheckoutMain from "./CheckoutMain";
+import CheckoutSuccessMain from "./CheckoutSuccessMain";
+import TrackOrderMain from "./TrackOrderMain";
 
 export {
     HeroMain,
@@ -39,5 +41,7 @@ export {
     ProductReviewsMain,
     CartMain,
     WishlistMain,
-    CheckoutMain
+    CheckoutMain,
+    CheckoutSuccessMain,
+    TrackOrderMain
 }

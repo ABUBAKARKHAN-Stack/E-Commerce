@@ -316,7 +316,7 @@ const addToCart = expressAsyncHandler(async (req: Request, res: Response) => {
     };
 
     try {
-        await publishEvent("cart-creation", "created_cart", cartedProductsPayload)
+        await publishEvent("cart.create", "created_cart", cartedProductsPayload)
         console.log("Event published successfully", cartedProductsPayload)
     } catch (error) {
         console.error('Error publishing product created event:', error)
@@ -342,7 +342,7 @@ const removeFromCart = expressAsyncHandler(async (req: Request, res: Response) =
     const cartedProducts = { productId, userId };
 
     try {
-        await publishEvent("product-removal", "removed_product", cartedProducts);
+        await publishEvent("cart.remove.product", "removed_product", cartedProducts);
         console.log("✅ Event published successfully", cartedProducts);
 
         res
@@ -380,7 +380,7 @@ const updateCart = expressAsyncHandler(async (req: Request, res: Response) => {
     };
 
 
-    await publishEvent("cart-update", "updated_cart", cartedProductsPayload)
+    await publishEvent("cart.update", "updated_cart", cartedProductsPayload)
         .then(() => console.log("✅ Event published successfully", cartedProductsPayload))
         .catch((error) => console.error('Error publishing product created event:', error));
 

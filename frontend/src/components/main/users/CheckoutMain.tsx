@@ -2,6 +2,7 @@ import { Layout } from '@/components/layout/shared';
 import { BlurFade } from '@/components/magicui/blur-fade';
 import { SectionHeader } from '@/components/reusable/user';
 import { CheckoutForm, CheckSummary } from '@/components/sections/user/checkout';
+import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { useLoaderData } from 'react-router-dom'
@@ -42,6 +43,8 @@ const CheckoutMain = () => {
                         />
                     </BlurFade>
                 </section>
+
+                 
             </Layout>
 
         </main>

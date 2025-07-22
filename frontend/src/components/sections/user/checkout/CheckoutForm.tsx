@@ -7,7 +7,7 @@ import { addressSchema } from '@/schemas/checkoutSchema'
 import { IUser } from '@/types/main.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreditCard, LoaderPinwheel, Mail, MapPin, ShoppingBag } from 'lucide-react'
-import { FC, FormEvent, useEffect, useState } from 'react'
+import { FC, FormEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
     useStripe,
@@ -18,6 +18,8 @@ import { useProductContext } from '@/context/productContext'
 import { errorToast, successToast } from '@/utils/toastNotifications'
 import { useThemeContext } from '@/context/themeContext'
 import { z } from 'zod'
+import { useNavigate } from 'react-router-dom'
+import { ApiError } from '@/utils/ApiError'
 
 type Props = {
     totalAmount: number;
@@ -48,6 +50,8 @@ const CheckoutForm: FC<Props> = ({
     const elements = useElements();
     const { theme } = useThemeContext();
     const { completeCheckout, setCartProductsCount } = useProductContext();
+    const navigate = useNavigate();
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 
     useEffect(() => {
@@ -82,8 +86,9 @@ const CheckoutForm: FC<Props> = ({
         const card = elements.getElement(CardElement);
         setPaymentLoading(true)
         try {
-            const clientSecret = await completeCheckout(totalAmount);
-            const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+            const { clientSecret, orderId } = await completeCheckout(totalAmount);
+
+            const { paymentIntent, error, } = await stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
                     card: card!
                 },
@@ -92,15 +97,24 @@ const CheckoutForm: FC<Props> = ({
                 errorToast(error.message || "Something went wrong")
             } else if (paymentIntent.status === 'succeeded') {
                 successToast("Payment Successful!");
-                setCartProductsCount(0)
+                setCartProductsCount(0);
+                timeoutRef.current = setTimeout(() => {
+                    navigate(`/checkout/success?orderId=${orderId}`)
+                }, 1000);
             }
         } catch (error) {
             const err = error as Error;
-            console.log(err);
+            throw new ApiError(500, err.message);
         } finally {
             setPaymentLoading(false)
         }
     }
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        }
+    }, [])
 
 
     const CARD_ELEMENT_OPTIONS = {
@@ -234,9 +248,6 @@ const CheckoutForm: FC<Props> = ({
                                     size={'lg'}
                                     type="submit"
                                     className='w-full'
-                                // onClick={() => {
-                                //     if (!form.formState.errors) setActiveTab('payment')
-                                // }}
                                 >
                                     Continue to Payment
                                 </Button>

@@ -93,3 +93,7 @@ export interface ApiErrorType {
 }
 
 
+
+export const enum OrderLoading {
+    TRACK_ORDER_LOADING = 'track-order'
+}

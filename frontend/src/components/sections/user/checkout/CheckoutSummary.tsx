@@ -1,6 +1,5 @@
 import { CategoryBadge } from '@/components/reusable/user'
 import { Separator } from '@/components/ui/separator'
-import { useProductContext } from '@/context/productContext'
 import { ReceiptText } from 'lucide-react'
 import { FC } from 'react'
 

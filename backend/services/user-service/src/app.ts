@@ -17,7 +17,7 @@ app.use(cookieparser())
 //* Importing  user routes
 import userRoutes from './routes/user.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
-import { cartEventConsumer, wishListEventConsumer } from './utils/kafka';
+import { cartEventConsumer, orderEventConsumer, wishListEventConsumer } from './utils/kafka';
 
 app.use("/", userRoutes); 
 
@@ -27,6 +27,7 @@ app.use("/", cartRoutes);
 Promise.all([
     cartEventConsumer(),
     wishListEventConsumer(),
+    orderEventConsumer(),
     
 ])
     .then(() => {

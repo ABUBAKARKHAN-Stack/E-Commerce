@@ -1,4 +1,4 @@
 import { existing } from "./user.helper";
-import { emailTemplate } from "./emailTemplate.helper";
+import { emailAuthTemplate } from "./emailTemplate.helper";
 
-export { existing, emailTemplate };
+export { existing, emailAuthTemplate };

@@ -1,6 +1,7 @@
 import { kafka } from '../config/kafka.config'
 import { handleCartCreation, handleClearCart, handleProductDeletionFromCart, } from '../helpers/cart.helper'
 import { addToWishList, removeFromWishList } from '../helpers/wishlist.helper';
+import { sendOrderConfirmationMail } from '../helpers/order.helper';
 
 const publishEvent = async<Data>(topicName: string, messageKey: string, value: Data) => {
     const producer = kafka.producer();
@@ -32,9 +33,9 @@ const cartEventConsumer = async () => {
     const consumer = kafka.consumer({ groupId: "cart-service-group" });
     console.log('Connecting to consumer...');
     await consumer.connect();
-    console.log('Subscribing to topic...');
+    console.log('Subscribing to Cart topic...');
     await consumer.subscribe({
-        topics: ["cart-creation", "cart-update", "product-removal", "cart-clear"],
+        topics: ["cart.create", "cart.update", "cart.remove.product", "cart.clear"],
         fromBeginning: false,
     });
 
@@ -63,8 +64,6 @@ const cartEventConsumer = async () => {
                         })
                         break;
                     case "cleared-cart":
-                        console.log(userId);
-                        
                         await handleClearCart({ userId })
                         break;
                     default:
@@ -113,9 +112,48 @@ const wishListEventConsumer = async () => {
 
 }
 
+const orderEventConsumer = async () => {
+    const consumer = kafka.consumer({
+        groupId: "order-user-service-group"
+    })
+    await consumer.connect();
+    console.log('Subscribing to Order topic...');
+    await consumer.subscribe({
+        topics: ["order.user.confirmed"],
+        fromBeginning: false,
+    });
+
+    await consumer.run({
+        eachMessage: async ({ topic, message }) => {
+            try {
+                const messageKey = message.key?.toString();
+                const messageValue = message.value ? JSON.parse(message.value.toString()) : null;
+
+                if (!messageValue) {
+                    console.log("Invalid message value received");
+                    return;
+                }
+                const { userId, orderId } = messageValue;
+                switch (messageKey) {
+                    case "user-confirmed":
+                        await sendOrderConfirmationMail({ userId, orderId })
+                        break;
+                    default:
+                        console.log("Invalid message key");
+                        break;
+                }
+            } catch (error) {
+                console.log("Error while consuming order event :: ", error);
+            }
+        },
+    });
+
+}
+
 
 export {
     publishEvent,
     cartEventConsumer,
     wishListEventConsumer,
+    orderEventConsumer
 }

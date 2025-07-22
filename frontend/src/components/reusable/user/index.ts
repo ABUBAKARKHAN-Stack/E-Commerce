@@ -7,6 +7,7 @@ import ProductQuantitySelector from "./ProductQuantitySelector";
 import AddToCartButton from "./AddToCartButton";
 import ProductImageSelector from "./ProductImageSelector";
 import AddReviewForm from "./AddReviewForm";
+import DeliveryInfo from "./DeliveryInfo";
 
 export {
     SectionHeader,
@@ -17,5 +18,6 @@ export {
     ProductQuantitySelector,
     AddToCartButton,
     ProductImageSelector,
-    AddReviewForm
+    AddReviewForm,
+    DeliveryInfo
 }

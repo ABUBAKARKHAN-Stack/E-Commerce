@@ -2,7 +2,7 @@ import { userModel } from '../models/user.model'
 import { Request, Response } from 'express'
 import { CreateUser, IUser, LoginUser, UpdatePassword, UpdateUser } from '../types/main.types'
 import { ApiError, ApiResponse, generateToken, sendEmail, publishEvent } from '../utils/index'
-import { existing, emailTemplate } from '../helpers/index'
+import { existing, emailAuthTemplate } from '../helpers/index'
 import asyncHandler from 'express-async-handler'
 import validator from 'validator'
 import expressAsyncHandler from 'express-async-handler'
@@ -89,15 +89,14 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     if (!user.isVerified) {
-
         const token = generateToken({
             email: user.email,
         }, "10m")
         await sendEmail(
-            'E-Commerce Sign In Verification',
+            'ShopNex Sign In Verification',
             user.email,
             'Email Verification',
-            emailTemplate("Email Verification", user.email, token)
+            emailAuthTemplate("Email Verification", user.email, token)
         );
 
         throw new ApiError(400, "Your account is not verified. We've sent a verification link to your email. Please check your inbox and verify your email to continue.");
@@ -172,10 +171,10 @@ const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
         email: user.email,
     }, '15m')
     await sendEmail(
-        'E-Commerce Reset Password',
+        'ShopNex Reset Password',
         user.email,
         'Reset Password',
-        emailTemplate("Reset Password", user.email, token)
+        emailAuthTemplate("Reset Password", user.email, token)
     );
 
     res

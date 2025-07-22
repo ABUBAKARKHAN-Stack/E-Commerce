@@ -57,7 +57,7 @@ const createProduct = expressAsyncHandler(async (req: Request, res: Response) =>
     }
 
     try {
-        await publishEvent<IProduct>("product-creation", "created_product", product)
+        await publishEvent<IProduct>("product.creation", "created_product", product)
     } catch (error) {
         console.error('Error publishing product created event:', error);
         throw new ApiError(500, "Error publishing product created event");
@@ -231,7 +231,7 @@ const deleteProduct = expressAsyncHandler(async (req: Request, res: Response) =>
 
 
     try {
-        await publishEvent<IProduct>("product-deletion", "deleted_product", product)
+        await publishEvent<IProduct>("product.deletion", "deleted_product", product)
     } catch (error) {
         console.log("Error publishing product deletion event:", error);
         throw new ApiError(500, "Error publishing product deletion event");

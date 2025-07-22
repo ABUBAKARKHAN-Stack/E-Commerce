@@ -36,10 +36,10 @@ const EmptyCart = () => {
                         <h1 className='text-4xl md:text-5xl font-black bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-orange-500 dark:to-orange-600 bg-clip-text text-transparent leading-tight tracking-tight'>
                             Your Cart is Empty
                         </h1>
-                        <p className='text-lg md:text-xl text-gray-600 dark:text-gray-300 w-full sm:w-3/4 mx-auto leading-relaxed font-medium'>
+                        <p className='text-lg md:text-xl text-gray-900 dark:text-gray-300 w-full sm:w-3/4 mx-auto leading-relaxed font-medium'>
                             It looks like you haven’t added anything to your cart yet. Start shopping to see your items here!
                         </p>
-                        <p className='text-sm text-gray-500 dark:text-gray-400 font-light'>
+                        <p className='text-sm text-muted-foreground font-light'>
                             Explore our collection and add products to your cart to get started.
                         </p>
                     </div>

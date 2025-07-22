@@ -168,6 +168,13 @@ const getPendingOrderDetails = async () => {
   })
 }
 
+const getConfirmedOrderDetails = async (orderId: string) => {
+  return await orderApi.get('/confirmed', {
+    params: { orderId },
+    withCredentials: true
+  })
+}
+
 const completeCheckout = async (totalAmount: number) => {
   return await orderApi.post('/complete-checkout', {
     totalAmountInUSD: totalAmount
@@ -203,5 +210,6 @@ export {
   deleteReview,
   proceedToCheckout,
   getPendingOrderDetails,
+  getConfirmedOrderDetails,
   completeCheckout
 }
