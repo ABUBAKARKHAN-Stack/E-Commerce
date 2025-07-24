@@ -14,6 +14,9 @@ import WishlistPage from "./WishlistPage";
 import CheckoutPage from "./CheckoutPage";
 import CheckoutSuccessPage from "./CheckoutSuccessPage";
 import TrackOrderPage from "./TrackOrderPage";
+import FaqsPage from "./FaqsPage";
+import ContactPage from "./ContactPage";
+import UserOrdersPage from "./UserOrdersPage";
 
 export {
     UserDashboardPage,
@@ -31,5 +34,8 @@ export {
     WishlistPage,
     CheckoutPage,
     CheckoutSuccessPage,
-    TrackOrderPage
+    TrackOrderPage,
+    FaqsPage,
+    ContactPage,
+    UserOrdersPage
 };

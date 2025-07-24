@@ -20,6 +20,7 @@ import { useThemeContext } from '@/context/themeContext'
 import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '@/utils/ApiError'
+import { handleScrollToSection } from '@/utils/HandleScrollToSection'
 
 type Props = {
     totalAmount: number;
@@ -66,9 +67,9 @@ const CheckoutForm: FC<Props> = ({
 
 
     const onSubmit = (data: z.infer<typeof addressSchema>) => {
-        console.log(data);
         setShippingCompleted(true)
-        setActiveTab('payment')
+        handleScrollToSection('checkout-form');     
+        setActiveTab('payment');
     }
 
 
@@ -137,7 +138,7 @@ const CheckoutForm: FC<Props> = ({
 
 
     return (
-        <div className="xl:w-[calc(100%+125px)] w-full">
+        <div className="xl:w-[calc(100%+125px)] w-full checkout-form">
             <div className="rounded-2xl shadow-xl shadow-black overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-orange-500 dark:to-orange-600 p-6">

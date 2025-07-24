@@ -1,5 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
-import { Document, Schema } from "mongoose";
+import { Document } from "mongoose";
 
 
 enum OrderStatus {

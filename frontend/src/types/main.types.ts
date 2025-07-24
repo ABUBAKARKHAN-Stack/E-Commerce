@@ -95,5 +95,6 @@ export interface ApiErrorType {
 
 
 export const enum OrderLoading {
-    TRACK_ORDER_LOADING = 'track-order'
+    TRACK_ORDER_LOADING = 'track-order',
+    GET_ALL_ORDERS = 'get-all-orders',
 }

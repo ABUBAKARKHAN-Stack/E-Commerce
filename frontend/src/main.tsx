@@ -32,7 +32,10 @@ import {
   WishlistPage,
   CheckoutPage,
   CheckoutSuccessPage,
-  TrackOrderPage
+  TrackOrderPage,
+  FaqsPage,
+  ContactPage,
+  UserOrdersPage
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
 import { UserAuthLayout } from '@/components/layout/user'
@@ -114,6 +117,22 @@ const router = createBrowserRouter([
     )
   },
   {
+    path: "/contact",
+    element: (
+      <AdminAuthLayout authenticationRequired={false}>
+        <ContactPage />
+      </AdminAuthLayout>
+    )
+  },
+  {
+    path: "/faqs",
+    element: (
+      <AdminAuthLayout authenticationRequired={false}>
+        <FaqsPage />
+      </AdminAuthLayout>
+    )
+  },
+  {
     path: "/products",
     element: (
       <AdminAuthLayout authenticationRequired={false}>
@@ -132,7 +151,7 @@ const router = createBrowserRouter([
 
   //! Protected Routes (Require Auth For Users)
   {
-    path: "/user/dashboard",
+    path: "/dashboard",
     element: (
       <UserAuthLayout authenticationRequired={true}>
         <UserDashboardPage />
@@ -140,7 +159,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/user/dashboard/profile/:name",
+    path: "/me",
     element: (
       <UserAuthLayout authenticationRequired={true}>
         <UserProfilePage />
@@ -154,6 +173,12 @@ const router = createBrowserRouter([
     </UserAuthLayout>,
     loader: cartLoader,
     errorElement: <CartErrorPage />
+  },
+  {
+    path: '/orders',
+    element: <UserAuthLayout authenticationRequired>
+      <UserOrdersPage />
+    </UserAuthLayout>,
   },
   {
     path: '/checkout',

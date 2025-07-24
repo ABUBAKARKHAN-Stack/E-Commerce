@@ -11,6 +11,7 @@ import ViewProduct from "./ViewProduct";
 import ProductImagesGallery from "./ProductImagesGallery";
 import ProductReviewsList from "./ProductReviewsList";
 import TrackOrderForm from "./TrackOrder/TrackOrderForm";
+import AboutHero from "./AboutHero";
 
 export {
     HeroText,
@@ -25,5 +26,6 @@ export {
     ViewProduct,
     ProductImagesGallery,
     ProductReviewsList,
-    TrackOrderForm
+    TrackOrderForm,
+    AboutHero,
 }

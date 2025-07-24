@@ -1,8 +1,8 @@
 import { Layout } from '@/components/layout/shared'
+import { useAuthContext } from '@/context/authContext';
 
 const UserProfilePage = () => {
-    // const { user } = useUserContext()
-    // console.log(user);
+    const { user } = useAuthContext()
 
     return (
         <Layout>

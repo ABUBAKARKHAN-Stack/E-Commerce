@@ -42,7 +42,7 @@ const FooterTop = () => {
         !user && { name: 'Login', link: '/sign-in' },
         !user && { name: 'Sign Up', link: '/sign-up' },
         { name: 'My Account', link: '/me' },
-        { name: 'Dashboard', link: '/user/dashboard' },
+        { name: 'Dashboard', link: '/dashboard' },
         { name: 'Cart', link: '/cart' },
         { name: 'Wishlist', link: '/wishlist' },
         { name: 'Track Your Order', link: '/track-order' }

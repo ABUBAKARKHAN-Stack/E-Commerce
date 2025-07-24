@@ -124,5 +124,33 @@ export const addressFields = [
         type: "text",
         placeholder: "74000",
     },
-   
+
 ] as const;
+
+export const contactFields = [
+    {
+        label: "Name",
+        name: "name",
+        type: "text",
+        placeholder: "Your full name",
+    },
+    {
+        label: "Email Address",
+        name: "email",
+        type: "email",
+        placeholder: "you@example.com",
+    },
+    {
+        label: "Subject (Optional)",
+        name: "subject",
+        type: "text",
+        placeholder: "What’s your message about?",
+    },
+    {
+        label: "Message",
+        name: "message",
+        type: "text",
+        placeholder: "Type your message here (min. 50 characters)",
+    },
+] as const;
+

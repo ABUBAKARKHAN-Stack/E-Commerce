@@ -5,7 +5,7 @@ type SectionHeaderProps = {
     mainHeading: string;
     subText: string;
     animateOnce?: boolean;
-    forHome?: boolean
+    forHome?: boolean;
 }
 const SectionHeader: FC<SectionHeaderProps> = ({ mainHeading, subText, animateOnce = false, forHome = true }) => {
     return (

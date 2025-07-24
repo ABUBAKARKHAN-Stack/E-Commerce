@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { DropdownItem, DropdownItems, DropdownMain } from '@/components/ui/dropdown-menu'
 import { useAuthContext } from '@/context/authContext'
 import { IUser } from '@/types/main.types'
-import { LayoutDashboardIcon, LogOutIcon } from 'lucide-react'
+import { LayoutDashboardIcon, LocateFixed, LogOutIcon } from 'lucide-react'
 import React, { FC, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 
@@ -65,8 +65,13 @@ const UserMenu: FC<Props> = ({ user, logout }) => {
                         <span className="px-4 py-2 text-left font-medium">Abubakar</span>
                         <div className="border-t mb-1"></div>
                         <DropdownItem>
-                            <Link to={`/user/dashboard`}>
+                            <Link to='/dashboard'>
                                 Dashboard <LayoutDashboardIcon className="inline-block w-5 h-5 ml-2" />
+                            </Link>
+                        </DropdownItem>
+                         <DropdownItem>
+                            <Link to={`/track-order`}>
+                                Track Order <LocateFixed className="inline-block w-5 h-5 ml-2" />
                             </Link>
                         </DropdownItem>
                         <DropdownItem>

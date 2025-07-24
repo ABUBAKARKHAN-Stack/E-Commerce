@@ -46,7 +46,13 @@ const Header: FC = () => {
           {/* === Cart Icon with Badge (hidden on mobile) === */}
           {user && <NavLink
             to="/cart"
-            className="relative hidden md:block"
+            className={({ isActive }) => (
+              `relative hidden md:block ${isActive
+                ? 'text-cyan-600 dark:text-orange-500'
+                : ''
+              }`
+
+            )}
             aria-label="View your cart"
           >
             <div className="relative">

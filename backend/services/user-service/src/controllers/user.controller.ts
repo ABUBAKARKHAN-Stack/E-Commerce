@@ -2,7 +2,7 @@ import { userModel } from '../models/user.model'
 import { Request, Response } from 'express'
 import { CreateUser, IUser, LoginUser, UpdatePassword, UpdateUser } from '../types/main.types'
 import { ApiError, ApiResponse, generateToken, sendEmail, publishEvent } from '../utils/index'
-import { existing, emailAuthTemplate } from '../helpers/index'
+import { existing, emailAuthTemplate, contactMessageTemplate } from '../helpers/index'
 import asyncHandler from 'express-async-handler'
 import validator from 'validator'
 import expressAsyncHandler from 'express-async-handler'
@@ -360,7 +360,7 @@ const deleteUser = asyncHandler(async (req: Request, res: Response) => {
 //? Get Wishlist
 const getWishList = expressAsyncHandler(async (req: Request, res: Response) => {
     const { _id } = res.locals.user;
-    
+
     const user = await userModel.findById(_id).select('wishlist');
 
     if (!user) {
@@ -371,16 +371,36 @@ const getWishList = expressAsyncHandler(async (req: Request, res: Response) => {
     if (!wishlist || wishlist.length === 0) {
         res
             .status(200)
-            .json( 
+            .json(
                 new ApiResponse(200, 'No products found in wishlist', { wishlist: [] })
             );
         return;
     }
 
- 
+
     res
         .status(200)
         .json(new ApiResponse(200, 'Wishlist Fetched', { wishlist }))
+})
+
+//? Send Contact Message
+const sendContactMessage = expressAsyncHandler(async (req: Request, res: Response) => {
+    const {
+        name,
+        email,
+        message,
+        subject
+    } = req.body;
+
+    if (!name || !email || !message) {
+        throw new ApiError(400, "Fill all fields.")
+    }
+
+    await sendEmail(`"ShopNex Contact Form" <official.shopnex@gmail.com>`, 'official.shopnex@gmail.com', `New Contact Form Submission from ${name}`, contactMessageTemplate(name, email, subject, message));
+
+    res
+        .status(200)
+        .json(new ApiResponse(200, 'Message sent successfully.'));
 })
 
 
@@ -395,5 +415,6 @@ export {
     updateUserPassword,
     logoutUser,
     deleteUser,
-    getWishList
+    getWishList,
+    sendContactMessage
 }

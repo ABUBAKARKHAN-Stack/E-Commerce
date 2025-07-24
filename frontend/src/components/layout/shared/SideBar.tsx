@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, forwardRef, SetStateAction } from "react";
 import {
     LayoutDashboard,
     ShoppingBag,
@@ -9,43 +9,44 @@ import {
     LogOut,
     LifeBuoy,
     Package,
+    Home,
 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
 import { useAuthContext } from "@/context/authContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ToolTip } from "@/components/reusable/shared";
 
 type Props = {
-    setActiveTab?: (tab: string) => void;
     isDrawerOpen: boolean;
     setIsDrawerOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => {
+const Sidebar = forwardRef<HTMLElement, Props>(({ isDrawerOpen, setIsDrawerOpen }, ref) => {
     const { user, logout, role } = useAuthContext();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
 
-    const sideBarItems = role === "admin" ? [
-        { icon: <LayoutDashboard strokeWidth={3} className="w-5 h-5 " />, text: "Dashboard", path: "/admin/dashboard" },
-        { icon: <Package strokeWidth={3} className="w-5 h-5" />, text: "Products", path: "/admin/products" },
-        { icon: <ShoppingBag strokeWidth={3} className="w-5 h-5 " />, text: "Orders", path: "/admin/orders" },
-        { icon: <User strokeWidth={3} className="w-5 h-5 " />, text: "Profile", path: "/admin/profile" }
-    ] : [
-        { icon: <LayoutDashboard strokeWidth={3} className="w-5 h-5 " />, text: "Dashboard", path: "dashboard" },
-        { icon: <ShoppingBag strokeWidth={3} className="w-5 h-5 " />, text: "Orders", path: "orders" },
-        { icon: <Heart strokeWidth={3} className="w-5 h-5 " />, text: "WishList", path: "wishlist" },
-        { icon: <ShoppingCart strokeWidth={3} className="w-5 h-5 " />, text: "Cart", path: "cart" },
-        { icon: <User strokeWidth={3} className="w-5 h-5 " />, text: "Profile", path: "profile" },
-        { icon: <LifeBuoy strokeWidth={3} className="w-5 h-5" />, text: "Help & Support", path: "help" }
-    ]
+
+    const sideBarItems = role === "admin"
+        ? [
+            { icon: <LayoutDashboard strokeWidth={3} className="w-5 h-5" />, text: "Dashboard", path: "/admin/dashboard" },
+            { icon: <Package strokeWidth={3} className="w-5 h-5" />, text: "Products", path: "/admin/products" },
+            { icon: <ShoppingBag strokeWidth={3} className="w-5 h-5" />, text: "Orders", path: "/admin/orders" },
+            { icon: <User strokeWidth={3} className="w-5 h-5" />, text: "Profile", path: "/admin/profile" }
+        ]
+        : [
+            { icon: <Home strokeWidth={3} className="w-5 h-5" />, text: "Home", path: '/' },
+            { icon: <LayoutDashboard strokeWidth={3} className="w-5 h-5" />, text: "Dashboard", path: "/dashboard" },
+            { icon: <ShoppingBag strokeWidth={3} className="w-5 h-5" />, text: "Orders", path: "/orders" },
+            { icon: <Heart strokeWidth={3} className="w-5 h-5" />, text: "WishList", path: "/wishlist" },
+            { icon: <ShoppingCart strokeWidth={3} className="w-5 h-5" />, text: "Cart", path: "/cart" },
+            { icon: <User strokeWidth={3} className="w-5 h-5" />, text: "Profile", path: "/me" },
+            { icon: <LifeBuoy strokeWidth={3} className="w-5 h-5" />, text: "Help & Support", path: "/help" }
+        ];
 
     const handleNavigation = (path: string) => {
-        if (role === "admin" && path.startsWith("/admin")) {
-            navigate(path);
-        } else {
-            setActiveTab!(path);
-        }
+        navigate(path)
     };
 
     return (
@@ -74,13 +75,12 @@ const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => 
 
 
                     {/* Sidebar Navigation */}
-
                     <nav>
                         <ul className="space-y-2">
                             {sideBarItems.map(({ icon, text, path }, i) => (
                                 <li
                                     key={i}
-                                    className="flex items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors duration-200 dark:text-gray-200"
+                                    className={`flex ${(pathname === path || (path !== '/' && pathname.startsWith(path))) ? 'bg-gray-200 dark:bg-zinc-700' : ""} items-center gap-3 p-3 rounded-md cursor-pointer hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors duration-200 dark:text-gray-200`}
                                     onClick={() => handleNavigation(path)}
                                 >
                                     {icon}
@@ -99,19 +99,25 @@ const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => 
                 </SheetContent>
             </Sheet>
 
-            <aside className="w-15 h-[calc(93vh-5rem)] hidden  xl:flex justify-center items-center fixed left-6 z-50 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] shadow-xl border-2 dark:border-zinc-700 rounded-full">
+            <aside
+            ref={ref}
+            className="w-15 h-[calc(93vh-5rem)] hidden xl:flex justify-center items-center fixed left-6 z-50 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] shadow-xl border-2 dark:border-zinc-700 rounded-full">
                 <nav className="w-full flex items-center justify-center">
-                    <ul className="space-y-2">
+                    <ul className="space-y-1">
                         {sideBarItems.map(({ icon, text, path }, i) => (
-                           
                             <ToolTip
                                 key={i}
                                 triggerValue={
                                     <li
-                                        className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
-                                        onClick={() => handleNavigation(path)}>
+                                        className={`p-3 ${(pathname === path || (path !== '/' && pathname.startsWith(path)))
+                                            ? 'dark:bg-orange-500/90 text-white bg-cyan-500/90'
+                                            : ''
+                                            } rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200`}
+                                        onClick={() => handleNavigation(path)}
+                                    >
                                         {icon}
                                     </li>
+
                                 }
                                 tooltip={text}
                             />
@@ -131,7 +137,9 @@ const Sidebar: FC<Props> = ({ setActiveTab, isDrawerOpen, setIsDrawerOpen }) => 
             </aside>
         </>
     );
-};
+})
+
+Sidebar.displayName = "SideBar"
 
 
 export default Sidebar;

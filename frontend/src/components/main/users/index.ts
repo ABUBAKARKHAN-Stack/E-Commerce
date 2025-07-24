@@ -20,6 +20,11 @@ import WishlistMain from "./WishlistMain";
 import CheckoutMain from "./CheckoutMain";
 import CheckoutSuccessMain from "./CheckoutSuccessMain";
 import TrackOrderMain from "./TrackOrderMain";
+import AboutHeroMain from "./AboutHeroMain";
+import FaqsMain from "./FaqsMain";
+import ContactMain from "./ContactMain";
+import FaqsTeaserMain from "./FaqsTeaserMain";
+import UserOrdersMain from "./UserOrdersMain";
 
 export {
     HeroMain,
@@ -43,5 +48,10 @@ export {
     WishlistMain,
     CheckoutMain,
     CheckoutSuccessMain,
-    TrackOrderMain
+    TrackOrderMain,
+    AboutHeroMain,
+    FaqsMain,
+    ContactMain,
+    FaqsTeaserMain,
+    UserOrdersMain
 }

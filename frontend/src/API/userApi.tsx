@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { orderApi, userApi, userProductApi } from './apiClients'
 import { addReviewSchema } from '@/schemas/add-reviewSchema'
+import { contactSchema } from '@/schemas/contactSchema'
 
 //* User APIS
 
@@ -99,6 +100,10 @@ const getWishList = async () => {
   })
 }
 
+const sendContactMessage = async (data: z.infer<typeof contactSchema>) => {
+  return await userApi.post('/contact', data)
+}
+
 
 const addToCart = async (productId: string, quantity: number) => {
   return await userProductApi.post(`add-to-cart/${productId}`, { quantity }, {
@@ -175,6 +180,12 @@ const getConfirmedOrderDetails = async (orderId: string) => {
   })
 }
 
+const getAllOrders = async () => {
+  return await orderApi.get('/all-orders', {
+    withCredentials: true
+  })
+}
+
 const completeCheckout = async (totalAmount: number) => {
   return await orderApi.post('/complete-checkout', {
     totalAmountInUSD: totalAmount
@@ -199,6 +210,7 @@ export {
   addToWishList,
   removeFromWishList,
   getWishList,
+  sendContactMessage,
   addToCart,
   updateCart,
   removeFromCart,
@@ -211,5 +223,6 @@ export {
   proceedToCheckout,
   getPendingOrderDetails,
   getConfirmedOrderDetails,
+  getAllOrders,
   completeCheckout
 }

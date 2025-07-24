@@ -85,6 +85,8 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
         .json(new ApiResponse(200, 'Payment Intent Created', { clientSecret: paymentIntent.client_secret, orderId: order.orderId }))
 })
 
+
+
 const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Response) => {
     const sig = req.headers['stripe-signature'];
     let event;
@@ -136,9 +138,34 @@ const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Respo
 });
 
 
-export {
+const getUserOrders = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { user } = res.locals;
+    if (!user) {
+        throw new ApiError(401, "User not Logged In")
+    }
+    const { userId } = user;
+
+    const orders = await orderModel.find({
+        userId
+    }).select('-userId -_id');
+
+    if (orders.length === 0) {
+        res
+            .status(200)
+            .json(new ApiResponse(200, `You Don't have made any order`, []))
+    }
+
+
+    res
+        .status(200)
+        .json(new ApiResponse(200, "Orders Fetched", orders))
+})
+
+
+export { 
     getPendingOrder,
     getConfirmedOrder,
     completeCheckout,
-    stripeWebhookHandler
+    stripeWebhookHandler,
+    getUserOrders
 }

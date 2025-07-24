@@ -1,4 +1,4 @@
 import { existing } from "./user.helper";
-import { emailAuthTemplate } from "./emailTemplate.helper";
+import { emailAuthTemplate , contactMessageTemplate,orderConfirmationTemplate} from "./emailTemplate.helper";
 
-export { existing, emailAuthTemplate };
+export { existing, emailAuthTemplate, contactMessageTemplate,orderConfirmationTemplate };

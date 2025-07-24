@@ -5,7 +5,7 @@ import { useOrderContext } from '@/context/orderContext'
 import { trackOrderSchema } from '@/schemas/track-orderSchema'
 import { OrderLoading } from '@/types/main.types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader, LoaderPinwheel } from 'lucide-react'
+import {  LoaderPinwheel } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { z } from 'zod'
@@ -21,9 +21,7 @@ const TrackOrderForm = () => {
     });
 
     const onSubmit = async (data: z.infer<typeof trackOrderSchema>) => {
-        getConfirmedOrderDetails(data.orderId, navigate)
-        // console.log(res);
-
+        await getConfirmedOrderDetails(data.orderId, navigate)
     }
     return (
         <Form {...form}>

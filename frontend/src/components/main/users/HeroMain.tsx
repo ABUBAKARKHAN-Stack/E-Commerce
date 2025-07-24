@@ -41,17 +41,11 @@ const HeroMain = () => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
 
-
-
     const [isFirst, setIsFirst] = useState(true);
-    // Animation logic
     useGSAP(() => {
-        console.log(isFirst);
 
-        // Restart timeline on index change
         tl.current.clear();
 
-        // Run this part only once
         if (isFirst) {
             tl.current
                 .fromTo([waveDividerTopRef.current, waveDividerBottomRef.current], {
@@ -80,7 +74,6 @@ const HeroMain = () => {
             setIsFirst(false);
         }
 
-        // Main slide animation
         tl.current
             .fromTo(
                 imageContainerRef.current,
@@ -106,7 +99,6 @@ const HeroMain = () => {
 
         tl.current.play();
 
-        // Update slide after 7s
         const timeout = setTimeout(() => {
             setCurrentIndex((prev) =>
                 prev < heroItems.length - 1 ? prev + 1 : 0
