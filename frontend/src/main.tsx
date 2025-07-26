@@ -48,6 +48,7 @@ import { wishlistLoader } from './utils/loaders/wishlistLoader'
 import WishlistErrorPage from './pages/users/error/WishlistErrorPage'
 import { confirmOrderDetailsLoader, pendingOrderDetailsLoader } from './utils/loaders/orderDetailsLoader'
 import { OrderProvider } from './context/orderContext'
+import { ActivityProvider } from './context/activityContext'
 
 
 
@@ -277,15 +278,17 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <ThemeProvider>
       <AuthProvider>
         <ProductProvider>
           <OrderProvider>
+            <ActivityProvider>
             <RouterProvider router={router} />
+            </ActivityProvider>
           </OrderProvider>
         </ProductProvider>
       </AuthProvider>
     </ThemeProvider>
-  </StrictMode >,
+  // </StrictMode >,
 )

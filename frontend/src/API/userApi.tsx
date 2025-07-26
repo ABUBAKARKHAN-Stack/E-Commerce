@@ -1,7 +1,8 @@
 import { z } from 'zod'
-import { orderApi, userApi, userProductApi } from './apiClients'
+import { activityApi, orderApi, userApi, userProductApi } from './apiClients'
 import { addReviewSchema } from '@/schemas/add-reviewSchema'
 import { contactSchema } from '@/schemas/contactSchema'
+import { CompleteCheckoutBody } from '@/types/main.types'
 
 //* User APIS
 
@@ -180,16 +181,22 @@ const getConfirmedOrderDetails = async (orderId: string) => {
   })
 }
 
-const getAllOrders = async () => {
+const getAllOrders = async (params?: any) => {
   return await orderApi.get('/all-orders', {
+    params,
     withCredentials: true
   })
 }
 
-const completeCheckout = async (totalAmount: number) => {
-  return await orderApi.post('/complete-checkout', {
-    totalAmountInUSD: totalAmount
-  }, {
+const completeCheckout = async (checkoutBody: CompleteCheckoutBody) => {
+  return await orderApi.post('/complete-checkout', checkoutBody, {
+    withCredentials: true
+  })
+}
+
+const getRecentActivity = async (params: any) => {
+  return activityApi.get('/recent', {
+    params,
     withCredentials: true
   })
 }
@@ -224,5 +231,6 @@ export {
   getPendingOrderDetails,
   getConfirmedOrderDetails,
   getAllOrders,
-  completeCheckout
+  completeCheckout,
+  getRecentActivity
 }

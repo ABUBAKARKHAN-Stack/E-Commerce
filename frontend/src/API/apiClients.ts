@@ -26,3 +26,7 @@ export const adminApi = axios.create({
 export const adminProductApi = axios.create({
     baseURL: 'http://localhost:3006/product/admin'
 })
+
+export const activityApi = axios.create({
+    baseURL: 'http://localhost:3006/activity'
+})

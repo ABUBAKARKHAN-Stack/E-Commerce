@@ -1,3 +1,4 @@
+import { OrderIdBadge } from '@/components/reusable/user';
 import { CheckCircle } from 'lucide-react'
 import { FC, Ref } from 'react'
 
@@ -32,9 +33,9 @@ const CheckoutSuccessIconAndText: FC<Props> = ({
 
 
             {/*  Order ID badge */}
-            <div className="orderid-badge inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-full text-sm font-medium bg-cyan-50 text-cyan-700 border border-cyan-200 dark:bg-orange-500/20 dark:text-orange-300 dark:border-orange-500/30">
-                ORDER-ID: {orderId}
-            </div>
+            <OrderIdBadge
+                orderId={orderId}
+            />
         </div>)
 }
 

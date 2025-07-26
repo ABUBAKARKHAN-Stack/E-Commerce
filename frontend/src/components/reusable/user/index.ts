@@ -8,6 +8,7 @@ import AddToCartButton from "./AddToCartButton";
 import ProductImageSelector from "./ProductImageSelector";
 import AddReviewForm from "./AddReviewForm";
 import DeliveryInfo from "./DeliveryInfo";
+import OrderIdBadge from "./OrderIdBadge";
 
 export {
     SectionHeader,
@@ -19,5 +20,6 @@ export {
     AddToCartButton,
     ProductImageSelector,
     AddReviewForm,
-    DeliveryInfo
+    DeliveryInfo,
+    OrderIdBadge
 }

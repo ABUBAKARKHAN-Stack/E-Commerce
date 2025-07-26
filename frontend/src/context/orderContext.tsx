@@ -9,7 +9,7 @@ import { errorToast, successToast } from "@/utils/toastNotifications";
 
 type OrderContextType = {
     getConfirmedOrderDetails: (orderId: string, navigate: (path: string) => void) => Promise<void>;
-    getAllOrders: () => Promise<void>;
+    getAllOrders: (params?: any) => Promise<void>;
     pendingOrders: any[];
     cancelledOrders: any[];
     confirmedOrders: any[];
@@ -48,10 +48,10 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const getAllOrders = async () => {
+    const getAllOrders = async (params?: any) => {
         setLoading(OrderLoading.GET_ALL_ORDERS)
         try {
-            const res = await getAllOrdersApi();
+            const res = await getAllOrdersApi(params);
             if (res.status === 200) {
                 const orders = res.data.data;
                 const confirmedOrders = orders.filter((o: any) => o.status === 'confirmed');

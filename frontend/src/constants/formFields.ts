@@ -120,7 +120,7 @@ export const addressFields = [
     },
     {
         label: "ZIP / Postal Code",
-        name: "zipCode",
+        name: "postalCode",
         type: "text",
         placeholder: "74000",
     },

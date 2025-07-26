@@ -8,6 +8,8 @@ import SignUpForm from "./SignUpForm";
 import ThemeToggler from "./ThemeToggler";
 import ToolTip from "./ToolTip";
 import Pagination from "./Pagination";
+import DashboardSectionHeader from "./DashboardSectionHeader";
+import DashboardMainHeader from "./DashboardMainHeader";
 
 
 export {
@@ -20,5 +22,7 @@ export {
     SignUpForm,
     ThemeToggler,
     ToolTip,
-    Pagination
+    Pagination,
+    DashboardSectionHeader,
+    DashboardMainHeader
 }

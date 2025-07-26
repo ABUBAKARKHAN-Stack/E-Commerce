@@ -3,21 +3,36 @@ import expressAsyncHandler from "express-async-handler";
 import activityModel from "../models/activity.model";
 import { ApiResponse } from "../utils";
 
-const createActivity = expressAsyncHandler(async (req: Request, res: Response) => {
-    const { type, description } = req.body;
+const getRecentActivity = expressAsyncHandler(async (req: Request, res: Response) => {
     const { userId } = res.locals.user;
+    const {
+        limit,
+        page
+    } = req.query;
+    const sortBy: any = { createdAt: -1 };
 
-    const activity = await activityModel.create({
-        userId,
-        activityType: type,
-        activityDescription: description
-    });
+    const paginationOptions: any = {};
+    paginationOptions.limit = Number(limit) || 10;
+    paginationOptions.page = Number(page) || 1;
+
+
+    const skip = (paginationOptions.page - 1) * paginationOptions.limit;
+
+
+    const recentActivity = await activityModel.find({
+        userId
+    })
+        .limit(paginationOptions.limit)
+        .skip(skip)
+        .sort(sortBy)
+        .lean()
+        .select('-updatedAt -_id -__v')
 
     res
         .status(200)
-        .json(new ApiResponse(200, "Activity Created Successfully" ,activity))
+        .json(new ApiResponse(200, "Recent Activity Fetched", recentActivity))
 })
 
 export {
-    createActivity
+    getRecentActivity
 }

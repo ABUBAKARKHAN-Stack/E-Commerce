@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, FC, forwardRef, SetStateAction } from "react";
+import { Dispatch, FC, forwardRef, SetStateAction, useEffect, useState } from "react";
 import {
     LayoutDashboard,
     ShoppingBag,
@@ -16,6 +16,8 @@ import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
 import { useAuthContext } from "@/context/authContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToolTip } from "@/components/reusable/shared";
+import { handleScrollToSection } from "@/utils/HandleScrollToSection";
+import { useScrollPosition } from "@/hooks/useScrollPosition";
 
 type Props = {
     isDrawerOpen: boolean;
@@ -100,8 +102,9 @@ const Sidebar = forwardRef<HTMLElement, Props>(({ isDrawerOpen, setIsDrawerOpen 
             </Sheet>
 
             <aside
-            ref={ref}
-            className="w-15 h-[calc(93vh-5rem)] hidden xl:flex justify-center items-center fixed left-6 z-50 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] shadow-xl border-2 dark:border-zinc-700 rounded-full">
+                ref={ref}
+                className={`w-15 h-[calc(93vh-4.5rem)] hidden xl:flex justify-center items-center fixed left-6 z-50 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] transform shadow-xl border-2 dark:border-zinc-700 rounded-full`}
+            >
                 <nav className="w-full flex items-center justify-center">
                     <ul className="space-y-1">
                         {sideBarItems.map(({ icon, text, path }, i) => (
@@ -117,7 +120,6 @@ const Sidebar = forwardRef<HTMLElement, Props>(({ isDrawerOpen, setIsDrawerOpen 
                                     >
                                         {icon}
                                     </li>
-
                                 }
                                 tooltip={text}
                             />
@@ -126,7 +128,8 @@ const Sidebar = forwardRef<HTMLElement, Props>(({ isDrawerOpen, setIsDrawerOpen 
                             triggerValue={
                                 <li
                                     className="p-3 rounded-md cursor-pointer hover:bg-cyan-500 dark:hover:bg-orange-500 transition-colors ease-in-out duration-300 hover:text-white text-gray-800 dark:text-gray-200"
-                                    onClick={async () => await logout(navigate)}>
+                                    onClick={async () => await logout(navigate)}
+                                >
                                     <LogOut strokeWidth={3} className="w-5 h-5" />
                                 </li>
                             }

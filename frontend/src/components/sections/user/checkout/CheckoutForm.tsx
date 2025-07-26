@@ -3,10 +3,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input'
 import { addressFields } from '@/constants/formFields'
 import { useAuthContext } from '@/context/authContext'
-import { addressSchema } from '@/schemas/checkoutSchema'
-import { IUser } from '@/types/main.types'
+import { shippingAddressSchema } from '@/schemas/checkoutSchema'
+import { CompleteCheckoutBody, IShippingAddress, IUser, PaymentMethod } from '@/types/main.types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CreditCard, LoaderPinwheel, Mail, MapPin, ShoppingBag } from 'lucide-react'
+import { BoxSelectIcon, CreditCard, LoaderPinwheel, Mail, MapPin, ShoppingBag } from 'lucide-react'
 import { FC, FormEvent, useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
@@ -21,6 +21,8 @@ import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '@/utils/ApiError'
 import { handleScrollToSection } from '@/utils/HandleScrollToSection'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
 
 type Props = {
     totalAmount: number;
@@ -30,8 +32,8 @@ const CheckoutForm: FC<Props> = ({
     totalAmount,
 }) => {
     let { user } = useAuthContext();
-    const form = useForm<z.infer<typeof addressSchema>>({
-        resolver: zodResolver(addressSchema),
+    const form = useForm<z.infer<typeof shippingAddressSchema>>({
+        resolver: zodResolver(shippingAddressSchema),
         defaultValues: {
             addressLine1: "",
             addressLine2: "",
@@ -41,7 +43,7 @@ const CheckoutForm: FC<Props> = ({
             fullName: "",
             state: "",
             phone: "",
-            zipCode: "",
+            postalCode: "",
         }
     });
     const [activeTab, setActiveTab] = useState('shipping');
@@ -53,6 +55,8 @@ const CheckoutForm: FC<Props> = ({
     const { completeCheckout, setCartProductsCount } = useProductContext();
     const navigate = useNavigate();
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [paymentMethod, setPaymentMethod] = useState<string>("")
+    const [shippingAddress, setShippingAddress] = useState<z.infer<typeof shippingAddressSchema > | null>(null);
 
 
     useEffect(() => {
@@ -66,9 +70,10 @@ const CheckoutForm: FC<Props> = ({
 
 
 
-    const onSubmit = (data: z.infer<typeof addressSchema>) => {
+    const onSubmit = (data: z.infer<typeof shippingAddressSchema>) => {
         setShippingCompleted(true)
-        handleScrollToSection('checkout-form');     
+        handleScrollToSection('checkout-form');
+        setShippingAddress(data)
         setActiveTab('payment');
     }
 
@@ -87,7 +92,11 @@ const CheckoutForm: FC<Props> = ({
         const card = elements.getElement(CardElement);
         setPaymentLoading(true)
         try {
-            const { clientSecret, orderId } = await completeCheckout(totalAmount);
+            const { clientSecret, orderId } = await completeCheckout({
+                paymentMethod,
+                shippingAddress: shippingAddress as IShippingAddress,
+                totalAmountInUSD: totalAmount
+            });
 
             const { paymentIntent, error, } = await stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
@@ -259,37 +268,56 @@ const CheckoutForm: FC<Props> = ({
 
                 {activeTab === 'payment' && (
                     <div className="p-6 space-y-6">
-                        {/* Payment Section */}
+                        {!paymentMethod ? (
+                            <>
+                                <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
+                                    <BoxSelectIcon className="size-6" />
+                                    Select Payment Method
+                                </h3>
 
-                        <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
-                            <CreditCard className="size-6" />
-                            Payment Information
-                        </h3>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="rounded-md border border-[#3C3C43] bg-background px-4 py-3">
-                                <CardElement options={CARD_ELEMENT_OPTIONS} />
-                            </div>
+                                <RadioGroup onValueChange={(value) => setPaymentMethod(value)}>
+                                    <div className="flex items-center gap-x-2">
+                                        <RadioGroupItem value={PaymentMethod.COD} id="cod" />
+                                        <Label htmlFor="cod">COD (Cash On Delivery)</Label>
+                                    </div>
+                                    <div className="flex items-center gap-x-2">
+                                        <RadioGroupItem value={PaymentMethod.STRIPE} id="card" />
+                                        <Label htmlFor="card">Card</Label>
+                                    </div>
+                                </RadioGroup>
+                            </>
+                        ) : paymentMethod === PaymentMethod.STRIPE ? (
+                            <>
+                                <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
+                                    <CreditCard className="size-6" />
+                                    Payment Information
+                                </h3>
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <div className="rounded-md border border-[#3C3C43] bg-background px-4 py-3">
+                                        <CardElement options={CARD_ELEMENT_OPTIONS} />
+                                    </div>
 
-                            <Button
-                                size={'lg'}
-                                type="submit"
-                                disabled={paymentLoading || !stripe}
-                                className='w-full'
-
-                            >
-                                {
-                                    paymentLoading ? <>
-                                        <span>Processing Payment</span>
-                                        <LoaderPinwheel className='animate-spin' />
-                                    </> : "Complete Order"
-                                }
-                            </Button>
-                        </form>
-
+                                    <Button
+                                        size="lg"
+                                        type="submit"
+                                        disabled={paymentLoading || !stripe}
+                                        className="w-full"
+                                    >
+                                        {paymentLoading ? (
+                                            <>
+                                                <span>Processing Payment</span>
+                                                <LoaderPinwheel className="animate-spin" />
+                                            </>
+                                        ) : (
+                                            'Complete Order'
+                                        )}
+                                    </Button>
+                                </form>
+                            </>
+                        ) : null}
                     </div>
-                )
+                )}
 
-                }
             </div>
         </div>
 

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/index";
-import { MongoError } from "mongodb";
 import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { env } from "../config/env";
 
@@ -21,15 +20,7 @@ const errorHandler = (
         return;
     }
 
-    // Handle MongoDB duplicate key error dynamically
-    if (err instanceof MongoError && err.code === 11000) {
-        const duplicateField = Object.keys((err as any).keyValue)[0] || "field"
-        res
-            .status(409)
-            .json(new ApiError(409, `User with the same ${duplicateField} already exists.`));
-        return;
-    }
-
+    
     // Handle JWT errors
     if (err instanceof TokenExpiredError) {
         res.status(401).json(new ApiError(401, "Unauthorized: Token expired"));

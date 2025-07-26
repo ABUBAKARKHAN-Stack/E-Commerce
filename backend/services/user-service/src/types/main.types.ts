@@ -18,7 +18,7 @@ interface IUser extends Document {
 
 interface ICartProduct {
     productId: string;
-    price:number;
+    price: number;
     quantity: number;
 }
 
@@ -59,6 +59,17 @@ interface UpdatePassword {
     newPassword: string;
 }
 
+enum ActivityType {
+    LOGIN = "LOGIN",
+    LOGOUT = "LOGOUT",
+    REGISTER = "REGISTER",
+
+    UPDATE_PROFILE = "UPDATE_PROFILE",
+    CHANGE_PASSWORD = "CHANGE_PASSWORD",
+    VERIFY_ACCOUNT = "VERIFY_ACCOUNT",
+    RESET_PASSWORD = "RESET_PASSWORD",
+}
+
 export {
     IUser,
     ICart,
@@ -67,5 +78,7 @@ export {
     CreateUser,
     LoginUser,
     UpdateUser,
-    UpdatePassword
+    UpdatePassword,
+    ActivityType
+
 }; 

@@ -37,5 +37,5 @@ app.use('/activity', proxy(env.ACTIVITY_SERVICE_URL))
 const PORT = env.PORT;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Gateway is running on port ${PORT}`);
 }); 

@@ -1,6 +1,6 @@
 import { userModel } from '../models/user.model'
 import { Request, Response } from 'express'
-import { CreateUser, IUser, LoginUser, UpdatePassword, UpdateUser } from '../types/main.types'
+import { ActivityType, CreateUser, IUser, LoginUser, UpdatePassword, UpdateUser } from '../types/main.types'
 import { ApiError, ApiResponse, generateToken, sendEmail, publishEvent } from '../utils/index'
 import { existing, emailAuthTemplate, contactMessageTemplate } from '../helpers/index'
 import asyncHandler from 'express-async-handler'
@@ -46,7 +46,12 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "User not created")
     }
     try {
-        await publishEvent<IUser>("user-creation", "user-created", user)
+        await publishEvent<IUser>("user-creation", "user-created", user);
+        await publishEvent('activity.user.register', ActivityType.REGISTER, {
+            userId: user._id,
+            activityType: ActivityType.REGISTER,
+            activityDescription: `${user.username} registered an account.`
+        })
     } catch (error) {
         console.log("Error publishing event:", error);
         throw new ApiError(500, "Error publishing event");
@@ -58,7 +63,7 @@ const createUser = asyncHandler(async (req: Request, res: Response) => {
 
 //? Login a user
 const loginUser = asyncHandler(async (req: Request, res: Response) => {
-    const { email, phone, password }: LoginUser = req.body
+    const { email, phone, password }: LoginUser = req.body;
     if (!email && !phone) {
         throw new ApiError(400, "Email or phone is required")
     }
@@ -105,7 +110,17 @@ const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const token = generateToken({
         userId: user._id,
         role: user.role,
-    }, "1d")
+    }, "1d");
+
+    try {
+        await publishEvent('activity.user.login', ActivityType.LOGIN, {
+            userId: user._id,
+            activityType: ActivityType.LOGIN,
+            activityDescription: `${user.username} logged in.`
+        })
+    } catch (error) {
+        console.log("Error publishing event:", error);
+    }
 
     res
         .status(200)
@@ -139,7 +154,17 @@ const verifyUser = asyncHandler(async (req: Request, res: Response) => {
     }
 
     user.isVerified = true;
-    await user.save()
+    await user.save();
+
+    try {
+        await publishEvent('activity.user.verify.account', ActivityType.VERIFY_ACCOUNT, {
+            userId: user._id,
+            activityType: ActivityType.VERIFY_ACCOUNT,
+            activityDescription: `User ${user.email} verified their account.`
+        })
+    } catch (error) {
+        console.log("Error publishing event:", error);
+    }
 
     res
         .status(200)
@@ -212,6 +237,17 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
     const { user } = res.locals;
     user.password = password;
     await user.save()
+
+    try {
+        await publishEvent('activity.user.reset.password', ActivityType.RESET_PASSWORD, {
+            userId: user._id,
+            activityType: ActivityType.RESET_PASSWORD,
+            activityDescription: `User ${user.username} reset their password.`
+        })
+    } catch (error) {
+        console.log("Error publishing event:", error);
+    }
+
     res
         .status(200)
         .json(new ApiResponse(200, "Password reset successfully"))
@@ -272,6 +308,18 @@ const updateUser = asyncHandler(async (req: Request, res: Response) => {
     if (!updatedUser) {
         throw new ApiError(400, "User not updated")
     }
+
+    try {
+        await publishEvent('activity.user.update.profile', ActivityType.UPDATE_PROFILE, {
+            userId: updatedUser._id,
+            activityType: ActivityType.UPDATE_PROFILE,
+            activityDescription: `${updatedUser.username} updated their profile.`
+        })
+    } catch (error) {
+        console.log("Error publishing event:", error);
+    }
+
+
     res
         .status(200)
         .json(new ApiResponse(200, "User updated successfully", updatedUser))
@@ -301,6 +349,16 @@ const updateUserPassword = asyncHandler(async (req: Request, res: Response) => {
     // Save the updated password
     await user.save();
 
+    try {
+        await publishEvent('activity.user.change.password', ActivityType.CHANGE_PASSWORD, {
+            userId: user._id,
+            activityType: ActivityType.CHANGE_PASSWORD,
+            activityDescription: `${user.username} changed their password.`
+        })
+    } catch (error) {
+        console.log("Error publishing event:", error);
+    }
+
     res
         .status(200)
         .json(new ApiResponse(200, "User password updated successfully"));
@@ -315,6 +373,17 @@ const logoutUser = asyncHandler(async (req: Request, res: Response) => {
     const user = await userModel.findById(res.locals.user._id)
     if (!user) {
         throw new ApiError(400, "User not found");
+    }
+
+    try {
+        await publishEvent('activity.user.logout', ActivityType.LOGOUT, {
+            userId: user._id,
+            activityType: ActivityType.LOGOUT,
+            activityDescription: `${user.username} logged out.`
+        })
+    }
+    catch (error) {
+        console.log("Error publishing event:", error);
     }
 
     res

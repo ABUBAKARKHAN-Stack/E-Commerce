@@ -5,8 +5,11 @@ import { ApiError, ApiResponse, publishEvent, subscribeToTopics } from '../utils
 import redisClient from "../config/redis.config"
 import mongoose from "mongoose"
 import { getAllRedisProducts, getProductbyId, invalidateProductCache } from "../helper/redisProduct.helper"
-import { IProduct, IReviews } from "../types/main.types"
+import { ActivityType, IProduct, IReviews, JwtUpdatedPayload } from "../types/main.types"
 import { sortProducts, updateTotalRatingAndReviews } from "../helper/userProduct.helper"
+import jwt from 'jsonwebtoken';
+import { env } from "../config/env"
+
 
 
 const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) => {
@@ -157,8 +160,24 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
 
 
 const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
-    const cachedProduct = await getProductbyId(req.params.id)
+    const cachedProduct = await getProductbyId(req.params.id);
+    const token = req.cookies.userToken;
+    let userId;
+
+
+    if (token) {
+        const decodedToken = jwt.verify(token, env.JWT_SECRET!) as JwtUpdatedPayload;
+        userId = decodedToken.userId;
+    }
+
     if (cachedProduct) {
+        if (userId) {
+            await publishEvent('activity.user.product.view', ActivityType.VIEW_PRODUCT, {
+                userId: userId,
+                activityType: ActivityType.VIEW_PRODUCT,
+                activityDescription: `${cachedProduct.name} was viewed.`
+            });
+        }
         console.log("🚀 Fetched product from cache");
         res
             .status(200)
@@ -171,6 +190,13 @@ const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
     }
     await redisClient.set(`product:${product._id}`, JSON.stringify(product));
     await redisClient.expire(`product:${product._id}`, 60 * 30);
+    if (userId) {
+        await publishEvent('activity.user.product.view', ActivityType.VIEW_PRODUCT, {
+            userId: userId,
+            activityType: ActivityType.VIEW_PRODUCT,
+            activityDescription: `${product.name} was viewed.`
+        });
+    }
 
     res
         .status(200)
@@ -316,7 +342,16 @@ const addToCart = expressAsyncHandler(async (req: Request, res: Response) => {
     };
 
     try {
-        await publishEvent("cart.create", "created_cart", cartedProductsPayload)
+        await publishEvent("cart.create", "created_cart", cartedProductsPayload);
+        await publishEvent('activity.user.cart.add', ActivityType.ADD_TO_CART, {
+            userId: userId,
+            activityType: ActivityType.ADD_TO_CART,
+            activityDescription: `${product.name} was added to the cart.`,
+            metaData: {
+                productName: product.name,
+                quantity
+            }
+        })
         console.log("Event published successfully", cartedProductsPayload)
     } catch (error) {
         console.error('Error publishing product created event:', error)
@@ -339,10 +374,22 @@ const removeFromCart = expressAsyncHandler(async (req: Request, res: Response) =
         throw new ApiError(400, "Invalid product ID");
     }
 
+    const product = await productModel.findById(productId).select("name");
+
+    if (!product) {
+        throw new ApiError(400, "Product not found");
+    }
+
+
     const cartedProducts = { productId, userId };
 
     try {
         await publishEvent("cart.remove.product", "removed_product", cartedProducts);
+        await publishEvent('activity.user.cart.remove', ActivityType.REMOVE_FROM_CART, {
+            userId: userId,
+            activityType: ActivityType.REMOVE_FROM_CART,
+            activityDescription: `${product.name} was removed from the cart.`,
+        })
         console.log("✅ Event published successfully", cartedProducts);
 
         res
@@ -431,6 +478,13 @@ const createReview = expressAsyncHandler(async (req: Request, res: Response) => 
 
     invalidateProductCache(productId);
 
+    await publishEvent('activity.user.review.write', ActivityType.WRITE_REVIEW, {
+        userId,
+        activityType: ActivityType.WRITE_REVIEW,
+        activityDescription: `You wrote a review on ${product.name}.`
+    })
+
+
     res
         .status(200)
         .json(new ApiResponse(200, "Review Added Successfully", {
@@ -501,6 +555,12 @@ const deleteReview = expressAsyncHandler(async (req: Request, res: Response) => 
     await product.save();
 
     invalidateProductCache(productId);
+
+    await publishEvent('activity.user.review.delete', ActivityType.DELETE_REVIEW, {
+        userId,
+        activityType: ActivityType.DELETE_REVIEW,
+        activityDescription: `You deleted your review on ${product.name}.`
+    });
 
     res
         .status(200)
@@ -614,6 +674,11 @@ const addToWishList = expressAsyncHandler(async (req: Request, res: Response) =>
 
     try {
         await publishEvent('add-to-wishlist', 'added-in-wishlist', wishlistPayload);
+        await publishEvent('activity.user.wishlist.add', ActivityType.ADD_TO_WISHLIST, {
+            userId: userId,
+            activityType: ActivityType.ADD_TO_WISHLIST,
+            activityDescription: `${product.name} was added to your wishlist.`
+        })
         console.log('Add to Wishlist Event Send...');
     } catch (error) {
         throw new ApiError(402, "Failed to sent wishlist event.")
@@ -655,6 +720,11 @@ const removeFromWishList = expressAsyncHandler(async (req: Request, res: Respons
 
     try {
         await publishEvent('remove-from-wishlist', 'removed-from-wishlist', wishlistPayload);
+        await publishEvent('activity.user.wishlist.remove', ActivityType.REMOVE_FROM_WISHLIST, {
+            userId: userId,
+            activityType: ActivityType.REMOVE_FROM_WISHLIST,
+            activityDescription: `${product.name} was removed from the wishlist.`
+        })
         console.log('Remove from Wishlist Event Send...');
     } catch (error) {
         throw new ApiError(402, "Failed to sent wishlist event.")

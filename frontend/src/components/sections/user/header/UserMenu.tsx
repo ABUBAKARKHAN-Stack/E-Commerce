@@ -1,9 +1,8 @@
 import { Button } from '@/components/ui/button'
-import { DropdownItem, DropdownItems, DropdownMain } from '@/components/ui/dropdown-menu'
-import { useAuthContext } from '@/context/authContext'
+import { DropdownItem, DropdownItems, DropdownMain } from '@/components/ui/dropdown-menu2'
 import { IUser } from '@/types/main.types'
 import { LayoutDashboardIcon, LocateFixed, LogOutIcon } from 'lucide-react'
-import React, { FC, useEffect, useRef, useState } from 'react'
+import  { FC, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 type Props = {

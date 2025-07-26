@@ -5,7 +5,7 @@ import Logo from '@/components/reusable/shared/Logo'
 import Layout from '@/components/layout/shared/Layout'
 import { useAuthContext } from '@/context/authContext'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { DropdownItem, DropdownItems, DropdownMain } from '@/components/ui/dropdown-menu'
+import { DropdownItem, DropdownItems, DropdownMain } from '@/components/ui/dropdown-menu2'
 
 type Props = {
     setIsOpen: React.Dispatch<React.SetStateAction<boolean>>

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const addressSchema = z.object({
+const shippingAddressSchema = z.object({
     fullName: z
         .string()
         .min(2, "Full name is required"),
@@ -19,7 +19,7 @@ const addressSchema = z.object({
     country: z
         .string()
         .min(2, "Country is required"),
-    zipCode: z
+    postalCode: z
     .string()
     .min(4, "ZIP code is required"),
     phone: z
@@ -35,5 +35,5 @@ const addressSchema = z.object({
 
 
 export {
-    addressSchema
+    shippingAddressSchema
 }

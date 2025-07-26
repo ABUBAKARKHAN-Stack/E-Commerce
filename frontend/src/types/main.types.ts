@@ -98,3 +98,64 @@ export const enum OrderLoading {
     TRACK_ORDER_LOADING = 'track-order',
     GET_ALL_ORDERS = 'get-all-orders',
 }
+
+export enum ActivityType {
+    LOGIN = "LOGIN",
+    LOGOUT = "LOGOUT",
+    REGISTER = "REGISTER",
+
+
+    UPDATE_PROFILE = "UPDATE_PROFILE",
+    CHANGE_PASSWORD = "CHANGE_PASSWORD",
+    VERIFY_ACCOUNT = "VERIFY_ACCOUNT",
+    RESET_PASSWORD = "RESET_PASSWORD",
+
+
+    ADD_TO_CART = "ADD_TO_CART",
+    REMOVE_FROM_CART = "REMOVE_FROM_CART",
+
+    ADD_TO_WISHLIST = "ADD_TO_WISHLIST",
+    REMOVE_FROM_WISHLIST = "REMOVE_FROM_WISHLIST",
+
+    PLACE_ORDER = "PLACE_ORDER",
+    CANCEL_ORDER = "CANCEL_ORDER",
+    PAID_ORDER = "PAID_ORDER",
+
+    WRITE_REVIEW = "WRITE_REVIEW",
+    DELETE_REVIEW = "DELETE_REVIEW",
+
+    VIEW_PRODUCT = "VIEW_PRODUCT",
+
+}
+
+
+export interface IActivity {
+    userId: string;
+    activityType: ActivityType;
+    activityDescription: string;
+    metaData?: Record<string, string | number>;
+    createdAt: Date
+}
+
+export enum PaymentMethod {
+    STRIPE = 'stripe',
+    COD = 'cod',
+}
+
+export interface IShippingAddress {
+    fullName: string;
+    phone: string;
+    email: string;
+    addressLine1: string;
+    addressLine2?: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+}
+export type CompleteCheckoutBody = {
+    totalAmountInUSD: number;
+    paymentMethod: string;
+    shippingAddress: IShippingAddress
+}
+

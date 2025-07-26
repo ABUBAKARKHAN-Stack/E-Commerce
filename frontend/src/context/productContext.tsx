@@ -16,7 +16,7 @@ import {
     proceedToCheckout as proceedToCheckoutApi,
     completeCheckout as completeCheckoutApi
 } from '@/API/userApi'
-import { ApiErrorType, IProduct } from "@/types/main.types";
+import { ApiErrorType, CompleteCheckoutBody, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
@@ -53,7 +53,7 @@ type ProductContextType = {
     cartProductsCount: number;
     setCartProductsCount: Dispatch<SetStateAction<number>>;
     proceedToCheckout: (navigate: (path: string) => void) => Promise<void>;
-    completeCheckout: (totalAmount: number) => Promise<{ clientSecret: string, orderId: string }>;
+    completeCheckout: (checkoutBody:CompleteCheckoutBody) => Promise<{ clientSecret: string, orderId: string }>;
 };
 
 const ProductContext = createContext<ProductContextType | null>(null);
@@ -291,9 +291,9 @@ const ProductProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
-    const completeCheckout = async (totalAmount: number) => {
+    const completeCheckout = async (checkoutBody:CompleteCheckoutBody) => {
         try {
-            const res = await completeCheckoutApi(totalAmount);
+            const res = await completeCheckoutApi(checkoutBody);
             if (res.status === 200) return res.data.data;
 
         } catch (error) {

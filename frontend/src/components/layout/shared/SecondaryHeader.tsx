@@ -15,7 +15,7 @@ const SecondaryHeader = forwardRef<HTMLElement, Props>(({ setIsOpen }, ref) => {
     return (
         <header
             ref={ref}
-            className="h-20 w-full border-b-2 dark:bg-[#1B1B1F] shadow-lg"
+            className="h-18 w-full border-b-2 dark:bg-[#1B1B1F] shadow-lg"
         >
             <Layout className="flex justify-between items-center">
                 <Logo />
