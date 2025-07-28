@@ -6,7 +6,6 @@ import { getQueryParams } from '@/utils/getQueryParams';
 import SearchBar from './SearchBar';
 import FilterToggleButton from './FilterToggleButton';
 import FilterPanel from './FilterPanel';
-import { Pagination } from '@/components/reusable/shared';
 
 type Props = {
     limit: number;

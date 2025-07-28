@@ -181,15 +181,26 @@ const getConfirmedOrderDetails = async (orderId: string) => {
   })
 }
 
-const getAllOrders = async (params?: any) => {
+const getAllOrders = async (params?: any) => {  
   return await orderApi.get('/all-orders', {
     params,
     withCredentials: true
   })
 }
 
+const getSingleOrder = async (orderId:string) => {
+  return await orderApi.get(`/${orderId}`, {
+    withCredentials:true
+  })
+}
 const completeCheckout = async (checkoutBody: CompleteCheckoutBody) => {
   return await orderApi.post('/complete-checkout', checkoutBody, {
+    withCredentials: true
+  })
+}
+
+const cancelOrder = async (orderId:string) => {
+  return await orderApi.post('/cancel', {orderId}, {
     withCredentials: true
   })
 }
@@ -231,6 +242,8 @@ export {
   getPendingOrderDetails,
   getConfirmedOrderDetails,
   getAllOrders,
+  cancelOrder,
+  getSingleOrder,
   completeCheckout,
   getRecentActivity
 }

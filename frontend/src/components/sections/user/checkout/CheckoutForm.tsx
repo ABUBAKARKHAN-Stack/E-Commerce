@@ -1,14 +1,7 @@
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { addressFields } from '@/constants/formFields'
-import { useAuthContext } from '@/context/authContext'
-import { shippingAddressSchema } from '@/schemas/checkoutSchema'
-import { CompleteCheckoutBody, IShippingAddress, IUser, PaymentMethod } from '@/types/main.types'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { BoxSelectIcon, CreditCard, LoaderPinwheel, Mail, MapPin, ShoppingBag } from 'lucide-react'
+import { IShippingAddress, PaymentMethod } from '@/types/main.types'
+import { CreditCard, LoaderPinwheel } from 'lucide-react'
 import { FC, FormEvent, useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import {
     useStripe,
     useElements,
@@ -17,38 +10,31 @@ import {
 import { useProductContext } from '@/context/productContext'
 import { errorToast, successToast } from '@/utils/toastNotifications'
 import { useThemeContext } from '@/context/themeContext'
-import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
 import { ApiError } from '@/utils/ApiError'
-import { handleScrollToSection } from '@/utils/HandleScrollToSection'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { z } from 'zod';
+import { shippingAddressSchema } from '@/schemas/checkoutSchema';
 
 type Props = {
     totalAmount: number;
+    shippingAddressCompleted: boolean;
+    shippingAddress: z.infer<typeof shippingAddressSchema>;
+    activeTab: string;
+    shippingMethod: string
 }
 
 const CheckoutForm: FC<Props> = ({
     totalAmount,
+    shippingAddressCompleted,
+    shippingAddress,
+    activeTab,
+    shippingMethod
 }) => {
-    let { user } = useAuthContext();
-    const form = useForm<z.infer<typeof shippingAddressSchema>>({
-        resolver: zodResolver(shippingAddressSchema),
-        defaultValues: {
-            addressLine1: "",
-            addressLine2: "",
-            city: "",
-            country: "",
-            email: "",
-            fullName: "",
-            state: "",
-            phone: "",
-            postalCode: "",
-        }
-    });
-    const [activeTab, setActiveTab] = useState('shipping');
+
     const [paymentLoading, setPaymentLoading] = useState(false);
-    const [shippingCompleted, setShippingCompleted] = useState(false);
     const stripe = useStripe();
     const elements = useElements();
     const { theme } = useThemeContext();
@@ -56,36 +42,20 @@ const CheckoutForm: FC<Props> = ({
     const navigate = useNavigate();
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const [paymentMethod, setPaymentMethod] = useState<string>("")
-    const [shippingAddress, setShippingAddress] = useState<z.infer<typeof shippingAddressSchema > | null>(null);
-
-
-    useEffect(() => {
-        if (!user) return;
-        const currentUser = user as IUser;
-        form.setValue("fullName", currentUser.username);
-        form.setValue("email", currentUser.email);
-        form.setValue("phone", currentUser.phone as string);
-        form.setValue("addressLine1", currentUser?.address || "")
-    }, [user])
 
 
 
-    const onSubmit = (data: z.infer<typeof shippingAddressSchema>) => {
-        setShippingCompleted(true)
-        handleScrollToSection('checkout-form');
-        setShippingAddress(data)
-        setActiveTab('payment');
-    }
 
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+
+    const handleSubmitViaCard = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!stripe || !elements) {
             errorToast("Stripe is not ready yet. Please wait...");
             return;
         }
 
-        if (!shippingCompleted) {
+        if (!shippingAddressCompleted) {
             errorToast("Please complete shipping details first.");
             return;
         }
@@ -95,7 +65,8 @@ const CheckoutForm: FC<Props> = ({
             const { clientSecret, orderId } = await completeCheckout({
                 paymentMethod,
                 shippingAddress: shippingAddress as IShippingAddress,
-                totalAmountInUSD: totalAmount
+                totalAmountInUSD: totalAmount,
+                shippingMethod
             });
 
             const { paymentIntent, error, } = await stripe.confirmCardPayment(clientSecret, {
@@ -119,6 +90,21 @@ const CheckoutForm: FC<Props> = ({
             setPaymentLoading(false)
         }
     }
+
+    const handleCod = async () => {
+        const { orderId } = await completeCheckout({
+            paymentMethod,
+            shippingAddress: shippingAddress as IShippingAddress,
+            totalAmountInUSD: totalAmount,
+            shippingMethod
+        })
+        successToast("Order Placed Successfully");
+        setCartProductsCount(0);
+        timeoutRef.current = setTimeout(() => {
+            navigate(`/checkout/success?orderId=${orderId}`)
+        }, 1000);
+    }
+
 
     useEffect(() => {
         return () => {
@@ -144,184 +130,96 @@ const CheckoutForm: FC<Props> = ({
     };
 
 
+    return activeTab === "payment" ? <div className="w-full">
+        <div className="rounded-2xl bg-background overflow-hidden">
 
-
-    return (
-        <div className="xl:w-[calc(100%+125px)] w-full checkout-form">
-            <div className="rounded-2xl shadow-xl shadow-black overflow-hidden">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-orange-500 dark:to-orange-600 p-6">
-                    <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                        <ShoppingBag className="w-6 h-6" />
-                        Checkout
-                    </h2>
-                    <p className="dark:text-orange-100 text-cyan-50 mt-2">Complete your purchase securely</p>
-                </div>
-
-                {/* Tab Navigation */}
-                <div className="flex border-b">
-                    <button
-                        onClick={() => setActiveTab('shipping')}
-                        className={`flex-1 py-4 px-6 text-sm font-medium transition-colors ${activeTab === 'shipping'
-                            ? 'dark:text-orange-600 text-cyan-600 border-b-2 border-cyan-500 dark:border-orange-500 dark:bg-orange-50 bg-cyan-50'
-                            : ' dark:hover:text-orange-500 hover:text-cyan-500 dark:hover:bg-orange-50 hover:bg-cyan-50 hover:cursor-pointer '
-                            }`}
-                    >
-                        <MapPin className="w-5 h-5 inline mr-2" />
-                        Shipping
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('payment')}
-                        className={`flex-1 py-4 px-6 text-sm font-medium transition-colors ${activeTab === 'payment'
-                            ? 'dark:text-orange-600 text-cyan-600 border-b-2 border-cyan-500 dark:border-orange-500 dark:bg-orange-50 bg-cyan-50'
-                            : ' dark:hover:text-orange-500 dark:hover:bg-orange-50 hover:bg-cyan-50 hover:text-cyan-500 hover:cursor-pointer'
-                            }`}
-                    >
-                        <CreditCard className="w-5 h-5 inline mr-2" />
-                        Payment
-                    </button>
-                </div>
-
-                {/* Form Section */}
-                {activeTab === 'shipping' && (
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-6">
-                            {/* Contact Information */}
-                            <div>
-                                <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
-                                    <Mail className="w-6 h-6" />
-                                    Contact Information
-                                </h3>
-                                <div className='space-y-4'>
-                                    <FormField
-                                        control={form.control}
-                                        name="email"
-                                        render={({ field }) => (
-                                            <FormItem >
-                                                <FormLabel>Email</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="Enter your email" />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="phone"
-                                        render={({ field }) => (
-                                            <FormItem >
-                                                <FormLabel>Phone Number</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder='03XXXXXXXXX' type='tel' />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Shipping Information */}
-                            <div>
-                                <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
-                                    <MapPin className="w-6 h-6" />
-                                    Shipping Address
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {addressFields.map(({ name, label, placeholder, type }, i) => (
-                                        <FormField
-                                            key={i}
-                                            control={form.control}
-                                            name={name}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>{label}</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            {...field}
-                                                            placeholder={placeholder}
-                                                            type={type}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Continue Button */}
-                            <div className="pt-4">
-                                <Button
-                                    size={'lg'}
-                                    type="submit"
-                                    className='w-full'
-                                >
-                                    Continue to Payment
-                                </Button>
-                            </div>
-                        </form>
-                    </Form>
-                )}
-
-                {activeTab === 'payment' && (
-                    <div className="p-6 space-y-6">
-                        {!paymentMethod ? (
-                            <>
-                                <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
-                                    <BoxSelectIcon className="size-6" />
-                                    Select Payment Method
-                                </h3>
-
-                                <RadioGroup onValueChange={(value) => setPaymentMethod(value)}>
-                                    <div className="flex items-center gap-x-2">
-                                        <RadioGroupItem value={PaymentMethod.COD} id="cod" />
-                                        <Label htmlFor="cod">COD (Cash On Delivery)</Label>
-                                    </div>
-                                    <div className="flex items-center gap-x-2">
-                                        <RadioGroupItem value={PaymentMethod.STRIPE} id="card" />
-                                        <Label htmlFor="card">Card</Label>
-                                    </div>
-                                </RadioGroup>
-                            </>
-                        ) : paymentMethod === PaymentMethod.STRIPE ? (
-                            <>
-                                <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
-                                    <CreditCard className="size-6" />
-                                    Payment Information
-                                </h3>
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div className="rounded-md border border-[#3C3C43] bg-background px-4 py-3">
-                                        <CardElement options={CARD_ELEMENT_OPTIONS} />
-                                    </div>
-
-                                    <Button
-                                        size="lg"
-                                        type="submit"
-                                        disabled={paymentLoading || !stripe}
-                                        className="w-full"
-                                    >
-                                        {paymentLoading ? (
-                                            <>
-                                                <span>Processing Payment</span>
-                                                <LoaderPinwheel className="animate-spin" />
-                                            </>
-                                        ) : (
-                                            'Complete Order'
-                                        )}
-                                    </Button>
-                                </form>
-                            </>
-                        ) : null}
-                    </div>
-                )}
-
+            {/* Header */}
+            <div className="bg-gradient-to-r rounded-t-2xl from-cyan-500 to-cyan-600 dark:from-orange-500 dark:to-orange-600 p-6">
+                <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <CreditCard className="w-6 h-6" />
+                    Select Payment Method
+                </h2>
+                <p className="dark:text-orange-100 text-cyan-50 mt-2">
+                    Choose your preferred payment option to complete the order
+                </p>
             </div>
-        </div>
 
-    )
+            {/* Payment Method Radio Buttons */}
+            <RadioGroup
+                onValueChange={(value) => setPaymentMethod(value)}
+                className="p-6 space-y-4"
+                defaultValue={paymentMethod}
+            >
+                <div className="flex items-center gap-x-3">
+                    <RadioGroupItem
+                        id="cod"
+                        value={PaymentMethod.COD}
+                        className="size-5"
+                    />
+                    <Label htmlFor="cod" className="text-base">
+                        Cash On Delivery (COD)
+                    </Label>
+                </div>
+
+                <div className="flex items-center gap-x-3">
+                    <RadioGroupItem
+                        id="stripe"
+                        value={PaymentMethod.STRIPE}
+                        className="size-5"
+                    />
+                    <Label htmlFor="stripe" className="text-base">
+                        Card Payment (Stripe)
+                    </Label>
+                </div>
+            </RadioGroup>
+
+            <Separator />
+
+            {/* Stripe Payment Info */}
+            {paymentMethod === PaymentMethod.STRIPE ? (
+                <div className="p-6">
+                    <h3 className="text-xl font-semibold text-gray-950 dark:text-gray-300 mb-4 flex items-center gap-2">
+                        <CreditCard className="size-6" />
+                        Payment Information
+                    </h3>
+
+                    <form onSubmit={handleSubmitViaCard} className="space-y-6">
+                        <div className="rounded-md border border-[#3C3C43] bg-background px-4 py-3">
+                            <CardElement options={CARD_ELEMENT_OPTIONS} />
+                        </div>
+
+                        <Button
+                            size="lg"
+                            type="submit"
+                            disabled={paymentLoading || !stripe}
+                            className="w-full flex justify-center items-center gap-2"
+                        >
+                            {paymentLoading ? (
+                                <>
+                                    <span>Processing Payment</span>
+                                    <LoaderPinwheel className="animate-spin size-5" />
+                                </>
+                            ) : (
+                                'Complete Order'
+                            )}
+                        </Button>
+                    </form>
+                </div>
+            )
+                : paymentMethod === PaymentMethod.COD ? <div className='p-6'>
+                    <Button
+                        onClick={handleCod}
+                        size={"lg"}
+                    >
+                        Complete Order Via Payment Method COD
+                    </Button>
+                </div>
+                    : null
+            }
+        </div>
+    </div>
+        : null
+
 }
 
 export default CheckoutForm

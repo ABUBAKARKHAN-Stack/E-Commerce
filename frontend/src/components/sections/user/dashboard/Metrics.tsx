@@ -13,7 +13,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 const Metrics = () => {
-    const { pendingOrders, confirmedOrders, cancelledOrders, totalOrders } = useOrderContext();
+    const { pendingOrders, confirmedOrders, cancelledOrders, ordersCount } = useOrderContext();
     const { cartProductsCount, wishlist } = useProductContext();
     const [countUpStarted, setCountUpStarted] = useState(false);
 
@@ -21,7 +21,7 @@ const Metrics = () => {
     const metrics = [
         {
             label: "Total Orders",
-            value: totalOrders.length,
+            value: ordersCount,
             icon: <ShoppingBag className="w-6 h-6" />,
             bg: "from-cyan-400 to-cyan-600 dark:from-orange-500 dark:to-red-500",
             shadow: "shadow-cyan-500/50 dark:shadow-orange-500/50"

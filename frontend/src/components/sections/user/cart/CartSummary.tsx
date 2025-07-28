@@ -58,18 +58,6 @@ const CartSummary: FC<Props> = ({
                         </div>
                         <h2 className='text-gray-900 dark:text-orange-200 font-bold text-xl'>${totalAmount.toFixed(2)}</h2>
                     </div>
-
-                    {/* Shipping */}
-                    <div className='flex justify-between items-center p-4 rounded-xl bg-white/80 dark:bg-orange-900/10 border border-gray-200/60 dark:border-orange-400/20 hover:bg-white/90 dark:hover:bg-orange-900/20 transition-all duration-200 lg:flex-1'>
-                        <div className='flex items-center gap-3'>
-                            <div className='w-2 h-2 bg-green-500 rounded-full'></div>
-                            <h2 className='text-gray-700 dark:text-gray-300 text-lg font-medium'>Shipping</h2>
-                        </div>
-                        <div className='flex items-center gap-2'>
-                            <span className='text-xs text-green-600 dark:text-green-400 font-medium bg-green-100 dark:bg-green-900/30 px-2 py-1 rounded-full'>Standard</span>
-                            <h2 className='text-gray-900 dark:text-orange-200 font-bold text-xl'>$50.00</h2>
-                        </div>
-                    </div>
                 </div>
 
                 {/* Divider */}
@@ -92,7 +80,7 @@ const CartSummary: FC<Props> = ({
                     </div>
                     <div className='flex items-center gap-2'>
                         <div className='text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-cyan-600 dark:from-orange-400 dark:to-orange-500'>
-                            ${Number(totalAmount + 50).toFixed(2)}
+                            ${Number(totalAmount).toFixed(2)}
                         </div>
                     </div>
                 </div>

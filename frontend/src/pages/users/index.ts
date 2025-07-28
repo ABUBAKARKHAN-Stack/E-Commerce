@@ -17,6 +17,7 @@ import TrackOrderPage from "./TrackOrderPage";
 import FaqsPage from "./FaqsPage";
 import ContactPage from "./ContactPage";
 import UserOrdersPage from "./UserOrdersPage";
+import UserOrderPage from "./UserOrderPage";
 
 export {
     UserDashboardPage,
@@ -37,5 +38,6 @@ export {
     TrackOrderPage,
     FaqsPage,
     ContactPage,
-    UserOrdersPage
+    UserOrdersPage,
+    UserOrderPage
 };

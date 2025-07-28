@@ -62,7 +62,6 @@ interface IOrder extends Document {
     confirmedAt: Date;
     shipping: number;
     shippingMethod: ShippingMethod,
-    tax: number;
     shippingAddress: IShippingAddress;
     isDelivered: boolean;
     intentId: string;
@@ -84,7 +83,10 @@ enum ActivityType {
 type CompleteCheckoutBody = {
     totalAmountInUSD: number;
     paymentMethod: string;
-    shippingAddress: IShippingAddress
+    shippingAddress: IShippingAddress;
+    shippingMethod?: ShippingMethod;
+    shipping?: number
+
 }
 
 

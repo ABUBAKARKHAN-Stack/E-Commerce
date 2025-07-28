@@ -1,20 +1,24 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
 import {
     getConfirmedOrderDetails as getConfirmedOrderDetailsApi,
-    getAllOrders as getAllOrdersApi
+    getAllOrders as getAllOrdersApi,
+    cancelOrder as cancelOrderApi
 } from '@/API/userApi'
 import { AxiosError } from "axios";
-import { ApiErrorType, OrderLoading } from "@/types/main.types";
+import { ApiErrorType, IOrder, OrderLoading } from "@/types/main.types";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
 type OrderContextType = {
     getConfirmedOrderDetails: (orderId: string, navigate: (path: string) => void) => Promise<void>;
-    getAllOrders: (params?: any) => Promise<void>;
+    getAllOrders: (params?: any) => Promise<any>;
+    ordersData: IOrder[];
+    setOrdersData: Dispatch<SetStateAction<IOrder[]>>;
     pendingOrders: any[];
     cancelledOrders: any[];
     confirmedOrders: any[];
-    totalOrders: any[];
-    loading: string | null
+    loading: string | null;
+    cancelOrder: (orderId: string) => Promise<void>;
+    ordersCount: number
 }
 
 const OrderContext = createContext<OrderContextType | null>(null);
@@ -25,7 +29,8 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     const [pendingOrders, setPendingOrders] = useState([]);
     const [cancelledOrders, setCancelledOrders] = useState([]);
     const [confirmedOrders, setConfirmedOrders] = useState([]);
-    const [totalOrders, setTotalOrders] = useState([]);
+    const [ordersData, setOrdersData] = useState<IOrder[]>([]);
+    const [ordersCount, setOrdersCount] = useState(0)
 
 
     const getConfirmedOrderDetails = async (orderId: string, navigate: (path: string) => void) => {
@@ -52,29 +57,46 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         setLoading(OrderLoading.GET_ALL_ORDERS)
         try {
             const res = await getAllOrdersApi(params);
+
             if (res.status === 200) {
-                const orders = res.data.data;
+                const orders = res.data.data.orders;
+                const ordersCount = res.data.data.ordersCount;
+                setOrdersCount(ordersCount)
                 const confirmedOrders = orders.filter((o: any) => o.status === 'confirmed');
                 const pendingOrders = orders.filter((o: any) => o.status === 'pending');
                 const cancelledOrders = orders.filter((o: any) => o.status === 'cancelled');
                 setConfirmedOrders(confirmedOrders)
                 setPendingOrders(pendingOrders);
                 setCancelledOrders(cancelledOrders);
-                setTotalOrders(orders)
+                return orders
             }
 
         } catch (error) {
             const err = error as AxiosError<ApiErrorType>;
-            const errMsg = err.response?.data.message || "Something went wrong";
-            errorToast(errMsg);
+            console.log(err);
+            
         } finally {
             setLoading(null)
         }
     }
 
+
     useEffect(() => {
         getAllOrders()
     }, [])
+
+    const cancelOrder = async (orderId: string) => {
+        try {
+            const res = await cancelOrderApi(orderId);
+            if (res.status === 200) {
+                successToast(res.data.message)
+            }
+        } catch (error) {
+            const err = error as AxiosError<ApiErrorType>;
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg);
+        }
+    }
 
 
 
@@ -85,7 +107,10 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         pendingOrders,
         cancelledOrders,
         confirmedOrders,
-        totalOrders,
+        cancelOrder,
+        setOrdersData,
+        ordersData,
+        ordersCount,
         loading
     }}>
         {children}

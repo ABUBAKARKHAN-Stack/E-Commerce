@@ -35,7 +35,8 @@ import {
   TrackOrderPage,
   FaqsPage,
   ContactPage,
-  UserOrdersPage
+  UserOrdersPage,
+  UserOrderPage
 } from '@/pages/users' //* User Pages
 import { ThemeProvider } from '@/context/themeContext'
 import { UserAuthLayout } from '@/components/layout/user'
@@ -43,10 +44,10 @@ import { AdminAuthLayout, AdminRoot } from '@/components/layout/admin'
 import { AuthProvider } from '@/context/authContext'
 import { ProductProvider } from '@/context/productContext'
 import { cartLoader } from '@/utils/loaders/cartLoader'
-import { CartErrorPage, CheckoutErrorPage, CheckoutSuccessErrorPage, TrackOrderErrorPage } from '@/pages/users/error'
+import { CartErrorPage, CheckoutErrorPage, CheckoutSuccessErrorPage, TrackOrderErrorPage, UserOrderErrorPage } from '@/pages/users/error'
 import { wishlistLoader } from './utils/loaders/wishlistLoader'
 import WishlistErrorPage from './pages/users/error/WishlistErrorPage'
-import { confirmOrderDetailsLoader, pendingOrderDetailsLoader } from './utils/loaders/orderDetailsLoader'
+import { confirmOrderDetailsLoader, pendingOrderDetailsLoader, singleOrderDetailsLoader } from './utils/loaders/orderDetailsLoader'
 import { OrderProvider } from './context/orderContext'
 import { ActivityProvider } from './context/activityContext'
 
@@ -182,6 +183,14 @@ const router = createBrowserRouter([
     </UserAuthLayout>,
   },
   {
+    path: '/orders/:orderId',
+    element: <UserAuthLayout authenticationRequired>
+      <UserOrderPage />
+    </UserAuthLayout>,
+    loader: singleOrderDetailsLoader,
+    errorElement: <UserOrderErrorPage />
+  },
+  {
     path: '/checkout',
     element: <UserAuthLayout authenticationRequired>
       <CheckoutPage />
@@ -279,16 +288,16 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>
-    <ThemeProvider>
-      <AuthProvider>
-        <ProductProvider>
-          <OrderProvider>
-            <ActivityProvider>
+  <ThemeProvider>
+    <AuthProvider>
+      <ProductProvider>
+        <OrderProvider>
+          <ActivityProvider>
             <RouterProvider router={router} />
-            </ActivityProvider>
-          </OrderProvider>
-        </ProductProvider>
-      </AuthProvider>
-    </ThemeProvider>
+          </ActivityProvider>
+        </OrderProvider>
+      </ProductProvider>
+    </AuthProvider>
+  </ThemeProvider>
   // </StrictMode >,
 )

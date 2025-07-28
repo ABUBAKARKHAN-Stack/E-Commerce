@@ -6,8 +6,8 @@ import { Request, Response } from "express";
 import { stripeClient } from "../config/stripe.config";
 import { env } from "../config/env";
 import Stripe from "stripe";
-import { ActivityType, CompleteCheckoutBody, OrderStatus, PaymentMethod, PaymentStatus } from "../types/main.types";
-import { confirmOrder } from "../helpers/order.helper";
+import { ActivityType, CompleteCheckoutBody, OrderStatus, PaymentMethod, PaymentStatus, ShippingMethod } from "../types/main.types";
+import { confirmOrder, validateCancellable } from "../helpers/order.helper";
 
 
 
@@ -55,7 +55,12 @@ const getConfirmedOrder = expressAsyncHandler(async (req: Request, res: Response
 
 
 const completeCheckout = expressAsyncHandler(async (req: Request, res: Response) => {
-    const { totalAmountInUSD, paymentMethod, shippingAddress }: CompleteCheckoutBody = req.body;
+    const {
+        totalAmountInUSD,
+        paymentMethod,
+        shippingAddress,
+        shippingMethod
+    }: CompleteCheckoutBody = req.body;
     const { userId } = res.locals.user;
 
 
@@ -84,9 +89,44 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
         throw new ApiError(400, 'All required shipping address fields must be provided');
     }
 
+    let shippingPayload: { method: ShippingMethod, cost: number } = {
+        cost: 6.99,
+        method: ShippingMethod.STANDARD
+    };
+
+    if (shippingMethod) {
+        switch (shippingMethod) {
+            case ShippingMethod.EXPRESS:
+                shippingPayload = {
+                    cost: 9.99,
+                    method: ShippingMethod.EXPRESS
+                }
+                break;
+            case ShippingMethod.STANDARD:
+                shippingPayload = {
+                    cost: 6.99,
+                    method: ShippingMethod.STANDARD
+                }
+                break;
+            default:
+                shippingPayload = {
+                    cost: 6.99,
+                    method: ShippingMethod.STANDARD
+                }
+                break;
+        }
+    }
+
+    if (totalAmountInUSD >= 1000) {
+        shippingPayload = {
+            cost: 0,
+            method: ShippingMethod.FREE
+        }
+    }
+
     const order = await orderModel.findOne({
         userId,
-        status: OrderStatus.PENDING
+        status: OrderStatus.PENDING,
     })
 
     if (!order) {
@@ -97,12 +137,18 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
         order.status = OrderStatus.CONFIRMED;
         order.paymentMethod = PaymentMethod.COD;
         order.shippingAddress = shippingAddress;
+        order.shippingMethod = shippingPayload.method;
+        order.shipping = shippingPayload.cost;
         order.confirmedAt = new Date();
         await order.save()
+        await publishEvent("cart.clear", 'cleared-cart', { userId });
+        await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId: order.orderId }); //* For User
+        await publishEvent('order.admin.confirmed', 'admin-confirmed', { orderId: order.orderId }); //* For Admin
+
 
         res
             .status(200)
-            .json(new ApiResponse(200, "Order Placed Successfully"));
+            .json(new ApiResponse(200, "Order Placed Successfully", { orderId: order.orderId }));
         return;
 
     }
@@ -115,7 +161,8 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
             orderId: order.orderId,
             userId: order.userId,
             paymentMethod: PaymentMethod.STRIPE,
-            shippingAddress: JSON.stringify(shippingAddress)
+            shippingAddress: JSON.stringify(shippingAddress),
+            shippingPayload: JSON.stringify(shippingPayload)
         }
     })
 
@@ -151,6 +198,7 @@ const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Respo
             const userId = intent.metadata?.userId;
             const paymentMethod = intent.metadata?.paymentMethod;
             const shippingAddress = intent.metadata?.shippingAddress;
+            const shippingPayload = intent.metadata?.shippingPayload;
             const intentId = intent.id;
             if (!orderId || !userId || !paymentMethod || !shippingAddress) {
                 res
@@ -163,7 +211,8 @@ const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Respo
                 userId,
                 intentId,
                 paymentMethod,
-                shippingAddress
+                shippingAddress,
+                shippingPayload
             })
             break;
         default:
@@ -179,12 +228,19 @@ const getUserOrders = expressAsyncHandler(async (req: Request, res: Response) =>
     const {
         status,
         sortBy,
-        orderId
+        orderId,
+        limit,
+        page
     } = req.query;
 
     const orderQuery: any = {};
     if (status) orderQuery.status = status;
-    if (orderId) orderQuery.orderId = { $regex: orderId, $options: "i" }
+    if (orderId) orderQuery.orderId = { $regex: orderId, $options: "i" };
+
+    const paginationQuery: any = {}
+    if (limit) paginationQuery.limit = +limit || 5;
+    if (page) paginationQuery.page = +page || 1;
+    const skip = (paginationQuery.page - 1) * paginationQuery.limit;
 
     const sortOptions: any = {};
     if (sortBy) {
@@ -206,7 +262,11 @@ const getUserOrders = expressAsyncHandler(async (req: Request, res: Response) =>
         ...orderQuery
     })
         .sort(sortOptions)
+        .limit(paginationQuery.limit)
+        .skip(skip)
         .select('-userId -_id');
+
+    const ordersCount = await orderModel.countDocuments(orderQuery)
 
     if (orders.length === 0) {
         res
@@ -217,8 +277,31 @@ const getUserOrders = expressAsyncHandler(async (req: Request, res: Response) =>
 
     res
         .status(200)
-        .json(new ApiResponse(200, "Orders Fetched", orders))
+        .json(new ApiResponse(200, "Orders Fetched", {
+            orders,
+            ordersCount
+        }))
 });
+
+const getUserSingleOrder = expressAsyncHandler(async (req:Request, res:Response) => {
+    const {orderId} = req.params;
+
+    if (!orderId) {
+        throw new ApiError(400, "Order Id is required")
+    }
+
+    const order = await orderModel.findOne({
+        orderId
+    })
+
+    if (!order) {
+        throw new ApiError(404, `No Order Found With Order Id ${orderId}`)
+    }
+
+    res
+    .status(200)
+    .json(new ApiResponse(200, "Order Details Fetched", order))
+})
 
 const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {
     const { user } = res.locals;
@@ -230,10 +313,7 @@ const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {
 
     const { userId } = user;
 
-    const order = await orderModel.findOne({
-        userId,
-        orderId
-    })
+    const order = await orderModel.findOne({ userId, orderId });
 
     if (!order) {
         throw new ApiError(404, "Order not found.");
@@ -243,48 +323,71 @@ const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(409, "Order has already been cancelled.");
     }
 
-    if (!order.intentId) {
-        throw new ApiError(400, "No payment intent found for this order.");
-    }
+    //*  Flags for easier logic
+    const isCOD = order.paymentMethod === PaymentMethod.COD;
+    const isStripe = order.paymentMethod === PaymentMethod.STRIPE;
+    const isPending = order.status === OrderStatus.PENDING;
+    const isConfirmed = order.status === OrderStatus.CONFIRMED;
 
-
-    if (order.status === OrderStatus.PENDING) {
+    //* Helper: Cancel order as unpaid (no refund)
+    const cancelAsUnpaid = async () => {
         order.status = OrderStatus.CANCELLED;
         order.paymentStatus = PaymentStatus.UNPAID;
-        await order.save()
-        res
-            .status(200)
-            .json(new ApiResponse(200, 'Order has been cancelled'));
-        return;
-    } else if (order.status === OrderStatus.CONFIRMED) {
-        const canCancelled = isOrderCancelable(order.status, order.confirmedAt);
-        if (!canCancelled) {
-            throw new ApiError(403, "Cancellation window has expired. This order cannot be cancelled.");
+        await order.save();
+        res.status(200).json(new ApiResponse(200, 'Order has been cancelled'));
+    };
+
+
+    //* Cancel PENDING orders first — no need to check payment method
+
+    if (isPending) {
+        return await cancelAsUnpaid();
+    }
+
+    //* COD logic
+    if (isCOD && isConfirmed) {
+        validateCancellable({
+            orderStatus: order.status,
+            orderConfirmedAt: order.confirmedAt
+        });
+        return await cancelAsUnpaid();
+    }
+
+    //* Online Payment logic
+    if (isStripe && isConfirmed) {
+        if (!order.intentId) {
+            throw new ApiError(400, "No payment intent found for this order.");
         }
+
+        validateCancellable({
+            orderStatus: order.status,
+            orderConfirmedAt: order.confirmedAt
+        });
         const refund = await stripeClient.refunds.create({
-            payment_intent: order.intentId
+            payment_intent: order.intentId,
         });
 
         if (!refund) {
-            throw new ApiError(400, "Refund not Made")
+            throw new ApiError(400, "Refund not made.");
         }
+
         order.status = OrderStatus.CANCELLED;
-        order.paymentStatus = PaymentStatus.REFUNDED
-        const refundAmount = +refund.amount / 100;
+        order.paymentStatus = PaymentStatus.REFUNDED;
         order.refund = {
-            refundAmount,
+            refundAmount: refund.amount / 100,
             refundAt: new Date(),
             stripeRefundId: refund.id,
-        }
+        };
 
-        await order.save()
+        await order.save();
+        res.status(200).json(new ApiResponse(200, 'Order has been cancelled'));
+        return
     }
 
-    res
-        .status(200)
-        .json(new ApiResponse(200, 'Order has been cancelled'));
 
-})
+    throw new ApiError(400, "Invalid order cancellation state.");
+});
+
 
 
 
@@ -294,5 +397,6 @@ export {
     completeCheckout,
     stripeWebhookHandler,
     getUserOrders,
+    getUserSingleOrder,
     cancelOrder
 }

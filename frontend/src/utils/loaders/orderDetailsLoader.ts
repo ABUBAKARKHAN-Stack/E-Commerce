@@ -1,4 +1,4 @@
-import { getBulkProducts, getConfirmedOrderDetails, getPendingOrderDetails } from "@/API/userApi"
+import { getBulkProducts, getConfirmedOrderDetails, getPendingOrderDetails, getSingleOrder } from "@/API/userApi"
 import { ApiErrorType, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
 import { ApiError } from "../ApiError";
@@ -54,9 +54,9 @@ const confirmOrderDetailsLoader = async ({ request }: LoaderFunctionArgs) => {
     if (!orderId) return;
     try {
         const res = await getConfirmedOrderDetails(orderId);
-        const confirmedAt = res.data.data.confirmedAt; 
+        const confirmedAt = res.data.data.confirmedAt;
         const orderStatus = res.data.data.status;
-               
+
 
         if (res.status === 200) {
             const orderId = res.data.data.orderId;
@@ -100,7 +100,60 @@ const confirmOrderDetailsLoader = async ({ request }: LoaderFunctionArgs) => {
 
 }
 
+const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
+    const { orderId } = params
+    if (!orderId) return;
+    try {
+        const res = await getSingleOrder(orderId);
+        const confirmedAt = res.data.data.confirmedAt;
+        const orderStatus = res.data.data.status;
+
+
+        if (res.status === 200) {
+            const orderId = res.data.data.orderId;
+            const cart = res.data.data.cart;
+            const productIds = cart.products.map(({ productId }: { productId: string }) => productId);
+            const totalAmount = cart.totalAmount;
+            const bulk = await getBulkProducts(productIds);
+            const bulkProducts: IProduct[] = bulk.data.data;
+            if (bulk.status === 200) {
+                const originalProducts = cart.products;
+                const quantityMap = new Map(
+                    originalProducts.map(({ productId, quantity }: { productId: string, quantity: number }) => [productId, quantity])
+                );
+                return {
+                    orderId,
+                    products: bulkProducts.map((product) => ({
+                        name: product.name,
+                        orderedProductQuantity: quantityMap.get(product._id),
+                        price: product.price,
+                        thumbnail: product.thumbnails[0]
+                    })),
+                    totalAmount,
+                    confirmedAt,
+                    orderStatus,
+
+
+                }
+            }
+            throw new ApiError(bulk.status, "Failed to fetch bulk products");
+        }
+
+        throw new ApiError(res.status, "Unexpected response from Order Details API");
+
+    } catch (error) {
+        const err = error as AxiosError<ApiErrorType>;
+        const errStatus = err.response?.status || 500
+        const errMsg = err.response?.data.message || "Something went wrong";
+        if (errStatus === 401 || errStatus === 403) {
+            return redirect("/sign-in");
+        }
+        throw new ApiError(errStatus, errMsg, err.response?.data);
+    }
+}
+
 export {
     pendingOrderDetailsLoader,
-    confirmOrderDetailsLoader
+    confirmOrderDetailsLoader,
+    singleOrderDetailsLoader
 }

@@ -1,3 +1,4 @@
+import { ShippingMethod } from "@/types/main.types";
 import { z } from "zod";
 
 const shippingAddressSchema = z.object({
@@ -20,8 +21,8 @@ const shippingAddressSchema = z.object({
         .string()
         .min(2, "Country is required"),
     postalCode: z
-    .string()
-    .min(4, "ZIP code is required"),
+        .string()
+        .min(4, "ZIP code is required"),
     phone: z
         .string()
         .min(10, "Phone number is required")
@@ -31,9 +32,15 @@ const shippingAddressSchema = z.object({
         .email("Invalid email address"),
 });
 
+const shippingMethodSchema = z.object({
+    shippingMethod: z
+        .enum([ShippingMethod.EXPRESS, ShippingMethod.FREE, ShippingMethod.STANDARD])
+})
+
 
 
 
 export {
-    shippingAddressSchema
+    shippingAddressSchema,
+    shippingMethodSchema
 }

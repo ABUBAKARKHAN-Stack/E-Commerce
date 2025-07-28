@@ -2,6 +2,7 @@ import { ActivityType, OrderStatus, PaymentMethod, PaymentStatus } from "../type
 import orderModel from "../models/order.model";
 import { customAlphabet } from "nanoid";
 import { publishEvent } from "../utils/kafka";
+import { ApiError, isOrderCancelable } from "../utils";
 
 const createOrder = async (orderData: any) => {
     try {
@@ -11,9 +12,11 @@ const createOrder = async (orderData: any) => {
             status: OrderStatus.PENDING
         })
 
+
+
         if (order) {
             order.cart.products = orderData.products;
-            order.cart.totalAmount = +orderData.totalAmount + 50;
+            order.cart.totalAmount = +orderData.totalAmount;
             await order.save();
             console.log('Order Updated Successfully');
         } else {
@@ -25,7 +28,7 @@ const createOrder = async (orderData: any) => {
                 userId: orderData.user,
                 cart: {
                     products: orderData.products,
-                    totalAmount: +orderData.totalAmount + 50
+                    totalAmount: +orderData.totalAmount
                 }
             });
             console.log('Order Created Successfully');
@@ -35,7 +38,7 @@ const createOrder = async (orderData: any) => {
                 activityDescription: `Your order has been placed successfully.`,
                 metaData: {
                     orderId,
-                    totalAmount: +orderData.totalAmount + 50
+                    totalAmount: +orderData.totalAmount
                 }
             });
 
@@ -52,9 +55,21 @@ const confirmOrder = async ({
     userId,
     intentId,
     paymentMethod,
-    shippingAddress
-}: { orderId: string, userId: string, intentId: string, paymentMethod: string, shippingAddress: string }) => {
-    const parsedShippingAddress = JSON.parse(shippingAddress)
+    shippingAddress,
+    shippingPayload
+}: {
+    orderId: string,
+    userId: string,
+    intentId: string,
+    paymentMethod: string,
+    shippingAddress: string,
+    shippingPayload?: string;
+}) => {
+    const parsedShippingAddress = JSON.parse(shippingAddress);
+    const parsedShippingPayload = shippingPayload ? JSON.parse(shippingPayload) : null;
+
+    console.log(parsedShippingPayload);
+
     const order = await orderModel.findOneAndUpdate({
         orderId,
     }, {
@@ -63,7 +78,9 @@ const confirmOrder = async ({
         intentId,
         paymentStatus: PaymentStatus.PAID,
         paymentMethod,
-        shippingAddress: parsedShippingAddress
+        shippingAddress: parsedShippingAddress,
+        shippingMethod: parsedShippingPayload.method,
+        shipping: parsedShippingPayload.cost
     }, { new: true });
     await publishEvent("cart.clear", 'cleared-cart', { userId });
     await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId }); //* For User
@@ -79,4 +96,18 @@ const confirmOrder = async ({
     });
 }
 
-export { createOrder, confirmOrder };
+const validateCancellable = ({
+    orderStatus,
+    orderConfirmedAt
+}: { orderStatus: string; orderConfirmedAt: Date }) => {
+    const cancellable = isOrderCancelable(orderStatus, orderConfirmedAt);
+    if (!cancellable) {
+        throw new ApiError(403, "Cancellation window has expired. This order cannot be cancelled.");
+    }
+};
+
+export { 
+    createOrder,
+     confirmOrder,
+     validateCancellable
+     };

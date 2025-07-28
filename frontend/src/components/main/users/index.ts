@@ -25,6 +25,7 @@ import FaqsMain from "./FaqsMain";
 import ContactMain from "./ContactMain";
 import FaqsTeaserMain from "./FaqsTeaserMain";
 import UserOrdersMain from "./UserOrdersMain";
+import UserOrderMain from "./UserOrderMain";
 
 export {
     HeroMain,
@@ -53,5 +54,6 @@ export {
     FaqsMain,
     ContactMain,
     FaqsTeaserMain,
-    UserOrdersMain
+    UserOrdersMain,
+    UserOrderMain
 }

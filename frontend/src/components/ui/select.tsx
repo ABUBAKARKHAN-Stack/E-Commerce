@@ -126,7 +126,7 @@ export function Select({
 
       {isOpen && (
         <div
-          className="mt-2 w-full overflow-auto rounded-md border bg-accent/50 backdrop-blur-3xl text-popover-foreground shadow-md"
+          className="mt-2 w-full overflow-auto rounded-md border bg-accent backdrop-blur-3xl text-popover-foreground shadow-md"
           role="listbox"
         >
           {filteredGroups.length === 0 ? (

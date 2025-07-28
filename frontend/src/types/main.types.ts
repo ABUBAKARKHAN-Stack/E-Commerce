@@ -156,6 +156,34 @@ export interface IShippingAddress {
 export type CompleteCheckoutBody = {
     totalAmountInUSD: number;
     paymentMethod: string;
-    shippingAddress: IShippingAddress
+    shippingAddress: IShippingAddress;
+    shippingMethod: string
 }
 
+
+export type CheckoutTabsType = "shipping-address" | "shipping-method" | "checkout-summary" | "payment"
+
+
+export enum ShippingMethod {
+    FREE = "FREE",
+    STANDARD = "STANDARD",
+    EXPRESS = "EXPRESS"
+}
+
+export interface IOrder  {
+    orderId: string;
+    cart: {
+        products: any[];
+        totalAmount: number;
+    };
+    status: string;
+    createdAt: string;
+    confirmedAt?: string;
+    paymentMethod?: PaymentMethod;
+    refund?: {
+        refundAmount?: number;
+        refundAt?: string;
+    };
+    shipping?: number;
+    paymentStatus: string
+};

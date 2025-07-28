@@ -1,5 +1,4 @@
 import { Dispatch, FC, SetStateAction } from 'react'
-import { Button } from '@/components/ui/button'
 import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
 
 type Props = {
@@ -7,13 +6,15 @@ type Props = {
     page: number;
     setPage: Dispatch<SetStateAction<number>>;
     totalProducts: number;
+    forOrder?: boolean
 }
 
 const Pagination: FC<Props> = ({
     limit,
     page,
     setPage,
-    totalProducts
+    totalProducts,
+    forOrder = false
 }) => {
 
     const start = (page - 1) * limit + 1;
@@ -63,7 +64,7 @@ const Pagination: FC<Props> = ({
                     </button>
                 </div>
                 <p className='text-base font-semibold dark:text-gray-300 text-gray-900'>
-                    Showing {start}–{end} of {totalProducts} products
+                    Showing {start}–{end} of {totalProducts} {forOrder ? "orders" : "products"}
                 </p>
             </div>
 

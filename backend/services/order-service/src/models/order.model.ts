@@ -33,7 +33,7 @@ const orderSchema = new Schema<IOrder>({
     refund: {
         refundAmount: { type: Number, default: null },
         refundAt: { type: Date, default: null },
-        stripeRefundId: { type: String, default: null }
+        stripeRefundId: { type: String, default: null },
     },
     paymentStatus: {
         type: String,
@@ -51,12 +51,16 @@ const orderSchema = new Schema<IOrder>({
     },
     shipping: {
         type: Number,
-        default: 6.99,
+        default: null,
     },
     shippingMethod: {
         type: String,
         enum: Object.values(ShippingMethod),
-        default: ShippingMethod.STANDARD
+        default: null
+    },
+    isDelivered: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 const orderModel = model<IOrder>("Order", orderSchema);
