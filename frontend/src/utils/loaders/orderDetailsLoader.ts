@@ -122,6 +122,7 @@ const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
             const cart = order.cart;
             const productIds = cart.products.map(({ productId }: { productId: string }) => productId);
             const totalAmount = cart.totalAmount;
+            const orderPlaceAt = order.createdAt            
             const bulk = await getBulkProducts(productIds);
             const bulkProducts: IProduct[] = bulk.data.data;
             if (bulk.status === 200) {
@@ -146,7 +147,8 @@ const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
                     paymentStatus,
                     refund,
                     paymentMethod,
-                    isDelivered
+                    isDelivered,
+                    orderPlaceAt
 
                 }
             }

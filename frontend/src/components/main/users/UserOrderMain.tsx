@@ -5,21 +5,6 @@ import { BlurFade } from "@/components/magicui/blur-fade";
 import { DashboardMainHeader } from "@/components/reusable/shared";
 import { Package, ShoppingBag } from "lucide-react";
 import { useLoaderData } from "react-router-dom";
-import useFormattedDateTime from "@/hooks/useFormattedDateTime";
-import {
-    CreditCard,
-    Truck,
-    Phone,
-    Mail,
-    MapPin,
-    PackageCheck,
-    CalendarCheck2,
-    PackageX,
-    DollarSign,
-    Undo2,
-} from "lucide-react";
-import { OrderIdBadge, OrderStatusBadge, PaymentStatusBadge } from "@/components/reusable/user";
-import { PaymentMethod } from "@/types/main.types";
 import { OrderDetails } from "@/components/sections/user/dashboard/orders";
 
 
@@ -39,7 +24,8 @@ const UserOrderMain = () => {
         paymentStatus,
         refund,
         paymentMethod,
-        isDelivered
+        isDelivered,
+        orderPlaceAt,
     } = useLoaderData();
 
 
@@ -90,22 +76,28 @@ const UserOrderMain = () => {
 
 
 
+                        <BlurFade
+                            delay={1.5}
+                            duration={0.5}
+                            direction="right"
+                        >
+                            <OrderDetails
+                                confirmedAt={confirmedAt}
+                                isDelivered={isDelivered}
+                                orderId={orderId}
+                                orderPlaceAt={orderPlaceAt}
+                                orderStatus={orderStatus}
+                                paymentMethod={paymentMethod}
+                                paymentStatus={paymentStatus}
+                                products={products}
+                                refund={refund}
+                                shipping={shipping}
+                                shippingAddress={shippingAddress}
+                                shippingMethod={shippingMethod}
+                                totalAmount={totalAmount}
 
-                        <OrderDetails
-                            confirmedAt={confirmedAt}
-                            isDelivered={isDelivered}
-                            orderId={orderId}
-                            orderStatus={orderStatus}
-                            paymentMethod={paymentMethod}
-                            paymentStatus={paymentStatus}
-                            products={products}
-                            refund={refund}
-                            shipping={shipping}
-                            shippingAddress={shippingAddress}
-                            shippingMethod={shippingMethod}
-                            totalAmount={totalAmount}
-
-                        />
+                            />
+                        </BlurFade>
 
                     </div>
                 </Layout >

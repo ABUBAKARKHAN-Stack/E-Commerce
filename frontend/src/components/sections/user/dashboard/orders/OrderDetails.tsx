@@ -24,19 +24,24 @@ type OrderedProduct = {
 };
 
 type Props = {
-    products: OrderedProduct[],
-    orderId: string,
-    totalAmount: number,
-    confirmedAt: Date,
-    orderStatus: string,
-    shippingAddress: IShippingAddress,
-    shippingMethod: string,
-    shipping: number,
-    paymentStatus: string,
-    refund: any,
-    paymentMethod: string,
-    isDelivered: boolean
-}
+    products: OrderedProduct[];
+    orderId: string;
+    totalAmount: number;
+    orderPlaceAt: Date;
+    confirmedAt: Date;
+    orderStatus: string;
+    shippingAddress: IShippingAddress;
+    shippingMethod: string;
+    shipping: number;
+    paymentStatus: string;
+    refund: {
+        refundAmount?: number;
+        refundAt?: Date | string;
+        stripeRefundId?: string;
+    } | null;
+    paymentMethod: string;
+    isDelivered: boolean;
+};
 
 const OrderDetails: FC<Props> = ({
     confirmedAt,
@@ -45,18 +50,18 @@ const OrderDetails: FC<Props> = ({
     orderStatus,
     paymentMethod,
     paymentStatus,
-    products,
-    refund,
-    shipping,
+    products = [],
+    refund = null,
+    shipping = 0,
     shippingAddress,
     shippingMethod,
+    orderPlaceAt,
     totalAmount,
 }) => {
     const { formatDate } = useFormattedDateTime();
 
     return (
         <div className="space-y-6">
-
             {/* Order Summary Header */}
             <div className="bg-muted p-4 rounded-lg border border-border shadow-sm">
                 <div className="flex items-center justify-between flex-wrap">
@@ -78,13 +83,21 @@ const OrderDetails: FC<Props> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
                     <div>
                         <p className="font-medium text-foreground mb-1">Recipient:</p>
-                        <p><span className="font-medium text-foreground">Name:</span> {shippingAddress?.fullName}</p>
-                        <p><span className="font-medium text-foreground">Address Line 1:</span> {shippingAddress?.addressLine1}</p>
-                        {shippingAddress?.addressLine2 && <p><span className="font-medium text-foreground">Address Line 2:</span> {shippingAddress.addressLine2}</p>}
-                        {shippingAddress?.city && <p><span className="font-medium text-foreground">City:</span> {shippingAddress.city}</p>}
-                        {shippingAddress?.state && <p><span className="font-medium text-foreground">State:</span> {shippingAddress.state}</p>}
-                        {shippingAddress?.postalCode && <p><span className="font-medium text-foreground">Postal Code:</span> {shippingAddress.postalCode}</p>}
-                        <p><span className="font-medium text-foreground">Country:</span> {shippingAddress?.country}</p>
+                        <p><span className="font-medium text-foreground">Name:</span> {shippingAddress?.fullName ?? "N/A"}</p>
+                        <p><span className="font-medium text-foreground">Address Line 1:</span> {shippingAddress?.addressLine1 ?? "N/A"}</p>
+                        {shippingAddress?.addressLine2 && (
+                            <p><span className="font-medium text-foreground">Address Line 2:</span> {shippingAddress.addressLine2}</p>
+                        )}
+                        {shippingAddress?.city && (
+                            <p><span className="font-medium text-foreground">City:</span> {shippingAddress.city}</p>
+                        )}
+                        {shippingAddress?.state && (
+                            <p><span className="font-medium text-foreground">State:</span> {shippingAddress.state}</p>
+                        )}
+                        {shippingAddress?.postalCode && (
+                            <p><span className="font-medium text-foreground">Postal Code:</span> {shippingAddress.postalCode}</p>
+                        )}
+                        <p><span className="font-medium text-foreground">Country:</span> {shippingAddress?.country ?? "N/A"}</p>
                         {shippingAddress?.phone && (
                             <p className="mt-1 flex items-center gap-1">
                                 <Phone className="w-4 h-4" />
@@ -102,9 +115,9 @@ const OrderDetails: FC<Props> = ({
                         <p className="font-medium text-foreground mb-1 flex items-center gap-1">
                             <Truck className="w-4 h-4" /> Shipping Method:
                         </p>
-                        <p><span className="font-medium text-foreground">Method:</span> {shippingMethod || 'N/A'}</p>
+                        <p><span className="font-medium text-foreground">Method:</span> {shippingMethod || "N/A"}</p>
                         <p className="mt-1 font-medium text-foreground">
-                            Shipping Cost: <span className="font-semibold">${shipping || 0}</span>
+                            Shipping Cost: <span className="font-semibold">${shipping}</span>
                         </p>
                     </div>
                 </div>
@@ -128,14 +141,14 @@ const OrderDetails: FC<Props> = ({
                                     : "N/A"}
                         </p>
                     </div>
-                    {refund.amount && refund.refundedAt && refund.intentId && (
+                    {refund?.refundAmount && refund?.refundAt && refund?.stripeRefundId && (
                         <div>
                             <p className="font-medium text-foreground mb-1 flex items-center gap-1">
                                 <Undo2 className="w-4 h-4" /> Refund Details:
                             </p>
-                            <p>Amount: <span className="text-foreground font-semibold">${refund.amount}</span></p>
-                            <p>Refunded At: <span className="text-foreground font-medium">{formatDate(refund.refundedAt)}</span></p>
-                            {refund.refundId && <p>Refund ID: <span className="text-foreground">{refund.refundId}</span></p>}
+                            <p>Amount: <span className="text-foreground font-semibold">${refund.refundAmount}</span></p>
+                            <p>Refunded At: <span className="text-foreground font-medium">{formatDate(new Date(refund.refundAt))}</span></p>
+                            <p>Refund ID: <span className="text-foreground">{refund.stripeRefundId}</span></p>
                         </div>
                     )}
                 </div>
@@ -147,6 +160,9 @@ const OrderDetails: FC<Props> = ({
             <div className="bg-muted p-4 rounded-lg border border-border shadow-sm text-sm text-muted-foreground space-y-2">
                 <p className="font-semibold text-foreground mb-1 flex items-center gap-1">
                     <CalendarCheck2 className="w-4 h-4" /> Order Timeline
+                </p>
+                <p className="flex items-center gap-1">
+                    Order Placed: <span className="text-foreground font-medium">{formatDate(new Date(orderPlaceAt))}</span>
                 </p>
                 <p className="flex items-center gap-1">
                     Confirmed At: <span className="text-foreground font-medium">{formatDate(new Date(confirmedAt))}</span>
@@ -172,7 +188,7 @@ const OrderDetails: FC<Props> = ({
                     <PackageCheck className="w-4 h-4" /> Ordered Items
                 </p>
                 <ul className="space-y-4">
-                    {products?.map((product, index) => (
+                    {products?.length > 0 ? products.map((product, index) => (
                         <li key={index} className="flex items-center gap-4">
                             {product.thumbnail && (
                                 <div className="size-20 rounded-md border bg-white p-1">
@@ -189,7 +205,9 @@ const OrderDetails: FC<Props> = ({
                                 <p>Price: <span className="font-semibold text-foreground">${product.price}</span></p>
                             </div>
                         </li>
-                    ))}
+                    )) : (
+                        <li className="text-foreground">No items ordered.</li>
+                    )}
                 </ul>
                 <p className="mt-4 flex items-center gap-1 text-foreground">
                     <DollarSign className="w-4 h-4" /> Total Amount:{" "}
