@@ -10,6 +10,7 @@ import ToolTip from "./ToolTip";
 import Pagination from "./Pagination";
 import DashboardSectionHeader from "./DashboardSectionHeader";
 import DashboardMainHeader from "./DashboardMainHeader";
+import UpdateProfileForm from "./UpdateProfileForm";
 
 
 export {
@@ -24,5 +25,6 @@ export {
     ToolTip,
     Pagination,
     DashboardSectionHeader,
-    DashboardMainHeader
+    DashboardMainHeader,
+    UpdateProfileForm
 }

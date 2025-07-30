@@ -46,6 +46,12 @@ const resetPasswordAdmin = async (data: any, params: any) => {
         })
 }
 
+const updateAdminProfile = async (data:any) => {
+    return adminApi.patch('/update/profile' , data,{
+        withCredentials: true
+    })
+}
+
 //* +++++++++++++++++++ Admin Product Apis ++++++++++++++++++++++++
 
 //* Create Product
@@ -80,6 +86,7 @@ export {
     logoutAdmin,
     forgotPasswordAdmin,
     resetPasswordAdmin,
+    updateAdminProfile,
     createProduct,
     deleteProduct,
     updateProduct,

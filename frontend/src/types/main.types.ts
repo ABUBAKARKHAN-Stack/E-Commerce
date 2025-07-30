@@ -1,5 +1,8 @@
 import { JwtPayload } from "jwt-decode";
 
+export type RoleType = "user" | "admin" | null;
+
+
 export interface IUser {
     _id: string;
     username: string;
@@ -14,7 +17,7 @@ export interface IAdmin {
     _id: string,
     username: string,
     email: string,
-    phone: number,
+    phone: string,
     isActive: boolean,
     isVerified: boolean,
     role: string,

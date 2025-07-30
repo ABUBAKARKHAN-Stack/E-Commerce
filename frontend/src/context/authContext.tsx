@@ -1,13 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { jwtDecode } from 'jwt-decode'
-import { IAdmin, IUser, UserUpdatedJwtPayload, AdminUpdatedJwtPayload } from "@/types/main.types";
-import { getUser, loginUser, logoutUser, forgotPasswordUser, resetPasswordUser } from "@/API/userApi";
-import { getAdmin, loginAdmin, logoutAdmin, forgotPasswordAdmin, resetPasswordAdmin } from "@/API/adminApi";
+import { IAdmin, IUser, UserUpdatedJwtPayload, AdminUpdatedJwtPayload, ApiErrorType, RoleType } from "@/types/main.types";
+import { getUser, loginUser, logoutUser, forgotPasswordUser, resetPasswordUser, updateUserProfile } from "@/API/userApi";
+import { getAdmin, loginAdmin, logoutAdmin, forgotPasswordAdmin, resetPasswordAdmin, updateAdminProfile } from "@/API/adminApi";
 import { z } from "zod";
 import { errorToast, infoToast, successToast } from "@/utils/toastNotifications";
 import { forgotPasswordSchema, signinSchema, resetPasswordSchema } from "@/schemas/authSchema";
+import { updateProfileSchema } from "@/schemas/update-ProfileSchema";
+import { AxiosError } from "axios";
 
-type RoleType = "user" | "admin" | null;
 
 
 type AuthContextType = {
@@ -18,6 +19,7 @@ type AuthContextType = {
     logout: (navigate: (path: string) => void) => Promise<void>;
     forgotPassword: (isAdmin: boolean, data: z.infer<typeof forgotPasswordSchema>) => Promise<void>;
     resetPassword: (isAdmin: boolean, data: z.infer<typeof resetPasswordSchema>, navigate: (path: string) => void, params: any) => Promise<void>;
+    updateProfile: (isAdmin: boolean, data: z.infer<typeof updateProfileSchema>, role: RoleType) => Promise<boolean>;
     setRole: (role: RoleType) => void;
     loading: boolean;
 }
@@ -183,6 +185,25 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    const updateProfile = async (isAdmin: boolean, data: z.infer<typeof updateProfileSchema>, role: RoleType) => {
+        try {
+            const res = isAdmin ? await updateAdminProfile(data) : await updateUserProfile(data);
+            if (res.status === 200) {
+                await fetchData(role)
+                successToast("Profile Updated Successfully!")
+                return true;
+            }
+            errorToast("Failed to update profile.");
+            return false
+        } catch (error) {
+            const err = error as AxiosError<ApiErrorType>
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg)
+            return false
+        }
+    }
+
+
     useEffect(() => {
         return () => {
             if (timeoutRef.current) {
@@ -193,7 +214,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
     return (
-        <AuthContext.Provider value={{ user, role, login, fetchData, logout, forgotPassword, resetPassword, setRole, loading }}>
+        <AuthContext.Provider value={{ user, role, login, fetchData, logout, forgotPassword, resetPassword, setRole, loading, updateProfile }}>
             {children}
         </AuthContext.Provider>
     );

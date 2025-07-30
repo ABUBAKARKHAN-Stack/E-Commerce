@@ -26,6 +26,7 @@ import ContactMain from "./ContactMain";
 import FaqsTeaserMain from "./FaqsTeaserMain";
 import UserOrdersMain from "./UserOrdersMain";
 import UserOrderMain from "./UserOrderMain";
+import UserProfileMain from "./UserProfileMain";
 
 export {
     HeroMain,
@@ -55,5 +56,6 @@ export {
     ContactMain,
     FaqsTeaserMain,
     UserOrdersMain,
-    UserOrderMain
+    UserOrderMain,
+    UserProfileMain
 }

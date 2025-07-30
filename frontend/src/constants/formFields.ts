@@ -154,3 +154,30 @@ export const contactFields = [
     },
 ] as const;
 
+
+export const updateProfileFields = [
+    {
+        label: "Username",
+        name: "username",
+        type: "text",
+        placeholder: "Example123",
+    },
+    {
+        label: "Email",
+        name: "email",
+        type: "email",
+        placeholder: "example@example.com",
+    },
+    {
+        label: "Phone",
+        name: "phone",
+        type: "text",
+        placeholder: "0XXXXXXXXXX",
+    },
+    {
+        label: "Address",
+        name: "address",
+        type: "text",
+        placeholder: "Street 1 XYZ"
+    }
+] as const
