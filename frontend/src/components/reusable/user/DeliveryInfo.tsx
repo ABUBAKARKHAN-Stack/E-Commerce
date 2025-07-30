@@ -4,17 +4,19 @@ import  { FC } from 'react'
 
 type Props = {
     formattedDate: Date;
-    etaDate: Date
+    etaDate: Date;
+    className?:string
 }
 
 const DeliveryInfo: FC<Props> = ({
     formattedDate,
-    etaDate
+    etaDate,
+    className
 }) => {
     const { formatDate, formatTime } = useFormattedDateTime()
     return (
 
-        <div className="p-4  bg-cyan-50 border border-cyan-100 dark:bg-orange-500/10 dark:border-orange-500/20">
+        <div className={`p-4 ${className} bg-cyan-50 border border-cyan-100 dark:bg-orange-500/10 dark:border-orange-500/20`}>
             <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                     <span className="text-gray-900 dark:text-gray-300">Order Confirmed At:</span>

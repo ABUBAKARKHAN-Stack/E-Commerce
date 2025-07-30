@@ -1,21 +1,25 @@
-import { CategoryBadge, DeliveryInfo } from '@/components/reusable/user';
+import {  DeliveryInfo } from '@/components/reusable/user';
 import { Separator } from '@/components/ui/separator';
-import useFormattedDateTime from '@/hooks/useFormattedDateTime';
+import { ShippingMethod } from '@/types/main.types';
 import { Receipt } from 'lucide-react';
-import React, { FC, Ref } from 'react'
+import  { FC, Ref } from 'react'
 
 type Props = {
     receiptRef: Ref<HTMLDivElement>;
     products: any[];
     totalAmount: number;
-    confirmedAt: Date
+    confirmedAt: Date;
+    shippingMethod:string;
+    shipping: number
 }
 
 const CheckoutOrderReceipt: FC<Props> = ({
     receiptRef,
     products,
     totalAmount,
-    confirmedAt
+    confirmedAt,
+    shippingMethod,
+    shipping
 }) => {
 
     const formattedDate = new Date(confirmedAt);
@@ -54,14 +58,16 @@ const CheckoutOrderReceipt: FC<Props> = ({
                     <div className="flex justify-between items-center text-gray-900 dark:text-gray-300">
                         <h2 className="text-lg font-medium">Items Total</h2>
                         <h2 className="text-lg font-semibold">
-                            ${Number(totalAmount - 50).toFixed(2)}
+                            ${Number(totalAmount - shipping).toFixed(2)}
                         </h2>
                     </div>
 
                     {/* Shipping Fee */}
                     <div className="flex justify-between items-center text-gray-900 dark:text-gray-300">
                         <h2 className="text-lg font-medium">Shipping Fee</h2>
-                        <h2 className="text-lg font-semibold">$50.00</h2>
+                        <h2 className="text-lg font-semibold">
+                            {shippingMethod === ShippingMethod.EXPRESS ? "$9.99" : shippingMethod === ShippingMethod.STANDARD ? "$6.99" : "$0"}
+                        </h2>
                     </div>
 
                     <Separator />

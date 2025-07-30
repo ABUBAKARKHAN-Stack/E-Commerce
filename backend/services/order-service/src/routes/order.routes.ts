@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { cancelOrder, completeCheckout, getConfirmedOrder, getPendingOrder, getUserOrders, getUserSingleOrder } from "../controllers/order.controller";
+import { cancelOrder, completeCheckout, downloadOrderInvoice, getConfirmedOrder, getPendingOrder, getUserOrders, getUserSingleOrder } from "../controllers/order.controller";
 import authCheck from "../middlewares/auth.middleware";
 
 
@@ -10,4 +10,5 @@ router.post('/complete-checkout', authCheck, completeCheckout);
 router.get('/all-orders', authCheck, getUserOrders);
 router.get('/:orderId',authCheck,getUserSingleOrder)
 router.post('/cancel', authCheck, cancelOrder)
+router.post('/invoice/download',  downloadOrderInvoice)
 export default router;

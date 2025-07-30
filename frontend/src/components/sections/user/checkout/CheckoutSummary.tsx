@@ -73,7 +73,7 @@ const CheckSummary: FC<Props> = ({
                     <div className="flex justify-between items-center text-gray-900 dark:text-gray-300">
                         <h2 className="text-lg font-medium">Shipping Fee</h2>
                         <h2 className="text-lg font-semibold">
-                            {shippingMethod === ShippingMethod.EXPRESS ? "$9.99" : shippingMethod === ShippingMethod.STANDARD ? "$6.99" : "0"}
+                            {shippingMethod === ShippingMethod.EXPRESS ? "$9.99" : shippingMethod === ShippingMethod.STANDARD ? "$6.99" : "$0"}
                         </h2>
                     </div>
 

@@ -56,6 +56,9 @@ const confirmOrderDetailsLoader = async ({ request }: LoaderFunctionArgs) => {
         const res = await getConfirmedOrderDetails(orderId);
         const confirmedAt = res.data.data.confirmedAt;
         const orderStatus = res.data.data.status;
+        const shippingMethod = res.data.data.shippingMethod;
+        const shipping = res.data.data.shipping;
+
 
 
         if (res.status === 200) {
@@ -79,7 +82,9 @@ const confirmOrderDetailsLoader = async ({ request }: LoaderFunctionArgs) => {
                     })),
                     totalAmount,
                     confirmedAt,
-                    orderStatus
+                    orderStatus,
+                    shippingMethod,
+                    shipping
                 }
             }
             throw new ApiError(bulk.status, "Failed to fetch bulk products");
@@ -110,7 +115,7 @@ const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
 
 
         if (res.status === 200) {
-            const order = res.data.data;            
+            const order = res.data.data;
             const orderId = order.orderId;
             const shippingAddress = order.shippingAddress;
             const paymentStatus = order.paymentStatus;
@@ -122,7 +127,7 @@ const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
             const cart = order.cart;
             const productIds = cart.products.map(({ productId }: { productId: string }) => productId);
             const totalAmount = cart.totalAmount;
-            const orderPlaceAt = order.createdAt            
+            const orderPlaceAt = order.createdAt
             const bulk = await getBulkProducts(productIds);
             const bulkProducts: IProduct[] = bulk.data.data;
             if (bulk.status === 200) {

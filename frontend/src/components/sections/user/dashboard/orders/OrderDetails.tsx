@@ -14,14 +14,9 @@ import { Separator } from "@/components/ui/separator";
 import { OrderIdBadge, OrderStatusBadge, PaymentStatusBadge } from "@/components/reusable/user";
 import { FC } from "react";
 import useFormattedDateTime from "@/hooks/useFormattedDateTime";
-import { IShippingAddress, PaymentMethod } from "@/types/main.types";
+import { IShippingAddress, OrderedProduct, PaymentMethod } from "@/types/main.types";
 
-type OrderedProduct = {
-    name: string;
-    orderedProductQuantity: number;
-    price: number;
-    thumbnail: string;
-};
+
 
 type Props = {
     products: OrderedProduct[];
@@ -58,7 +53,7 @@ const OrderDetails: FC<Props> = ({
     orderPlaceAt,
     totalAmount,
 }) => {
-    const { formatDate } = useFormattedDateTime();
+    const { formatDate, formatTime } = useFormattedDateTime();
 
     return (
         <div className="space-y-6">
@@ -162,11 +157,17 @@ const OrderDetails: FC<Props> = ({
                     <CalendarCheck2 className="w-4 h-4" /> Order Timeline
                 </p>
                 <p className="flex items-center gap-1">
-                    Order Placed: <span className="text-foreground font-medium">{formatDate(new Date(orderPlaceAt))}</span>
+                    Order Placed: <span className="text-foreground font-medium">
+                        {formatDate(new Date(orderPlaceAt))} - {formatTime(new Date(orderPlaceAt))}
+                    </span>
                 </p>
-                <p className="flex items-center gap-1">
-                    Confirmed At: <span className="text-foreground font-medium">{formatDate(new Date(confirmedAt))}</span>
-                </p>
+                {
+                    confirmedAt && (<p className="flex items-center gap-1">
+                        Confirmed At: <span className="text-foreground font-medium">
+                            {formatDate(new Date(confirmedAt))} - {formatTime(new Date(confirmedAt))}
+                        </span>
+                    </p>)
+                }
                 <p className="flex items-center gap-1">
                     {isDelivered ? (
                         <>

@@ -10,7 +10,7 @@ import {
 import { Layout } from '@/components/layout/shared';
 
 const CheckoutSuccessMain = () => {
-    const { products, totalAmount, orderId, confirmedAt } = useLoaderData();
+    const { products, totalAmount, orderId, confirmedAt, shippingMethod, shipping } = useLoaderData();
 
     const containerRef = useRef(null);
     const checkIconRef = useRef(null);
@@ -148,9 +148,11 @@ const CheckoutSuccessMain = () => {
                     {/*  Order Receipt Section */}
                     <CheckoutOrderReceipt
                         receiptRef={receiptRef}
+                        shippingMethod={shippingMethod}
                         products={products}
                         totalAmount={totalAmount}
                         confirmedAt={confirmedAt}
+                        shipping={shipping}
                     />
 
                     {/* Action Buttons: Track Order & Continue Shopping */}

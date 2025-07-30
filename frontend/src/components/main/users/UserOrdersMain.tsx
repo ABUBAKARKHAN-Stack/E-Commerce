@@ -100,10 +100,6 @@ const UserOrdersMain = () => {
     ]);
 
 
-    if (!ordersData) {
-        return <h1>No Orders found</h1>
-    }
-
 
     return (
         <>

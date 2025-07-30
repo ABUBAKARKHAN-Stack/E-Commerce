@@ -8,7 +8,8 @@ import { env } from "../config/env";
 import Stripe from "stripe";
 import { ActivityType, CompleteCheckoutBody, OrderStatus, PaymentMethod, PaymentStatus, ShippingMethod } from "../types/main.types";
 import { confirmOrder, validateCancellable } from "../helpers/order.helper";
-
+import * as puppeteer from "puppeteer";
+import { getInvoiceHtmlTemplate } from "../helpers";
 
 
 const getPendingOrder = expressAsyncHandler(async (req: Request, res: Response) => {
@@ -389,6 +390,81 @@ const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {
     throw new ApiError(400, "Invalid order cancellation state.");
 });
 
+const downloadOrderInvoice = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { orderId } = req.query;
+    const {
+        products
+    } = req.body
+
+
+    if (!orderId) {
+        throw new ApiError(400, "Order Id is required")
+    }
+    const order = await orderModel.findOne({
+        orderId
+    })
+
+    if (!order) {
+        throw new ApiError(404, "Order Not Found")
+    }
+
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+
+    const {
+        totalAmount,
+    } = order.cart;
+    const {
+        shipping,
+        shippingMethod,
+        shippingAddress,
+        paymentStatus,
+        paymentMethod,
+        refund,
+        status,
+        isDelivered,
+        confirmedAt,
+        createdAt
+    } = order
+
+
+
+    const htmlContent = getInvoiceHtmlTemplate({
+        confirmedAt,
+        createdAt,
+        isDelivered,
+        orderId: orderId.toString(),
+        paymentMethod,
+        paymentStatus,
+        products,
+        refund,
+        shipping,
+        shippingAddress,
+        shippingMethod,
+        status,
+        totalAmount
+    })
+
+
+    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+    const pdfBufferRaw = await page.pdf({
+        format: "A4", printBackground: true,
+        margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" },
+    });
+    const pdfBuffer = Buffer.from(pdfBufferRaw)
+
+    await browser.close()
+
+
+
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=invoice-${order.orderId}.pdf`)
+    res.send(pdfBuffer)
+
+})
+
 
 
 
@@ -399,5 +475,6 @@ export {
     stripeWebhookHandler,
     getUserOrders,
     getUserSingleOrder,
-    cancelOrder
+    cancelOrder,
+    downloadOrderInvoice
 }

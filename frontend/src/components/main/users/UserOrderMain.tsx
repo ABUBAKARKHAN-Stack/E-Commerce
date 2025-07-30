@@ -3,9 +3,14 @@ import { motion } from 'motion/react'
 import { Layout, SecondaryHeader, SideBar } from "@/components/layout/shared";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { DashboardMainHeader } from "@/components/reusable/shared";
-import { Package, ShoppingBag } from "lucide-react";
-import { useLoaderData } from "react-router-dom";
+import { Ban, FileDown, LoaderPinwheel, Package, PackageSearch, ShoppingBag } from "lucide-react";
+import { useLoaderData, useNavigate, useRevalidator } from "react-router-dom";
 import { OrderDetails } from "@/components/sections/user/dashboard/orders";
+import { Button } from "@/components/ui/button";
+import { isOrderCancelable } from "@/utils/IsOrderCancelable";
+import { OrderLoading, OrderStatus } from "@/types/main.types";
+import { useOrderContext } from "@/context/orderContext";
+import { DeliveryInfo } from "@/components/reusable/user";
 
 
 const UserOrderMain = () => {
@@ -29,9 +34,26 @@ const UserOrderMain = () => {
     } = useLoaderData();
 
 
+    const isCancelable = isOrderCancelable(orderStatus, confirmedAt);
+    const { cancelOrder, loading, downloadOrderInvoice } = useOrderContext();
+    const { revalidate } = useRevalidator();
+    const navigate = useNavigate()
 
+    const formattedDate = new Date(confirmedAt);
+    const etaDate = new Date(formattedDate.getTime() + 2 * 24 * 60 * 60 * 1000);
 
+    const handleOrderCanel = async () => {
+        await cancelOrder(orderId);
+        revalidate()
+    }
 
+    const handleTrackOrder = () => {
+        navigate(`/track-order?orderId=${orderId}`)
+    }
+
+    const handleDownloadInvoice = () => {
+        downloadOrderInvoice(orderId, products)
+    }
 
 
     return (
@@ -80,6 +102,7 @@ const UserOrderMain = () => {
                             delay={1.5}
                             duration={0.5}
                             direction="right"
+                            className="space-y-3"
                         >
                             <OrderDetails
                                 confirmedAt={confirmedAt}
@@ -97,8 +120,62 @@ const UserOrderMain = () => {
                                 totalAmount={totalAmount}
 
                             />
+                            {
+                                confirmedAt && (
+                                    <DeliveryInfo
+                                        etaDate={etaDate}
+                                        formattedDate={formattedDate}
+                                        className="rounded-md"
+                                    />
+                                )
+                            }
                         </BlurFade>
 
+                        {/* Action Buttons */}
+                        <BlurFade
+                            inView
+                            duration={0.5}
+                            inViewMargin="-70px"
+                            direction="down"
+                            className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <Button
+                                onClick={handleTrackOrder}
+                                disabled={orderStatus === OrderStatus.PENDING || orderStatus === OrderStatus.CANCELLED}
+                                size="lg" variant="default">
+                                <PackageSearch className="size-4.5" />
+                                Track Order
+                            </Button>
+                            <Button
+                                onClick={handleDownloadInvoice}
+                                disabled={orderStatus === OrderStatus.PENDING || loading === OrderLoading.DOWNLOAD_INVOICE}
+                                size="lg" variant="outline">
+                                {
+                                    loading === OrderLoading.DOWNLOAD_INVOICE ? <>
+                                        <LoaderPinwheel className="size-4 animate-spin" />
+                                        Downloaing...
+                                    </> : <>
+                                        <FileDown className="size-4.5" />
+                                        Download Invoice
+                                    </>
+                                }
+                            </Button>
+                            <Button
+                                disabled={isDelivered || !isCancelable || loading === OrderLoading.CANCEL_ORDER}
+                                size="lg"
+                                variant="destructive"
+                                onClick={handleOrderCanel}
+                            >
+                                {
+                                    loading === OrderLoading.CANCEL_ORDER ? <>
+                                        <LoaderPinwheel className="size-4 animate-spin" />
+                                        Cancelling...
+                                    </> : (<>
+                                        <Ban className="size-4.5" />
+                                        Cancel Order
+                                    </>)
+                                }
+                            </Button>
+                        </BlurFade>
                     </div>
                 </Layout >
             </div >

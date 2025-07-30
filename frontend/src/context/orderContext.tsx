@@ -2,10 +2,11 @@ import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffe
 import {
     getConfirmedOrderDetails as getConfirmedOrderDetailsApi,
     getAllOrders as getAllOrdersApi,
-    cancelOrder as cancelOrderApi
+    cancelOrder as cancelOrderApi,
+    downloadOrderInvoice as downloadOrderInvoiceApi
 } from '@/API/userApi'
 import { AxiosError } from "axios";
-import { ApiErrorType, IOrder, OrderLoading } from "@/types/main.types";
+import { ApiErrorType, IOrder, OrderedProduct, OrderLoading } from "@/types/main.types";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
 type OrderContextType = {
@@ -18,7 +19,8 @@ type OrderContextType = {
     confirmedOrders: any[];
     loading: string | null;
     cancelOrder: (orderId: string) => Promise<void>;
-    ordersCount: number
+    ordersCount: number;
+    downloadOrderInvoice: (orderId: string, products: OrderedProduct[]) => Promise<void>;
 }
 
 const OrderContext = createContext<OrderContextType | null>(null);
@@ -74,7 +76,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         } catch (error) {
             const err = error as AxiosError<ApiErrorType>;
             console.log(err);
-            
+
         } finally {
             setLoading(null)
         }
@@ -86,6 +88,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     }, [])
 
     const cancelOrder = async (orderId: string) => {
+        setLoading(OrderLoading.CANCEL_ORDER)
         try {
             const res = await cancelOrderApi(orderId);
             if (res.status === 200) {
@@ -95,6 +98,34 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
             const err = error as AxiosError<ApiErrorType>;
             const errMsg = err.response?.data.message || "Something went wrong";
             errorToast(errMsg);
+        } finally {
+            setLoading(null)
+        }
+    }
+
+    const downloadOrderInvoice = async (orderId: string, products: OrderedProduct[]) => {
+        setLoading(OrderLoading.DOWNLOAD_INVOICE)
+        try {
+            const res = await downloadOrderInvoiceApi(orderId, products)
+            if (res.status === 200) {
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", `invoice-${orderId}.pdf`);
+                document.body.appendChild(link);
+                link.click()
+
+                link.parentNode?.removeChild(link);
+                window.URL.revokeObjectURL(url)
+                successToast("Invoice downloaded!");
+            }
+
+        } catch (error) {
+            const err = error as AxiosError<ApiErrorType>;
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg);
+        } finally {
+            setLoading(null)
         }
     }
 
@@ -108,6 +139,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         cancelledOrders,
         confirmedOrders,
         cancelOrder,
+        downloadOrderInvoice,
         setOrdersData,
         ordersData,
         ordersCount,

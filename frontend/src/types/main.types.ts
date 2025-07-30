@@ -97,6 +97,8 @@ export interface ApiErrorType {
 export const enum OrderLoading {
     TRACK_ORDER_LOADING = 'track-order',
     GET_ALL_ORDERS = 'get-all-orders',
+    CANCEL_ORDER = "cancel-order",
+    DOWNLOAD_INVOICE= "download-invoice"
 }
 
 export enum ActivityType {
@@ -203,3 +205,10 @@ export enum OrderStatus {
     DELIVERED = "delivered",
     CANCELLED = "cancelled",
 }
+
+export type OrderedProduct = {
+    name: string;
+    orderedProductQuantity: number;
+    price: number;
+    thumbnail?: string;
+};

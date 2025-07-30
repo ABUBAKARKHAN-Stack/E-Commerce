@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { activityApi, orderApi, userApi, userProductApi } from './apiClients'
 import { addReviewSchema } from '@/schemas/add-reviewSchema'
 import { contactSchema } from '@/schemas/contactSchema'
-import { CompleteCheckoutBody } from '@/types/main.types'
+import { CompleteCheckoutBody, OrderedProduct } from '@/types/main.types'
 
 //* User APIS
 
@@ -181,16 +181,16 @@ const getConfirmedOrderDetails = async (orderId: string) => {
   })
 }
 
-const getAllOrders = async (params?: any) => {  
+const getAllOrders = async (params?: any) => {
   return await orderApi.get('/all-orders', {
     params,
     withCredentials: true
   })
 }
 
-const getSingleOrder = async (orderId:string) => {
+const getSingleOrder = async (orderId: string) => {
   return await orderApi.get(`/${orderId}`, {
-    withCredentials:true
+    withCredentials: true
   })
 }
 const completeCheckout = async (checkoutBody: CompleteCheckoutBody) => {
@@ -199,8 +199,16 @@ const completeCheckout = async (checkoutBody: CompleteCheckoutBody) => {
   })
 }
 
-const cancelOrder = async (orderId:string) => {
-  return await orderApi.post('/cancel', {orderId}, {
+const cancelOrder = async (orderId: string) => {
+  return await orderApi.post('/cancel', { orderId }, {
+    withCredentials: true
+  })
+}
+
+const downloadOrderInvoice = async (orderId: string, products: OrderedProduct[]) => {
+  return await orderApi.post('invoice/download', { products }, {
+    params: { orderId },
+    responseType: "blob",
     withCredentials: true
   })
 }
@@ -243,6 +251,7 @@ export {
   getConfirmedOrderDetails,
   getAllOrders,
   cancelOrder,
+  downloadOrderInvoice,
   getSingleOrder,
   completeCheckout,
   getRecentActivity

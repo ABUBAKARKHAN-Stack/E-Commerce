@@ -66,7 +66,8 @@ interface IOrder extends Document {
     isDelivered: boolean;
     intentId: string;
     refund: IRefundInfo;
-    paymentStatus: PaymentStatus,
+    paymentStatus: PaymentStatus;
+    createdAt:Date
 }
 
 interface JwtUpdtedPayload extends JwtPayload {
@@ -99,5 +100,6 @@ export {
     PaymentStatus,
     ShippingMethod,
     CompleteCheckoutBody,
+    IShippingAddress
 
 }

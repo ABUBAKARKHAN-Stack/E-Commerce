@@ -1,5 +1,5 @@
 import { BlurFade } from "@/components/magicui/blur-fade";
-import { OrderIdBadge } from "@/components/reusable/user";
+import { OrderIdBadge, OrderStatusBadge } from "@/components/reusable/user";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useFormattedDateTime from "@/hooks/useFormattedDateTime";
-import { IOrder, PaymentMethod } from "@/types/main.types";
+import { IOrder, OrderStatus, PaymentMethod } from "@/types/main.types";
 import {
     Eye,
     HelpCircle,
@@ -24,6 +24,7 @@ import {
     CreditCard,
     Undo2,
     Truck,
+    FileDown,
 } from "lucide-react";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
@@ -35,7 +36,7 @@ type Props = {
 
 const OrderCard: FC<Props> = ({ totalOrders, filterError }) => {
     const { formatDate } = useFormattedDateTime();
-    const navigate = useNavigate();
+    const navigate = useNavigate();    
 
     return (
         <>
@@ -54,12 +55,6 @@ const OrderCard: FC<Props> = ({ totalOrders, filterError }) => {
                                 onClick: () => navigate(`/orders/${orderId}`),
                             },
                             {
-                                label: "Track Your Order",
-                                icon: LocateFixed,
-                                disabled: status === "pending" || status === "cancelled",
-                                onClick: () => navigate(`/track-order?orderId=${orderId}`),
-                            },
-                            {
                                 label: "Contact Support",
                                 icon: HelpCircle,
                                 onClick: () => navigate("/contact"),
@@ -75,7 +70,7 @@ const OrderCard: FC<Props> = ({ totalOrders, filterError }) => {
                                 {/* Dropdown Menu */}
                                 <DropdownMenu>
                                     <DropdownMenuTrigger className="absolute right-5 bottom-0">
-                                        <Button size="icon" variant="outline">
+                                        <Button size="icon" className="!bg-foreground dark:text-black text-white">
                                             <MoreVertical className="size-5 stroke-2" />
                                         </Button>
                                     </DropdownMenuTrigger>
@@ -99,17 +94,7 @@ const OrderCard: FC<Props> = ({ totalOrders, filterError }) => {
                                         className="!mt-0 !rounded xxs:text-sm text-xs tracking-tight"
                                         orderId={orderId}
                                     />
-                                    <Badge
-                                        variant={
-                                            status === "pending"
-                                                ? "default"
-                                                : status === "confirmed"
-                                                    ? "success"
-                                                    : "error"
-                                        }
-                                    >
-                                        {status}
-                                    </Badge>
+                                    <OrderStatusBadge orderStatus={status} />
                                 </div>
 
                                 {/* Details */}
