@@ -170,7 +170,7 @@ export enum ShippingMethod {
     EXPRESS = "EXPRESS"
 }
 
-export interface IOrder  {
+export interface IOrder {
     orderId: string;
     cart: {
         products: any[];
@@ -187,3 +187,19 @@ export interface IOrder  {
     shipping?: number;
     paymentStatus: string
 };
+
+
+export enum PaymentStatus {
+    PAID = "PAID",
+    UNPAID = "UNPAID",
+    REFUNDED = "REFUNDED"
+}
+
+export enum OrderStatus {
+    PENDING = "pending",
+    CONFIRMED = "confirmed",
+    PROCESSING = "processing",
+    SHIPPED = "shipped",
+    DELIVERED = "delivered",
+    CANCELLED = "cancelled",
+}

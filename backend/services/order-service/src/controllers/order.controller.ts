@@ -140,6 +140,7 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
         order.shippingMethod = shippingPayload.method;
         order.shipping = shippingPayload.cost;
         order.confirmedAt = new Date();
+        order.cart.totalAmount = order.cart.totalAmount + order.shipping;
         await order.save()
         await publishEvent("cart.clear", 'cleared-cart', { userId });
         await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId: order.orderId }); //* For User
@@ -283,8 +284,8 @@ const getUserOrders = expressAsyncHandler(async (req: Request, res: Response) =>
         }))
 });
 
-const getUserSingleOrder = expressAsyncHandler(async (req:Request, res:Response) => {
-    const {orderId} = req.params;
+const getUserSingleOrder = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { orderId } = req.params;
 
     if (!orderId) {
         throw new ApiError(400, "Order Id is required")
@@ -299,8 +300,8 @@ const getUserSingleOrder = expressAsyncHandler(async (req:Request, res:Response)
     }
 
     res
-    .status(200)
-    .json(new ApiResponse(200, "Order Details Fetched", order))
+        .status(200)
+        .json(new ApiResponse(200, "Order Details Fetched", order))
 })
 
 const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {

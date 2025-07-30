@@ -110,8 +110,16 @@ const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
 
 
         if (res.status === 200) {
-            const orderId = res.data.data.orderId;
-            const cart = res.data.data.cart;
+            const order = res.data.data;            
+            const orderId = order.orderId;
+            const shippingAddress = order.shippingAddress;
+            const paymentStatus = order.paymentStatus;
+            const paymentMethod = order.paymentMethod;
+            const refund = order.refund;
+            const shippingMethod = order.shippingMethod;
+            const shipping = order.shipping;
+            const isDelivered = order.isDelivered;
+            const cart = order.cart;
             const productIds = cart.products.map(({ productId }: { productId: string }) => productId);
             const totalAmount = cart.totalAmount;
             const bulk = await getBulkProducts(productIds);
@@ -132,7 +140,13 @@ const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
                     totalAmount,
                     confirmedAt,
                     orderStatus,
-
+                    shippingAddress,
+                    shippingMethod,
+                    shipping,
+                    paymentStatus,
+                    refund,
+                    paymentMethod,
+                    isDelivered
 
                 }
             }

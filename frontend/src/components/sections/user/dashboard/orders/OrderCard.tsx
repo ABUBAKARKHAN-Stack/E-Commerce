@@ -104,8 +104,8 @@ const OrderCard: FC<Props> = ({ totalOrders, filterError }) => {
                                             status === "pending"
                                                 ? "default"
                                                 : status === "confirmed"
-                                                ? "success"
-                                                : "error"
+                                                    ? "success"
+                                                    : "error"
                                         }
                                     >
                                         {status}
@@ -142,15 +142,14 @@ const OrderCard: FC<Props> = ({ totalOrders, filterError }) => {
                                     </div>
 
                                     {/* Shipping */}
-                                    {shipping && (
-                                        <div className="flex items-center gap-2">
-                                            <Truck className="size-4" />
-                                            Shipping:
-                                            <span className="ml-1 font-semibold text-foreground">
-                                                ${shipping}
-                                            </span>
-                                        </div>
-                                    )}
+
+                                    <div className="flex items-center gap-2">
+                                        <Truck className="size-4" />
+                                        Shipping:
+                                        <span className="ml-1 font-semibold text-foreground">
+                                            ${shipping}
+                                        </span>
+                                    </div>
 
                                     {/* Payment Method */}
                                     {paymentMethod && (
@@ -161,8 +160,8 @@ const OrderCard: FC<Props> = ({ totalOrders, filterError }) => {
                                                 {paymentMethod === PaymentMethod.COD
                                                     ? "Cash On Delivery"
                                                     : paymentMethod === PaymentMethod.STRIPE
-                                                    ? "Card"
-                                                    : "N/A"}
+                                                        ? "Card"
+                                                        : "N/A"}
                                             </span>
                                         </div>
                                     )}

@@ -9,7 +9,7 @@ type SectionHeaderProps = {
 }
 const SectionHeader: FC<SectionHeaderProps> = ({ mainHeading, subText, animateOnce = false, forHome = true }) => {
     return (
-        <div className='relative w-full flex  flex-col gap-y-4 justify-center items-center'>
+        <div className='relative w-full flex flex-col gap-y-4 justify-center items-center'>
             <BlurFade direction="down" once={animateOnce} delay={forHome ? 0.25 : 0.2} inView>
                 <h1 className='text-gray-950 dark:text-white text-center text-2xl xsm:text-4xl md:text-5xl xl:text-6xl font-bold'>
                     {mainHeading}

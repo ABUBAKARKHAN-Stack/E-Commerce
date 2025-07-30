@@ -100,8 +100,8 @@ const UserOrdersMain = () => {
     ]);
 
 
-    if (ordersData.length === 0) {
-        return <h1>Fetching</h1>
+    if (!ordersData) {
+        return <h1>No Orders found</h1>
     }
 
 

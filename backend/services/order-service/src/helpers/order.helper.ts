@@ -68,7 +68,6 @@ const confirmOrder = async ({
     const parsedShippingAddress = JSON.parse(shippingAddress);
     const parsedShippingPayload = shippingPayload ? JSON.parse(shippingPayload) : null;
 
-    console.log(parsedShippingPayload);
 
     const order = await orderModel.findOneAndUpdate({
         orderId,
@@ -80,7 +79,11 @@ const confirmOrder = async ({
         paymentMethod,
         shippingAddress: parsedShippingAddress,
         shippingMethod: parsedShippingPayload.method,
-        shipping: parsedShippingPayload.cost
+        shipping: parsedShippingPayload.cost,
+        $inc: {
+            "cart.totalAmount": parsedShippingPayload.cost
+        }
+
     }, { new: true });
     await publishEvent("cart.clear", 'cleared-cart', { userId });
     await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId }); //* For User
@@ -106,8 +109,8 @@ const validateCancellable = ({
     }
 };
 
-export { 
+export {
     createOrder,
-     confirmOrder,
-     validateCancellable
-     };
+    confirmOrder,
+    validateCancellable
+};
