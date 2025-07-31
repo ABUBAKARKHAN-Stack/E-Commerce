@@ -21,7 +21,6 @@ const RecentActivity = () => {
                 start: "top 85%",
                 end: "bottom 10%",
                 toggleActions: "play reverse play reverse",
-                markers: true,
             },
             defaults: { duration: 2 }
         });

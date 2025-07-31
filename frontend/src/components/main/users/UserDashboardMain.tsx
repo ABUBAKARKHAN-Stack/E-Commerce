@@ -12,6 +12,8 @@ import { DashboardMainHeader, } from "@/components/reusable/shared";
 import { Handshake, Sparkles } from "lucide-react";
 import { useAuthContext } from "@/context/authContext";
 import { animations } from "@/utils/animations/animations";
+import { Link } from "react-router-dom";
+import { BlurFade } from "@/components/magicui/blur-fade";
 gsap.registerPlugin(ScrollTrigger)
 
 const UserDashboardMain = () => {
@@ -88,6 +90,20 @@ const UserDashboardMain = () => {
                         <Metrics />
                         <RecentActivity />
                         <QuickActions />
+                        <BlurFade
+                        inView
+                        inViewMargin="-50px"
+                        blur="30px"
+                        direction="down"
+                        duration={0.75}
+                        once={false}
+                        >
+                        <p className="text-center text-sm text-muted-foreground mt-10">
+                            Need help with something? <Link to="/contact" className="underline">Contact support</Link> anytime. <br />
+                            Thank you for shopping with <strong className="dark:text-orange-500 text-cyan-500">ShopNex</strong>!
+                        </p>
+                        </BlurFade>
+
                     </div>
                 </Layout>
             </div>

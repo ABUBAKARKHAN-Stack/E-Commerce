@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { OrderStatus } from '@/types/main.types';
-import React, { FC } from 'react';
+import  { FC } from 'react';
 
 type Props = {
     orderStatus: string;

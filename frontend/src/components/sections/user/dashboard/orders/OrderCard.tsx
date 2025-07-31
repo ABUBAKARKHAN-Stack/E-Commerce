@@ -1,6 +1,5 @@
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { OrderIdBadge, OrderStatusBadge } from "@/components/reusable/user";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -11,11 +10,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import useFormattedDateTime from "@/hooks/useFormattedDateTime";
-import { IOrder, OrderStatus, PaymentMethod } from "@/types/main.types";
+import { IOrder, PaymentMethod } from "@/types/main.types";
 import {
     Eye,
     HelpCircle,
-    LocateFixed,
     MoreVertical,
     SearchSlash,
     PackageCheck,
@@ -24,7 +22,6 @@ import {
     CreditCard,
     Undo2,
     Truck,
-    FileDown,
 } from "lucide-react";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";

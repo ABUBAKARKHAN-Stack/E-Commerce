@@ -181,3 +181,18 @@ export const updateProfileFields = [
         placeholder: "Street 1 XYZ"
     }
 ] as const
+
+export const updatePasswordFields = [
+     {
+        label: "Old Password",
+        name: "oldPassword",
+        type: "password",
+        placeholder: "********",
+    },
+      {
+        label: "New Password",
+        name: "newPassword",
+        type: "password",
+        placeholder: "********",
+    }
+] as const

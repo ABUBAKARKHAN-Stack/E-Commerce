@@ -59,6 +59,12 @@ const updateUserProfile = async (data: any) => {
   })
 }
 
+const updateUserPassword = async (data:any) => {
+  return await userApi.patch('/update/password' , data, {
+    withCredentials: true
+  })
+}
+
 //* +++++++++++++++++++ User Product Api ++++++++++++++
 const getProducts = async (params?: any) => {
   console.log(params, 'from func');
@@ -235,6 +241,7 @@ export {
   forgotPasswordUser,
   resetPasswordUser,
   updateUserProfile,
+  updateUserPassword,
   getProducts,
   getSingleProduct,
   getCategories,

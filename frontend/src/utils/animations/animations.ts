@@ -47,6 +47,25 @@ const animations = {
             ease: 'power3.out',
         }
     },
+    quickActionsCards: {
+        from: {
+            opacity: 0,
+            rotateX: -90,
+            y: 50,
+            scale: 0.9,
+            filter: 'blur(8px)',
+        },
+        to: {
+            opacity: 1,
+            rotateX: 0,
+            y: 0,
+            scale: 1,
+            filter: 'blur(0px)',
+            duration: 0.9,
+            stagger: 0.15,
+            ease: 'back.out(1.7)',
+        }
+    },
     countUpEase: (t: number, b: number, c: number, d: number) => {
         t /= d / 2;
         if (t < 1) return (c / 2) * t * t + b;

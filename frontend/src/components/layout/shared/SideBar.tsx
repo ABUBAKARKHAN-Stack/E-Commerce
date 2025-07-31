@@ -44,7 +44,6 @@ const Sidebar = forwardRef<HTMLElement, Props>(({ isDrawerOpen, setIsDrawerOpen 
             { icon: <Heart strokeWidth={3} className="w-5 h-5" />, text: "WishList", path: "/wishlist" },
             { icon: <ShoppingCart strokeWidth={3} className="w-5 h-5" />, text: "Cart", path: "/cart" },
             { icon: <User strokeWidth={3} className="w-5 h-5" />, text: "Profile", path: "/me" },
-            { icon: <LifeBuoy strokeWidth={3} className="w-5 h-5" />, text: "Help & Support", path: "/help" }
         ];
 
     const handleNavigation = (path: string) => {

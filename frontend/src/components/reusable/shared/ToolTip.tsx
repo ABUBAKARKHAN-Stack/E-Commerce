@@ -21,7 +21,7 @@ const ToolTip: FC<Props> = ({
                 <TooltipTrigger asChild>
                     {triggerValue}
                 </TooltipTrigger>
-                <TooltipContent>{tooltip}</TooltipContent>
+                <TooltipContent className='text-wrap text-center max-w-60'>{tooltip}</TooltipContent>
             </Tooltip>
         </TooltipProvider>
     )

@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { Layout, SecondaryHeader, SideBar } from '@/components/layout/shared';
 import { BlurFade } from '@/components/magicui/blur-fade';
-import { DashboardMainHeader, UpdateProfileForm } from '@/components/reusable/shared';
+import { DashboardMainHeader, UpdatePasswordForm, UpdateProfileForm } from '@/components/reusable/shared';
 import { IdCard, Lock, User } from 'lucide-react';
 import { useAuthContext } from '@/context/authContext';
 import { Button } from '@/components/ui/button';
@@ -53,16 +53,17 @@ const UserProfileMain = () => {
                         >
                             <DashboardMainHeader
                                 mainIcon={<User className="size-8 stroke-3" />}
-                                mainHeading={`Account Overview – ${user?.username}`}
+                                mainHeading={`Account Overview – ${user?.username || "User"}`}
                                 subIcon={<IdCard className="size-5 text-cyan-100 dark:text-orange-100" />}
                                 subText="View and update your personal information, account settings, and preferences."
                                 animateClassName="user-profile-header"
                             />
                         </BlurFade>
-                        <BlurFade
-                            delay={1.5}
-                            duration={0.5}
-                            direction='right'
+                        <div
+                            // delay={1.5}
+                            // blur='30px'
+                            // duration={0.5}
+                            // direction='right'
                             className='px-1 space-y-4 rounded'>
                             <div className="flex h-full tracking-wide gap-x-10 pb-2">
                                 {tabOptions.map(({ key, icon: Icon, text }) => (
@@ -84,7 +85,8 @@ const UserProfileMain = () => {
                                 ))}
                             </div>
                             {activeTab === "profile" && <UpdateProfileForm />}
-                        </BlurFade>
+                            {activeTab === "password" && <UpdatePasswordForm />}
+                        </div>
 
                     </div>
                 </Layout>

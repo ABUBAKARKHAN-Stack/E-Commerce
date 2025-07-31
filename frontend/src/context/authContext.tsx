@@ -1,12 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { jwtDecode } from 'jwt-decode'
 import { IAdmin, IUser, UserUpdatedJwtPayload, AdminUpdatedJwtPayload, ApiErrorType, RoleType } from "@/types/main.types";
-import { getUser, loginUser, logoutUser, forgotPasswordUser, resetPasswordUser, updateUserProfile } from "@/API/userApi";
-import { getAdmin, loginAdmin, logoutAdmin, forgotPasswordAdmin, resetPasswordAdmin, updateAdminProfile } from "@/API/adminApi";
+import { getUser, loginUser, logoutUser, forgotPasswordUser, resetPasswordUser, updateUserProfile, updateUserPassword, } from "@/API/userApi";
+import { getAdmin, loginAdmin, logoutAdmin, forgotPasswordAdmin, resetPasswordAdmin, updateAdminProfile, updateAdminPassword } from "@/API/adminApi";
 import { z } from "zod";
 import { errorToast, infoToast, successToast } from "@/utils/toastNotifications";
 import { forgotPasswordSchema, signinSchema, resetPasswordSchema } from "@/schemas/authSchema";
-import { updateProfileSchema } from "@/schemas/update-ProfileSchema";
+import { updatePasswordSchema, updateProfileSchema } from "@/schemas/update-ProfileSchema";
 import { AxiosError } from "axios";
 
 
@@ -20,6 +20,7 @@ type AuthContextType = {
     forgotPassword: (isAdmin: boolean, data: z.infer<typeof forgotPasswordSchema>) => Promise<void>;
     resetPassword: (isAdmin: boolean, data: z.infer<typeof resetPasswordSchema>, navigate: (path: string) => void, params: any) => Promise<void>;
     updateProfile: (isAdmin: boolean, data: z.infer<typeof updateProfileSchema>, role: RoleType) => Promise<boolean>;
+    updatePassword: (isAdmin: boolean, data: z.infer<typeof updatePasswordSchema>) => Promise<boolean>;
     setRole: (role: RoleType) => void;
     loading: boolean;
 }
@@ -203,6 +204,24 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
 
+    const updatePassword = async (isAdmin: boolean, data: z.infer<typeof updatePasswordSchema>) => {
+        try {
+            const res = isAdmin ? await updateAdminPassword(data) : await updateUserPassword(data);
+            console.log(res.data);
+
+            if (res.status === 200) {
+                successToast("Password Updated Successfully!")
+                return true
+            }
+            errorToast("Failed to update password.");
+            return false
+        } catch (error) {
+            const err = error as AxiosError<ApiErrorType>
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg)
+            return false
+        }
+    }
 
     useEffect(() => {
         return () => {
@@ -214,7 +233,20 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
     return (
-        <AuthContext.Provider value={{ user, role, login, fetchData, logout, forgotPassword, resetPassword, setRole, loading, updateProfile }}>
+        <AuthContext.Provider value={{
+            user,
+            role,
+            login,
+            fetchData,
+            logout,
+            forgotPassword,
+            resetPassword,
+            setRole,
+            loading,
+            updateProfile,
+            updatePassword
+
+        }}>
             {children}
         </AuthContext.Provider>
     );

@@ -338,15 +338,19 @@ const updateUserPassword = asyncHandler(async (req: Request, res: Response) => {
         throw new ApiError(400, "User not found");
     }
 
-    // 🛠️ Await the password comparison!
     const isPasswordValid = await user.comparePassword(oldPassword);
     if (!isPasswordValid) {
         throw new ApiError(400, "Old password is incorrect");
     }
 
+    const isSame = await user.comparePassword(newPassword);
+    if (isSame) {
+        throw new ApiError(400, "New password cannot be the same as the old password.")
+    }
+
+
     user.password = newPassword;
 
-    // Save the updated password
     await user.save();
 
     try {

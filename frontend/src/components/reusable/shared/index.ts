@@ -11,6 +11,7 @@ import Pagination from "./Pagination";
 import DashboardSectionHeader from "./DashboardSectionHeader";
 import DashboardMainHeader from "./DashboardMainHeader";
 import UpdateProfileForm from "./UpdateProfileForm";
+import UpdatePasswordForm from "./UpdatePasswordForm";
 
 
 export {
@@ -26,5 +27,6 @@ export {
     Pagination,
     DashboardSectionHeader,
     DashboardMainHeader,
-    UpdateProfileForm
+    UpdateProfileForm,
+    UpdatePasswordForm
 }
