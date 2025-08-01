@@ -67,7 +67,8 @@ interface IOrder extends Document {
     intentId: string;
     refund: IRefundInfo;
     paymentStatus: PaymentStatus;
-    createdAt:Date
+    createdAt:Date;
+    deliveryDate: Date
 }
 
 interface JwtUpdtedPayload extends JwtPayload {

@@ -19,8 +19,11 @@ app.use(urlencoded({
 
 app.use(cookieparser())
 
-import orderRoutes from './routes/order.routes';
+//* Order Routes
+import orderRoutes from './routes/order.routes'; //* For USERS
+import adminOrderRoutes from './routes/admin.order.routes' //* For Admin
 app.use('/', orderRoutes);
+app.use('/admin', adminOrderRoutes)
 
 
 const PORT = env.PORT || 3001;

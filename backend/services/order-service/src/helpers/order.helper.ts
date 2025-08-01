@@ -82,8 +82,8 @@ const confirmOrder = async ({
         shipping: parsedShippingPayload.cost,
         $inc: {
             "cart.totalAmount": parsedShippingPayload.cost
-        }
-
+        },
+        deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
     }, { new: true });
     await publishEvent("cart.clear", 'cleared-cart', { userId });
     await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId }); //* For User

@@ -142,6 +142,7 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
         order.shipping = shippingPayload.cost;
         order.confirmedAt = new Date();
         order.cart.totalAmount = order.cart.totalAmount + order.shipping;
+        order.deliveryDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
         await order.save()
         await publishEvent("cart.clear", 'cleared-cart', { userId });
         await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId: order.orderId }); //* For User

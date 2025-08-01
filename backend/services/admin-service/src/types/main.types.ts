@@ -42,7 +42,6 @@ interface UpdateAdmin {
     name?: string;
     email?: string;
     phone?: string;
-    address?: string;
 }
 
 interface UpdatePassword {

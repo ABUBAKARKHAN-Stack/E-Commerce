@@ -212,7 +212,7 @@ const resetPassword = asyncHandler(async (req: Request, res: Response) => {
         }
     }
 
-    const { admin } =  res.locals;
+    const { admin } = res.locals;
     admin.password = password;
     await admin.save();
     res
@@ -239,9 +239,9 @@ const getAdmin = asyncHandler(async (req: Request, res: Response) => {
 
 //? Update a Admin
 const updateAdmin = asyncHandler(async (req: Request, res: Response) => {
-    const { name, email, phone, address }: UpdateAdmin = req.body
+    const { name, email, phone }: UpdateAdmin = req.body
     const adminId = res.locals.admin._id;
-    if (!name && !email && !phone && !address) {
+    if (!name && !email && !phone) {
         throw new ApiError(400, "At least one field is required")
     }
 
@@ -256,7 +256,6 @@ const updateAdmin = asyncHandler(async (req: Request, res: Response) => {
         name,
         email,
         phone,
-        address
     }, { new: true })
         .select("-password")
 
@@ -281,15 +280,18 @@ const updateAdminPassword = asyncHandler(async (req: Request, res: Response) => 
         throw new ApiError(400, "Admin not found");
     }
 
-    // 🛠️ Await the password comparison!
     const isPasswordValid = await admin.comparePassword(oldPassword);
     if (!isPasswordValid) {
         throw new ApiError(400, "Old password is incorrect");
     }
 
+    const isSame = await admin.comparePassword(newPassword);
+    if (isSame) {
+        throw new ApiError(400, "New password cannot be the same as the old password.")
+    }
+
     admin.password = newPassword;
 
-    // Save the updated password
     await admin.save();
 
     res
