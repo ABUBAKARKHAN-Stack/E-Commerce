@@ -1,49 +1,49 @@
-import { SignInForm, FormHeader } from '@/components/reusable/shared';
-import { Link } from 'react-router-dom';
+import { SignInForm, FormHeader } from "@/components/reusable/shared";
+import { Link } from "react-router-dom";
 
 const UserSignInMain = () => {
-    return (
-        <div className="min-h-screen flex justify-center items-center">
-             <div className="flex flex-col bg-gradient-to-b from-[#ffffff] via-[#E5E7EB] to-[#F3F4F6] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] rounded-2xl px-1 py-4 sm:p-4 border-2 border-[#E5E7EB] dark:border-[#27272A] shadow-2xl dark:shadow-2xl max-w-[30rem] md:max-w-[60%] lg:max-w-[45%] mx-auto items-center justify-center text-black dark:text-white">
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="mx-auto flex max-w-[30rem] flex-col items-center justify-center rounded-2xl border-2 border-[#E5E7EB] bg-gradient-to-b from-[#ffffff] via-[#E5E7EB] to-[#F3F4F6] px-1 py-4 text-black shadow-2xl sm:p-4 md:max-w-[60%] lg:max-w-[45%] dark:border-[#27272A] dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F] dark:text-white dark:shadow-2xl">
+        {/* Header Section */}
+        <FormHeader />
 
-                {/* Header Section */}
-                <FormHeader />
+        {/* Signin Message */}
+        <p className="xxs:text-sm xs:max-w-[90%] xs:text-lg mt-4 max-w-full text-center font-mono text-xs font-semibold text-[#1B1B1F] dark:text-gray-200">
+          Sign in to continue shopping with{" "}
+          <span className="font-extrabold text-cyan-500 dark:text-orange-500">
+            ShopNex!
+          </span>
+        </p>
 
-                  {/* Signin Message */}
-                  <p className="text-xs xxs:text-sm max-w-full xs:max-w-[90%] xs:text-lg font-mono font-semibold mt-4 text-[#1B1B1F] dark:text-gray-200 text-center">
-                    Sign in to continue shopping with {" "}
-                    <span className="font-extrabold text-cyan-500 dark:text-orange-500">ShopNex!</span>
-                </p>
-
-
-                {/* Signin Form */}
-                <div className="w-full px-1.5 max-w-[95%] xs:max-w-[92%] mt-6 mb-6">
-                    <SignInForm isAdmin={false} />
-                </div>
-
-                   {/* Forgot Password */}
-          
-                    <Link
-                        to="/forgot-password"
-                       className="dark:text-orange-400 text-cyan-400 hover:text-cyan-500 font-medium underline dark:hover:text-orange-500 transition-colors duration-200"
-                    >
-                        Forgotten Password?
-                    </Link>
-
-                {/* Sign-in Redirect */}
-                <p className="text-xs xs:text-sm max-w-[90%] mt-3 text-center text-[#17171b]  dark:text-gray-300">
-                    Don't have an account?{' '}
-                    <Link
-                        to="/sign-up"
-                       className="dark:text-orange-400 text-cyan-400 hover:text-cyan-500 font-medium underline dark:hover:text-orange-500 transition-colors duration-200"
-                    >
-                        Sign up here
-                    </Link>
-                    .
-                </p>
-            </div>
+        {/* Signin Form */}
+        <div className="xs:max-w-[92%] mt-6 mb-6 w-full max-w-[95%] px-1.5">
+          <SignInForm isAdmin={false} />
         </div>
-    );
+
+        {/* Forgot Password */}
+
+        <Link
+          to="/forgot-password"
+          className="font-medium text-cyan-400 underline transition-colors duration-200 hover:text-cyan-500 dark:text-orange-400 dark:hover:text-orange-500"
+        >
+          Forgotten Password?
+        </Link>
+
+        {/* Sign-in Redirect */}
+        <p className="xs:text-sm mt-3 max-w-[90%] text-center text-xs text-[#17171b] dark:text-gray-300">
+          Don't have an account?{" "}
+          <Link
+            to="/sign-up"
+            className="font-medium text-cyan-400 underline transition-colors duration-200 hover:text-cyan-500 dark:text-orange-400 dark:hover:text-orange-500"
+          >
+            Sign up here
+          </Link>
+          .
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default UserSignInMain;

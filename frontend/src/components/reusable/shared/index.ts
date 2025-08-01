@@ -13,20 +13,19 @@ import DashboardMainHeader from "./DashboardMainHeader";
 import UpdateProfileForm from "./UpdateProfileForm";
 import UpdatePasswordForm from "./UpdatePasswordForm";
 
-
 export {
-    ForgotPasswordForm,
-    FormHeader,
-    Logo,
-    PasswordVisibilityToggler,
-    ResetPasswordForm,
-    SignInForm,
-    SignUpForm,
-    ThemeToggler,
-    ToolTip,
-    Pagination,
-    DashboardSectionHeader,
-    DashboardMainHeader,
-    UpdateProfileForm,
-    UpdatePasswordForm
-}
+  ForgotPasswordForm,
+  FormHeader,
+  Logo,
+  PasswordVisibilityToggler,
+  ResetPasswordForm,
+  SignInForm,
+  SignUpForm,
+  ThemeToggler,
+  ToolTip,
+  Pagination,
+  DashboardSectionHeader,
+  DashboardMainHeader,
+  UpdateProfileForm,
+  UpdatePasswordForm,
+};

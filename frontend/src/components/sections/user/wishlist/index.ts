@@ -1,6 +1,3 @@
 import EmptyWishlist from "./EmptyWishlist";
 
-
-export {
-    EmptyWishlist
-}
+export { EmptyWishlist };

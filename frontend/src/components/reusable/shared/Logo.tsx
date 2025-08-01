@@ -1,22 +1,22 @@
-import React, { FC } from 'react'
-import { Link } from 'react-router-dom'
-import shopnexLogo from '@/assets/shopnex.webp'
+import React, { FC } from "react";
+import { Link } from "react-router-dom";
+import shopnexLogo from "@/assets/shopnex.webp";
 
 type Props = {
-    width?: string;
-    className?: string
-}
+  width?: string;
+  className?: string;
+};
 
-const Logo: FC<Props> = ({ width = "w-48" , className }) => {
-    return (
-        <Link to="/" className="text-white">
-            <img
-                src={shopnexLogo}
-                alt="ShopNex Logo"
-                className={`${width} ${className} dark:invert-0 invert`}
-            />
-        </Link>
-    )
-}
+const Logo: FC<Props> = ({ width = "w-48", className }) => {
+  return (
+    <Link to="/" className="text-white">
+      <img
+        src={shopnexLogo}
+        alt="ShopNex Logo"
+        className={`${width} ${className} invert dark:invert-0`}
+      />
+    </Link>
+  );
+};
 
-export default Logo
+export default Logo;

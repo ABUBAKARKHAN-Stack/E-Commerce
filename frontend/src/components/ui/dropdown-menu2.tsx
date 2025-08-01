@@ -2,7 +2,15 @@ import { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
 
 // Dropdown Wrapper with GSAP Animation
-const DropdownMain = ({ children, className, isOpen }: { children: React.ReactNode; className?: string; isOpen: boolean }) => {
+const DropdownMain = ({
+  children,
+  className,
+  isOpen,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  isOpen: boolean;
+}) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -16,7 +24,7 @@ const DropdownMain = ({ children, className, isOpen }: { children: React.ReactNo
         {
           opacity: 0,
           y: -10,
-          scale: 0.95, 
+          scale: 0.95,
         },
         {
           opacity: 1,
@@ -25,7 +33,7 @@ const DropdownMain = ({ children, className, isOpen }: { children: React.ReactNo
           duration: 0.3,
           ease: "power2.out",
           onComplete: () => setIsAnimating(true),
-        }
+        },
       );
     } else {
       gsap.to(dropdownRef.current, {
@@ -44,9 +52,7 @@ const DropdownMain = ({ children, className, isOpen }: { children: React.ReactNo
   return (
     <div
       ref={dropdownRef}
-      className={`
-        absolute ${className} py-2 top-12 right-0 bg-[#F3F4F6] dark:bg-[#1B1B1F] dark:text-white text-sm border-2 shadow-lg rounded-md w-40 z-50
-      `}
+      className={`absolute ${className} top-12 right-0 z-50 w-40 rounded-md border-2 bg-[#F3F4F6] py-2 text-sm shadow-lg dark:bg-[#1B1B1F] dark:text-white`}
     >
       {children}
     </div>
@@ -59,6 +65,10 @@ const DropdownItems = ({ children }: { children: React.ReactNode }) => (
 );
 
 // Individual Dropdown Item (Unchanged)
-const DropdownItem = ({ children }: { children: React.ReactNode }) => <div className="block cursor-pointer w-full text-left px-4 py-2 hover:bg-[#dadbdd] transition-colors dark:hover:bg-zinc-700">{children}</div>;
+const DropdownItem = ({ children }: { children: React.ReactNode }) => (
+  <div className="block w-full cursor-pointer px-4 py-2 text-left transition-colors hover:bg-[#dadbdd] dark:hover:bg-zinc-700">
+    {children}
+  </div>
+);
 
 export { DropdownMain, DropdownItems, DropdownItem };

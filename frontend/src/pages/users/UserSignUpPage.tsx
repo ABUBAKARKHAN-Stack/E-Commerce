@@ -1,14 +1,11 @@
-import { UserSignUpMain } from '@/components/main/users'
-import { ThemeToggler } from '@/components/reusable/shared'
-import { Layout } from '@/components/layout/shared'
-import { Toaster } from 'sonner'
-import { useThemeContext } from '@/context/themeContext'
-
+import { UserSignUpMain } from "@/components/main/users";
+import { ThemeToggler } from "@/components/reusable/shared";
+import { Layout } from "@/components/layout/shared";
+import { Toaster } from "sonner";
+import { useThemeContext } from "@/context/themeContext";
 
 const UserSignUpPage = () => {
-
-  const { theme } = useThemeContext()
-
+  const { theme } = useThemeContext();
 
   return (
     <Layout>
@@ -16,7 +13,7 @@ const UserSignUpPage = () => {
       <UserSignUpMain />
       <Toaster position="top-right" theme={theme as "dark" | "light"} />
     </Layout>
-  )
-}
+  );
+};
 
-export default UserSignUpPage
+export default UserSignUpPage;

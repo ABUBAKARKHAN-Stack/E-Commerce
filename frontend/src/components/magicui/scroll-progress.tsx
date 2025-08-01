@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { motion, MotionProps, useScroll } from "motion/react";
 import React from "react";
 interface ScrollProgressProps
-  extends Omit<React.HTMLAttributes<HTMLElement>, keyof MotionProps> { }
+  extends Omit<React.HTMLAttributes<HTMLElement>, keyof MotionProps> {}
 
 export const ScrollProgress = React.forwardRef<
   HTMLDivElement,
@@ -16,7 +16,7 @@ export const ScrollProgress = React.forwardRef<
     <motion.div
       ref={ref}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 h-px origin-left bg-gradient-to-r dark:from-[#F15136] dark:via-[#FBA740] dark:to-[#A3302A] from-cyan-700 via-cyan-500 to-cyan-600",
+        "fixed inset-x-0 top-0 z-50 h-px origin-left bg-gradient-to-r from-cyan-700 via-cyan-500 to-cyan-600 dark:from-[#F15136] dark:via-[#FBA740] dark:to-[#A3302A]",
         className,
       )}
       style={{

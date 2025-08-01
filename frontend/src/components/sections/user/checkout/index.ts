@@ -6,13 +6,12 @@ import CheckoutSuccessActionButtons from "./CheckoutSuccessActionButtons";
 import ShippingAddressForm from "./ShippingAddressForm";
 import ShippingMethod from "./ShippingMethod";
 
-
 export {
-    CheckoutForm,
-    CheckSummary,
-    CheckoutSuccessIconAndText,
-    CheckoutOrderReceipt,
-    CheckoutSuccessActionButtons,
-    ShippingAddressForm,
-    ShippingMethod
-}
+  CheckoutForm,
+  CheckSummary,
+  CheckoutSuccessIconAndText,
+  CheckoutOrderReceipt,
+  CheckoutSuccessActionButtons,
+  ShippingAddressForm,
+  ShippingMethod,
+};

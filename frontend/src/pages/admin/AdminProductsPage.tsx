@@ -1,14 +1,13 @@
-import {  ThemeToggler } from '@/components/reusable/shared'
-import { AdminProductsMian } from '@/components/main/admin'
+import { ThemeToggler } from "@/components/reusable/shared";
+import { AdminProductsMian } from "@/components/main/admin";
 
 const AdminProductsPage = () => {
-    return (
-        <>
+  return (
+    <>
+      <ThemeToggler />
+      <AdminProductsMian />
+    </>
+  );
+};
 
-            <ThemeToggler />
-            <AdminProductsMian />
-        </>
-    )
-}
-
-export default AdminProductsPage
+export default AdminProductsPage;

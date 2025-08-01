@@ -7,15 +7,16 @@ import AdminUpdateProductPage from "./AdminUpdateProductPage";
 import AdminViewProductPage from "./AdminViewProductPage";
 import AdminForgotPasswordPage from "./AdminForgotPasswordPage";
 import AdminResetPasswordPage from "./AdminResetPasswordPage";
+import AdminProfilePage from "./AdminProfilePage";
 export {
-    AdminAddProductPage,
-    AdminDashboardPage,
-    AdminProductsPage,
-    AdminSignInPage,
-    AdminSignUpPage,
-    AdminUpdateProductPage,
-    AdminViewProductPage,
-    AdminForgotPasswordPage,
-    AdminResetPasswordPage,
-
+  AdminAddProductPage,
+  AdminDashboardPage,
+  AdminProductsPage,
+  AdminSignInPage,
+  AdminSignUpPage,
+  AdminUpdateProductPage,
+  AdminViewProductPage,
+  AdminForgotPasswordPage,
+  AdminResetPasswordPage,
+  AdminProfilePage,
 };

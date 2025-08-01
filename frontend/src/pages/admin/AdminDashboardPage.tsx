@@ -1,5 +1,5 @@
-import { ThemeToggler } from "@/components/reusable/shared"
-import { AdminDashboardMain } from "@/components/main/admin"
+import { ThemeToggler } from "@/components/reusable/shared";
+import { AdminDashboardMain } from "@/components/main/admin";
 
 const AdminDashboardPage = () => {
   return (
@@ -7,7 +7,7 @@ const AdminDashboardPage = () => {
       <ThemeToggler />
       <AdminDashboardMain />
     </>
-  )
-}
+  );
+};
 
-export default AdminDashboardPage
+export default AdminDashboardPage;

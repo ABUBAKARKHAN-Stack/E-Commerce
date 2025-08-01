@@ -7,16 +7,17 @@ import AdminUpdateProductMain from "./AdminUpdateProductMain";
 import AdminViewProductMain from "./AdminViewProductMain";
 import AdminForgotPasswordMain from "./AdminForgotPasswordMain";
 import AdminResetPasswordMain from "./AdminResetPasswordMain";
+import AdminProfileMain from "./AdminProfileMain";
 
 export {
-    AdminAddProductMain,
-    AdminDashboardMain,
-    AdminProductsMian,
-    AdminSignInMain,
-    AdminSignUpMain,
-    AdminUpdateProductMain,
-    AdminViewProductMain,
-    AdminForgotPasswordMain,
-    AdminResetPasswordMain,
-    
-}
+  AdminAddProductMain,
+  AdminDashboardMain,
+  AdminProductsMian,
+  AdminSignInMain,
+  AdminSignUpMain,
+  AdminUpdateProductMain,
+  AdminViewProductMain,
+  AdminForgotPasswordMain,
+  AdminResetPasswordMain,
+  AdminProfileMain,
+};

@@ -51,7 +51,7 @@ export function MagicCard({
         resetPosition();
       }
     },
-    [mouseX, mouseY, gradientSize]
+    [mouseX, mouseY, gradientSize],
   );
 
   return (
@@ -63,7 +63,7 @@ export function MagicCard({
     >
       {/* Glow Border Layer */}
       <motion.div
-        className="pointer-events-none absolute inset-0 rounded-[inherit] bg-border duration-300 group-hover:opacity-100"
+        className="bg-border pointer-events-none absolute inset-0 rounded-[inherit] duration-300 group-hover:opacity-100"
         style={{
           background: useMotionTemplate`
             radial-gradient(${gradientSize}px circle at ${mouseX}px ${mouseY}px,
@@ -76,7 +76,7 @@ export function MagicCard({
       />
 
       {/* Card Background */}
-      <div className="absolute inset-px rounded-[inherit] bg-background" />
+      <div className="bg-background absolute inset-px rounded-[inherit]" />
 
       {/* Inner Highlight Gradient */}
       <motion.div

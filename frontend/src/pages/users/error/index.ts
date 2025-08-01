@@ -7,11 +7,11 @@ import UserOrderErrorPage from "./UserOrderErrorPage";
 import UserProfileErrorPage from "./UserProfileErrorPage";
 
 export {
-    CartErrorPage,
-    WishlistErrorPage,
-    CheckoutErrorPage,
-    CheckoutSuccessErrorPage,
-    TrackOrderErrorPage,
-    UserOrderErrorPage,
-    UserProfileErrorPage
-}
+  CartErrorPage,
+  WishlistErrorPage,
+  CheckoutErrorPage,
+  CheckoutSuccessErrorPage,
+  TrackOrderErrorPage,
+  UserOrderErrorPage,
+  UserProfileErrorPage,
+};

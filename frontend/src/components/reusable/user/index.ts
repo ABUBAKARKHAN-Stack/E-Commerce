@@ -13,17 +13,17 @@ import OrderStatusBadge from "./OrderStatusBadge";
 import PaymentStatusBadge from "./PaymentStatusBadge";
 
 export {
-    SectionHeader,
-    CategoryBadge,
-    ProductCardHeaderButtons,
-    ProductCard,
-    WaveDivider,
-    ProductQuantitySelector,
-    AddToCartButton,
-    ProductImageSelector,
-    AddReviewForm,
-    DeliveryInfo,
-    OrderIdBadge,
-    OrderStatusBadge,
-    PaymentStatusBadge
-}
+  SectionHeader,
+  CategoryBadge,
+  ProductCardHeaderButtons,
+  ProductCard,
+  WaveDivider,
+  ProductQuantitySelector,
+  AddToCartButton,
+  ProductImageSelector,
+  AddReviewForm,
+  DeliveryInfo,
+  OrderIdBadge,
+  OrderStatusBadge,
+  PaymentStatusBadge,
+};

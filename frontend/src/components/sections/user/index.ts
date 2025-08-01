@@ -13,17 +13,17 @@ import TrackOrderForm from "./TrackOrder/TrackOrderForm";
 import AboutHero from "./AboutHero";
 
 export {
-    HeroText,
-    HeroImage,
-    FeaturedCategoriesCard,
-    TrendingProductsCard,
-    WhyChooseUs,
-    Testimonials,
-    NewsletterCTASection,
-    SearchFilterSortProduct,
-    ViewProduct,
-    ProductImagesGallery,
-    ProductReviewsList,
-    TrackOrderForm,
-    AboutHero,
-}
+  HeroText,
+  HeroImage,
+  FeaturedCategoriesCard,
+  TrendingProductsCard,
+  WhyChooseUs,
+  Testimonials,
+  NewsletterCTASection,
+  SearchFilterSortProduct,
+  ViewProduct,
+  ProductImagesGallery,
+  ProductReviewsList,
+  TrackOrderForm,
+  AboutHero,
+};

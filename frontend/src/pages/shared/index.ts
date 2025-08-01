@@ -1,5 +1,3 @@
 import ErrorPage from "./ErrorPage";
 
-export {
-  ErrorPage,
-}
+export { ErrorPage };

@@ -1,9 +1,9 @@
-import { BlurFade } from '@/components/magicui/blur-fade';
-import { Button } from '@/components/ui/button';
-import { MinusCircle, PlusCircle } from 'lucide-react';
-import { AnimatePresence } from 'motion/react';
-import { FC, JSX } from 'react';
-import { motion } from 'motion/react';
+import { BlurFade } from "@/components/magicui/blur-fade";
+import { Button } from "@/components/ui/button";
+import { MinusCircle, PlusCircle } from "lucide-react";
+import { AnimatePresence } from "motion/react";
+import { FC, JSX } from "react";
+import { motion } from "motion/react";
 
 type Props = {
   id: number;
@@ -11,10 +11,19 @@ type Props = {
   answer: string | JSX.Element;
   i: number;
   showFaq: { id: number | null; isFaqOpen: boolean };
-  setShowFaq: React.Dispatch<React.SetStateAction<{ id: number | null; isFaqOpen: boolean }>>;
+  setShowFaq: React.Dispatch<
+    React.SetStateAction<{ id: number | null; isFaqOpen: boolean }>
+  >;
 };
 
-const FaqsCard: FC<Props> = ({ id, question, answer, i, showFaq, setShowFaq }) => {
+const FaqsCard: FC<Props> = ({
+  id,
+  question,
+  answer,
+  i,
+  showFaq,
+  setShowFaq,
+}) => {
   return (
     <BlurFade
       key={id}
@@ -22,10 +31,10 @@ const FaqsCard: FC<Props> = ({ id, question, answer, i, showFaq, setShowFaq }) =
       delay={0.15 * i}
       once={false}
       inView
-      className="dark:bg-orange-500 bg-cyan-500 w-full p-6 rounded-lg flex flex-col gap-4 transition-all duration-300"
+      className="flex w-full flex-col gap-4 rounded-lg bg-cyan-500 p-6 transition-all duration-300 dark:bg-orange-500"
     >
-      <div className="flex justify-between items-start">
-        <h2 className="text-lg md:text-xl font-medium text-white leading-snug">
+      <div className="flex items-start justify-between">
+        <h2 className="text-lg leading-snug font-medium text-white md:text-xl">
           {question}
         </h2>
         <Button
@@ -40,16 +49,16 @@ const FaqsCard: FC<Props> = ({ id, question, answer, i, showFaq, setShowFaq }) =
           className="text-white hover:text-white"
         >
           <motion.div
-            key={showFaq.id === id && showFaq.isFaqOpen ? 'minus' : 'plus'}
+            key={showFaq.id === id && showFaq.isFaqOpen ? "minus" : "plus"}
             initial={{ scale: 0, rotate: -90 }}
             animate={{ scale: 1, rotate: 0 }}
             exit={{ scale: 0, rotate: 90 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {showFaq.id === id && showFaq.isFaqOpen ? (
-              <MinusCircle className="size-6.5 drop-shadow-2px" />
+              <MinusCircle className="drop-shadow-2px size-6.5" />
             ) : (
-              <PlusCircle className="size-6.5 drop-shadow-2px" />
+              <PlusCircle className="drop-shadow-2px size-6.5" />
             )}
           </motion.div>
         </Button>
@@ -62,8 +71,8 @@ const FaqsCard: FC<Props> = ({ id, question, answer, i, showFaq, setShowFaq }) =
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="text-sm md:text-base font-light dark:text-orange-50 text-cyan-50 leading-relaxed"
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="text-sm leading-relaxed font-light text-cyan-50 md:text-base dark:text-orange-50"
           >
             {answer}
           </motion.p>

@@ -1,14 +1,13 @@
-import { ThemeToggler } from '@/components/reusable/shared'
-import { UserDashboardMain } from '@/components/main/users'
+import { ThemeToggler } from "@/components/reusable/shared";
+import { UserDashboardMain } from "@/components/main/users";
 
 const UserDashboardPage = () => {
-
   return (
     <>
-      <ThemeToggler  />
+      <ThemeToggler />
       <UserDashboardMain />
     </>
-  )
-}
+  );
+};
 
-export default UserDashboardPage
+export default UserDashboardPage;

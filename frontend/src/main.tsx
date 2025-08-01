@@ -1,10 +1,8 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import {
-  ErrorPage,
-} from '@/pages/shared' //* Shared Pages
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { ErrorPage } from "@/pages/shared"; //* Shared Pages
 import {
   AdminSignUpPage,
   AdminSignInPage,
@@ -14,8 +12,9 @@ import {
   AdminViewProductPage,
   AdminProductsPage,
   AdminForgotPasswordPage,
-  AdminResetPasswordPage
-} from '@/pages/admin' //* Admin Pages
+  AdminResetPasswordPage,
+  AdminProfilePage,
+} from "@/pages/admin"; //* Admin Pages
 import {
   HomePage,
   AboutPage,
@@ -36,22 +35,32 @@ import {
   FaqsPage,
   ContactPage,
   UserOrdersPage,
-  UserOrderPage
-} from '@/pages/users' //* User Pages
-import { ThemeProvider } from '@/context/themeContext'
-import { UserAuthLayout } from '@/components/layout/user'
-import { AdminAuthLayout, AdminRoot } from '@/components/layout/admin'
-import { AuthProvider } from '@/context/authContext'
-import { ProductProvider } from '@/context/productContext'
-import { cartLoader } from '@/utils/loaders/cartLoader'
-import { CartErrorPage, CheckoutErrorPage, CheckoutSuccessErrorPage, TrackOrderErrorPage, UserOrderErrorPage, UserProfileErrorPage } from '@/pages/users/error'
-import { wishlistLoader } from './utils/loaders/wishlistLoader'
-import WishlistErrorPage from './pages/users/error/WishlistErrorPage'
-import { confirmOrderDetailsLoader, pendingOrderDetailsLoader, singleOrderDetailsLoader } from './utils/loaders/orderDetailsLoader'
-import { OrderProvider } from './context/orderContext'
-import { ActivityProvider } from './context/activityContext'
-
-
+  UserOrderPage,
+} from "@/pages/users"; //* User Pages
+import { ThemeProvider } from "@/context/themeContext";
+import { UserAuthLayout } from "@/components/layout/user";
+import { AdminAuthLayout, AdminRoot } from "@/components/layout/admin";
+import { AuthProvider } from "@/context/authContext";
+import { ProductProvider } from "@/context/productContext";
+import { cartLoader } from "@/utils/loaders/cartLoader";
+import {
+  CartErrorPage,
+  CheckoutErrorPage,
+  CheckoutSuccessErrorPage,
+  TrackOrderErrorPage,
+  UserOrderErrorPage,
+  UserProfileErrorPage,
+} from "@/pages/users/error";
+import { wishlistLoader } from "./utils/loaders/wishlistLoader";
+import WishlistErrorPage from "./pages/users/error/WishlistErrorPage";
+import {
+  confirmOrderDetailsLoader,
+  pendingOrderDetailsLoader,
+  singleOrderDetailsLoader,
+} from "./utils/loaders/orderDetailsLoader";
+import { OrderProvider } from "./context/orderContext";
+import { ActivityProvider } from "./context/activityContext";
+import { Toaster } from "sonner";
 
 const router = createBrowserRouter([
   {
@@ -100,7 +109,7 @@ const router = createBrowserRouter([
       <UserAuthLayout authenticationRequired={false}>
         <UserForgotPasswordPage />
       </UserAuthLayout>
-    )
+    ),
   },
   {
     path: "/user/reset-password",
@@ -108,7 +117,7 @@ const router = createBrowserRouter([
       <UserAuthLayout authenticationRequired={false}>
         <UserResetPasswordPage />
       </UserAuthLayout>
-    )
+    ),
   },
   {
     path: "/about",
@@ -116,7 +125,7 @@ const router = createBrowserRouter([
       <AdminAuthLayout authenticationRequired={false}>
         <AboutPage />
       </AdminAuthLayout>
-    )
+    ),
   },
   {
     path: "/contact",
@@ -124,7 +133,7 @@ const router = createBrowserRouter([
       <AdminAuthLayout authenticationRequired={false}>
         <ContactPage />
       </AdminAuthLayout>
-    )
+    ),
   },
   {
     path: "/faqs",
@@ -132,7 +141,7 @@ const router = createBrowserRouter([
       <AdminAuthLayout authenticationRequired={false}>
         <FaqsPage />
       </AdminAuthLayout>
-    )
+    ),
   },
   {
     path: "/products",
@@ -169,58 +178,72 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/cart',
-    element: <UserAuthLayout authenticationRequired>
-      <CartPage />
-    </UserAuthLayout>,
+    path: "/cart",
+    element: (
+      <UserAuthLayout authenticationRequired>
+        <CartPage />
+      </UserAuthLayout>
+    ),
     loader: cartLoader,
-    errorElement: <CartErrorPage />
+    errorElement: <CartErrorPage />,
   },
   {
-    path: '/orders',
-    element: <UserAuthLayout authenticationRequired>
-      <UserOrdersPage />
-    </UserAuthLayout>,
+    path: "/orders",
+    element: (
+      <UserAuthLayout authenticationRequired>
+        <UserOrdersPage />
+      </UserAuthLayout>
+    ),
   },
   {
-    path: '/orders/:orderId',
-    element: <UserAuthLayout authenticationRequired>
-      <UserOrderPage />
-    </UserAuthLayout>,
+    path: "/orders/:orderId",
+    element: (
+      <UserAuthLayout authenticationRequired>
+        <UserOrderPage />
+      </UserAuthLayout>
+    ),
     loader: singleOrderDetailsLoader,
-    errorElement: <UserOrderErrorPage />
+    errorElement: <UserOrderErrorPage />,
   },
   {
-    path: '/checkout',
-    element: <UserAuthLayout authenticationRequired>
-      <CheckoutPage />
-    </UserAuthLayout>,
+    path: "/checkout",
+    element: (
+      <UserAuthLayout authenticationRequired>
+        <CheckoutPage />
+      </UserAuthLayout>
+    ),
     loader: pendingOrderDetailsLoader,
-    errorElement: <CheckoutErrorPage />
+    errorElement: <CheckoutErrorPage />,
   },
   {
-    path: '/checkout/success',
-    element: <UserAuthLayout authenticationRequired>
-      <CheckoutSuccessPage />
-    </UserAuthLayout>,
+    path: "/checkout/success",
+    element: (
+      <UserAuthLayout authenticationRequired>
+        <CheckoutSuccessPage />
+      </UserAuthLayout>
+    ),
     loader: confirmOrderDetailsLoader,
-    errorElement: <CheckoutSuccessErrorPage />
+    errorElement: <CheckoutSuccessErrorPage />,
   },
   {
-    path: '/track-order',
-    element: <UserAuthLayout authenticationRequired>
-      <TrackOrderPage />
-    </UserAuthLayout>,
+    path: "/track-order",
+    element: (
+      <UserAuthLayout authenticationRequired>
+        <TrackOrderPage />
+      </UserAuthLayout>
+    ),
     loader: confirmOrderDetailsLoader,
-    errorElement: <TrackOrderErrorPage />
+    errorElement: <TrackOrderErrorPage />,
   },
   {
-    path: '/wishlist',
-    element: <UserAuthLayout authenticationRequired>
-      <WishlistPage />
-    </UserAuthLayout>,
+    path: "/wishlist",
+    element: (
+      <UserAuthLayout authenticationRequired>
+        <WishlistPage />
+      </UserAuthLayout>
+    ),
     loader: wishlistLoader,
-    errorElement: <WishlistErrorPage />
+    errorElement: <WishlistErrorPage />,
   },
 
   //! Public Routes (No Auth Required For Admin)
@@ -232,7 +255,7 @@ const router = createBrowserRouter([
           <AdminSignUpPage />
         </UserAuthLayout>
       </AdminAuthLayout>
-    )
+    ),
   },
   {
     path: "/admin/sign-in",
@@ -242,19 +265,15 @@ const router = createBrowserRouter([
           <AdminSignInPage />
         </UserAuthLayout>
       </AdminAuthLayout>
-    )
+    ),
   },
   {
     path: "/admin/forgot-password",
-    element: (
-      <AdminForgotPasswordPage />
-    )
+    element: <AdminForgotPasswordPage />,
   },
   {
     path: "/admin/reset-password",
-    element: (
-      <AdminResetPasswordPage />
-    )
+    element: <AdminResetPasswordPage />,
   },
   //! Protected Routes (Require Auth for Admins)
   {
@@ -262,31 +281,34 @@ const router = createBrowserRouter([
     element: <AdminRoot />,
     children: [
       {
-        path: 'dashboard',
-        element: <AdminDashboardPage />
+        path: "dashboard",
+        element: <AdminDashboardPage />,
       },
       {
-        path: 'products',
-        element: <AdminProductsPage />
-
+        path: "products",
+        element: <AdminProductsPage />,
       },
       {
-        path: 'products/add',
-        element: <AdminAddProductPage />
+        path: "products/add",
+        element: <AdminAddProductPage />,
       },
       {
-        path: 'products/edit/:id',
-        element: <AdminUpdateProductPage />
+        path: "products/edit/:id",
+        element: <AdminUpdateProductPage />,
       },
       {
-        path: 'products/product/:id',
-        element: <AdminViewProductPage />
+        path: "products/product/:id",
+        element: <AdminViewProductPage />,
       },
-    ]
+      {
+        path: "me",
+        element: <AdminProfilePage />,
+      },
+    ],
   },
-])
+]);
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <ThemeProvider>
     <AuthProvider>
@@ -294,10 +316,11 @@ createRoot(document.getElementById('root')!).render(
         <OrderProvider>
           <ActivityProvider>
             <RouterProvider router={router} />
+            <Toaster />
           </ActivityProvider>
         </OrderProvider>
       </ProductProvider>
     </AuthProvider>
-  </ThemeProvider>
-  // </StrictMode >,
-)
+  </ThemeProvider>,
+  // </StrictMode >
+);

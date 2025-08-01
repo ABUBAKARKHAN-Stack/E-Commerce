@@ -1,22 +1,19 @@
-import { AdminSignUpMain } from '@/components/main/admin'
-import { ThemeToggler } from '@/components/reusable/shared'
-import { Layout } from '@/components/layout/shared'
-import { Toaster } from 'sonner'
-import { useThemeContext } from '@/context/themeContext'
-
+import { AdminSignUpMain } from "@/components/main/admin";
+import { ThemeToggler } from "@/components/reusable/shared";
+import { Layout } from "@/components/layout/shared";
+import { Toaster } from "sonner";
+import { useThemeContext } from "@/context/themeContext";
 
 const AdminSignUpPage = () => {
+  const { theme } = useThemeContext();
 
-    const { theme } = useThemeContext()
+  return (
+    <Layout>
+      <ThemeToggler />
+      <AdminSignUpMain />
+      <Toaster position="top-right" theme={theme as "dark" | "light"} />
+    </Layout>
+  );
+};
 
-
-    return (
-        <Layout>
-            <ThemeToggler />
-            <AdminSignUpMain />
-            <Toaster position="top-right" theme={theme as "dark" | "light"} />
-        </Layout>
-    )
-}
-
-export default AdminSignUpPage
+export default AdminSignUpPage;

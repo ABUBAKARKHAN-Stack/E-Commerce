@@ -1,17 +1,17 @@
-import { AdminViewProductMain } from '@/components/main/admin';
-import { ThemeToggler } from '@/components/reusable/shared';
-import { Toaster } from 'sonner';
+import { AdminViewProductMain } from "@/components/main/admin";
+import { ThemeToggler } from "@/components/reusable/shared";
+import { Toaster } from "sonner";
 
 const AdminViewProductPage = () => {
-    const theme = localStorage.getItem('theme');
+  const theme = localStorage.getItem("theme");
 
   return (
     <>
-    <ThemeToggler />
-    <Toaster theme={theme as "dark" | "light"} />
-    <AdminViewProductMain />
+      <ThemeToggler />
+      <Toaster theme={theme as "dark" | "light"} />
+      <AdminViewProductMain />
     </>
-  )
-}
+  );
+};
 
-export default AdminViewProductPage
+export default AdminViewProductPage;

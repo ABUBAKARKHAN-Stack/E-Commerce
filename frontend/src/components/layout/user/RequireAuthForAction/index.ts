@@ -1,8 +1,4 @@
-import RequireAuth from '@/components/layout/user/RequireAuthForAction/RequireAuth';
-import RequireAuthDialog from '@/components/layout/user/RequireAuthForAction/RequireAuthDialog';
+import RequireAuth from "@/components/layout/user/RequireAuthForAction/RequireAuth";
+import RequireAuthDialog from "@/components/layout/user/RequireAuthForAction/RequireAuthDialog";
 
-
-export {
-    RequireAuth,
-    RequireAuthDialog
-}
+export { RequireAuth, RequireAuthDialog };

@@ -1,8 +1,8 @@
-import { Footer, Header } from '@/components/layout/user'
-import { ThemeToggler } from '@/components/reusable/shared'
-import { Toaster } from 'sonner';
-import { useThemeContext } from '@/context/themeContext'
-import { ProductsMain } from '@/components/main/users';
+import { Footer, Header } from "@/components/layout/user";
+import { ThemeToggler } from "@/components/reusable/shared";
+import { Toaster } from "sonner";
+import { useThemeContext } from "@/context/themeContext";
+import { ProductsMain } from "@/components/main/users";
 
 const ProductsPage = () => {
   const { theme } = useThemeContext();
@@ -11,10 +11,10 @@ const ProductsPage = () => {
       <Header />
       <ProductsMain />
       <Footer />
-      <Toaster theme={theme as "light" | 'dark'} />
+      <Toaster theme={theme as "light" | "dark"} />
       <ThemeToggler />
     </>
-  )
-}
+  );
+};
 
-export default ProductsPage
+export default ProductsPage;

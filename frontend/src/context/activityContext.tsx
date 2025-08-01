@@ -1,75 +1,77 @@
 import { ApiErrorType, IActivity } from "@/types/main.types";
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
 import {
-    getRecentActivity as getRecentActivityApi
-} from "@/API/userApi";
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { getRecentActivity as getRecentActivityApi } from "@/API/userApi";
 import { AxiosError } from "axios";
 import { errorToast } from "@/utils/toastNotifications";
 
 type ActivityContextType = {
-    getRecentActivity: (params: any) => Promise<IActivity[] | undefined>;
-    setRecentActivityData: Dispatch<SetStateAction<IActivity[] | undefined>>;
-    recentActivityData: IActivity[] | undefined;
-    setPage: Dispatch<SetStateAction<number>>;
-}
+  getRecentActivity: (params: any) => Promise<IActivity[] | undefined>;
+  setRecentActivityData: Dispatch<SetStateAction<IActivity[] | undefined>>;
+  recentActivityData: IActivity[] | undefined;
+  setPage: Dispatch<SetStateAction<number>>;
+};
 
 const ActivityContext = createContext<ActivityContextType | null>(null);
 
 const ActivityProvider = ({ children }: { children: ReactNode }) => {
-    const pathname = window.location.pathname;
-    const [recentActivityData, setRecentActivityData] = useState<IActivity[] | undefined>(undefined);
-    const [limit, setLimit] = useState(5);
-    const [page, setPage] = useState(1);
+  const [recentActivityData, setRecentActivityData] = useState<
+    IActivity[] | undefined
+  >(undefined);
+  const [limit, setLimit] = useState(5);
+  const [page, setPage] = useState(1);
 
-
-    const getRecentActivity = async (params: any) => {
-        try {
-            const res = await getRecentActivityApi(params);
-            if (res.status === 200) {
-                const activityData: IActivity[] = res.data.data;
-                return activityData
-            }
-            return undefined;
-        } catch (error) {
-            const err = error as AxiosError<ApiErrorType>;
-            const errMsg = err.response?.data.message || "Something went wrong";
-            errorToast(errMsg);
-        }
+  const getRecentActivity = async (params: any) => {
+    try {
+      const res = await getRecentActivityApi(params);
+      if (res.status === 200) {
+        const activityData: IActivity[] = res.data.data;
+        return activityData;
+      }
+      return undefined;
+    } catch (error) {
+      const err = error as AxiosError<ApiErrorType>;
+      console.log(err);
     }
+  };
 
+  useEffect(() => {
+    (async () => {
+      const recentActivity = await getRecentActivity({ limit: 6 });
+      if (recentActivity) {
+        setRecentActivityData(recentActivity);
+      }
+    })();
+  }, []);
 
-    useEffect(() => {
-        if (pathname === '/dashboard') {
-            (async () => {
-                const recentActivity = await getRecentActivity({ limit: 6, });
-                if (recentActivity) {
-                    setRecentActivityData(recentActivity);
-                }
-            })();
-        }
-    }, [pathname]);
-
-
-    return <ActivityContext.Provider
-        value={{
-            getRecentActivity,
-            setRecentActivityData,
-            recentActivityData,
-            setPage
-        }}
+  return (
+    <ActivityContext.Provider
+      value={{
+        getRecentActivity,
+        setRecentActivityData,
+        recentActivityData,
+        setPage,
+      }}
     >
-        {children}
+      {children}
     </ActivityContext.Provider>
-}
-
+  );
+};
 
 const useActivityContext = () => {
-    const context = useContext(ActivityContext);
-    if (!context) throw new Error("useActivityContext must be used within a ActivityProvider");
-    return context;
-}
+  const context = useContext(ActivityContext);
+  if (!context)
+    throw new Error(
+      "useActivityContext must be used within a ActivityProvider",
+    );
+  return context;
+};
 
-export {
-    useActivityContext,
-    ActivityProvider
-}
+export { useActivityContext, ActivityProvider };
