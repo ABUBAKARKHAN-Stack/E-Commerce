@@ -1,5 +1,4 @@
 import { MagicCard } from "@/components/magicui/magic-card";
-import { useThemeContext } from "@/context/themeContext";
 import ProductCardHeaderButtons from "./ProductCardHeaderButtons";
 import CategoryBadge from "./CategoryBadge";
 import { Star } from "lucide-react";
@@ -9,6 +8,7 @@ import { useAuthContext } from "@/context/authContext";
 import { useProductContext } from "@/context/productContext";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 import AddToCartButton from "./AddToCartButton";
+import { useTheme } from "next-themes";
 
 type Props = {
   product: IProduct;
@@ -33,11 +33,11 @@ const ProductCard: FC<Props> = ({
     quantity,
     // reviews
   } = product;
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   const { user } = useAuthContext();
   const { wishlist } = useProductContext();
   const [quantityCount, setQuantityCount] = useState(1);
-  const isDark = theme === "dark";
+  const isDark = resolvedTheme === "dark";
 
   return (
     <>

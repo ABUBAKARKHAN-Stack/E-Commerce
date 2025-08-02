@@ -1,15 +1,15 @@
-import { useThemeContext } from "@/context/themeContext";
 import { Toaster } from "sonner";
 import { ThemeToggler } from "@/components/reusable/shared";
 import { CheckoutSuccessMain } from "@/components/main/users";
+import { useTheme } from "next-themes";
 
 const CheckoutSuccessPage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
 
   return (
     <>
       <CheckoutSuccessMain />
-      <Toaster theme={theme as "dark" | "light"} />
+      <Toaster theme={resolvedTheme as "dark" | "light"} />
       <ThemeToggler />
     </>
   );

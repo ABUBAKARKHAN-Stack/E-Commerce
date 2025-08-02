@@ -49,7 +49,6 @@ import {
   CheckoutSuccessErrorPage,
   TrackOrderErrorPage,
   UserOrderErrorPage,
-  UserProfileErrorPage,
 } from "@/pages/users/error";
 import { wishlistLoader } from "./utils/loaders/wishlistLoader";
 import WishlistErrorPage from "./pages/users/error/WishlistErrorPage";
@@ -310,7 +309,11 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
-  <ThemeProvider>
+  <ThemeProvider
+    attribute="class"
+    defaultTheme="system"
+    enableSystem
+  >
     <AuthProvider>
       <ProductProvider>
         <OrderProvider>
@@ -321,6 +324,6 @@ createRoot(document.getElementById("root")!).render(
         </OrderProvider>
       </ProductProvider>
     </AuthProvider>
-  </ThemeProvider>,
+  </ThemeProvider>
   // </StrictMode >
 );

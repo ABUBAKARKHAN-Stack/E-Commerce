@@ -2,13 +2,13 @@ import { Layout } from "@/components/layout/shared";
 import { AdminResetPasswordMain } from "@/components/main/admin";
 import { ThemeToggler } from "@/components/reusable/shared";
 import { Toaster } from "sonner";
-import { useThemeContext } from "@/context/themeContext";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useTheme } from "next-themes";
 
 const AdminResetPasswordPage = () => {
   const [params] = useSearchParams();
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   const [queryParams, setQueryParams] = useState<object | null>(null);
 
   console.log(queryParams);
@@ -26,7 +26,7 @@ const AdminResetPasswordPage = () => {
     <Layout>
       <ThemeToggler />
       <AdminResetPasswordMain queryParameters={queryParams} />
-      <Toaster theme={theme as "dark" | "light"} />
+      <Toaster theme={resolvedTheme as "dark" | "light"} />
     </Layout>
   );
 };

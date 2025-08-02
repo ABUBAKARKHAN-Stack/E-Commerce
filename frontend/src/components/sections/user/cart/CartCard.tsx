@@ -3,22 +3,22 @@ import { ToolTip } from "@/components/reusable/shared";
 import { CategoryBadge } from "@/components/reusable/user";
 import { Button } from "@/components/ui/button";
 import { useProductContext } from "@/context/productContext";
-import { useThemeContext } from "@/context/themeContext";
 import { useCartQuantityHandler } from "@/hooks/useCartQuantityHandler";
 import { Trash2 } from "lucide-react";
 import { FC } from "react";
 import { Link, useRevalidator } from "react-router-dom";
 import CartQuantitySelector from "./CartQuantitySelector";
 import { ICartedProduct } from "@/types/main.types";
+import { useTheme } from "next-themes";
 
 type Props = {
   products: ICartedProduct[];
 };
 
 const CartCard: FC<Props> = ({ products }) => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   const { removeFromCart, updateCart } = useProductContext();
-  const isDark = theme === "dark";
+  const isDark = resolvedTheme === "dark";
   const { revalidate } = useRevalidator();
   const {
     handleIncrement,

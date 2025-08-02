@@ -1,17 +1,17 @@
 import { Footer, Header } from "@/components/layout/user";
 import { ThemeToggler } from "@/components/reusable/shared";
 import { Toaster } from "sonner";
-import { useThemeContext } from "@/context/themeContext";
 import { ProductsMain } from "@/components/main/users";
+import { useTheme } from "next-themes";
 
 const ProductsPage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   return (
     <>
       <Header />
       <ProductsMain />
       <Footer />
-      <Toaster theme={theme as "light" | "dark"} />
+      <Toaster theme={resolvedTheme as "light" | "dark"} />
       <ThemeToggler />
     </>
   );

@@ -1,11 +1,11 @@
 import { Footer, Header } from "@/components/layout/user";
 import { ContactMain, FaqsTeaserMain } from "@/components/main/users";
 import { ThemeToggler } from "@/components/reusable/shared";
-import { useThemeContext } from "@/context/themeContext";
+import { useTheme } from "next-themes";
 import { Toaster } from "sonner";
 
 const ContactPage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   return (
     <>
       <Header />
@@ -13,7 +13,7 @@ const ContactPage = () => {
       <FaqsTeaserMain />
       <Footer />
       <ThemeToggler />
-      <Toaster theme={theme as "light" | "dark"} />
+      <Toaster theme={resolvedTheme as "light" | "dark"} />
     </>
   );
 };

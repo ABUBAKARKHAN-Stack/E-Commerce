@@ -10,9 +10,9 @@ import {
 } from "@/components/main/users";
 import { ScrollProgress } from "@/components/magicui/scroll-progress";
 import { Toaster } from "sonner";
-import { useThemeContext } from "@/context/themeContext";
+import { useTheme } from "next-themes";
 const HomePage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
 
   return (
     <>
@@ -26,7 +26,7 @@ const HomePage = () => {
       <NewsletterCTASectionMain />
       <Footer />
       <ThemeToggler />
-      <Toaster theme={theme as "light" | "dark"} />
+      <Toaster theme={resolvedTheme as "light" | "dark"} />
     </>
   );
 };

@@ -1,18 +1,18 @@
 import { Footer, Header } from "@/components/layout/user";
 import { CheckoutMain } from "@/components/main/users";
 import { ThemeToggler } from "@/components/reusable/shared";
-import { useThemeContext } from "@/context/themeContext";
+import { useTheme } from "next-themes";
 import { Toaster } from "sonner";
 
 const CheckoutPage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
 
   return (
     <>
       <Header />
       <CheckoutMain />
       <Footer />
-      <Toaster theme={theme as "light" | "dark"} />
+      <Toaster theme={resolvedTheme as "light" | "dark"} />
       <ThemeToggler />
     </>
   );

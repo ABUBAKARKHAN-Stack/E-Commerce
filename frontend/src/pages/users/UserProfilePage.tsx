@@ -1,15 +1,15 @@
 import { ThemeToggler } from "@/components/reusable/shared";
-import { useThemeContext } from "@/context/themeContext";
 import { Toaster } from "sonner";
 import { UserProfileMain } from "@/components/main/users";
+import { useTheme } from "next-themes";
 
 const UserProfilePage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   return (
     <>
       <UserProfileMain />
       <ThemeToggler />
-      <Toaster theme={theme as "light" | "dark"} />
+      <Toaster theme={resolvedTheme as "light" | "dark"} />
     </>
   );
 };

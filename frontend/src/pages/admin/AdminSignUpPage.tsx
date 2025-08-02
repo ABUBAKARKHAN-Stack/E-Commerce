@@ -2,16 +2,16 @@ import { AdminSignUpMain } from "@/components/main/admin";
 import { ThemeToggler } from "@/components/reusable/shared";
 import { Layout } from "@/components/layout/shared";
 import { Toaster } from "sonner";
-import { useThemeContext } from "@/context/themeContext";
+import { useTheme } from "next-themes";
 
 const AdminSignUpPage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
 
   return (
     <Layout>
       <ThemeToggler />
       <AdminSignUpMain />
-      <Toaster position="top-right" theme={theme as "dark" | "light"} />
+      <Toaster position="top-right" theme={resolvedTheme as "dark" | "light"} />
     </Layout>
   );
 };

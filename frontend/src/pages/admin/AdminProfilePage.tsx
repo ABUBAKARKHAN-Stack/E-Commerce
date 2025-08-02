@@ -1,16 +1,15 @@
 import { AdminProfileMain } from "@/components/main/admin";
 import { ThemeToggler } from "@/components/reusable/shared";
-import { useThemeContext } from "@/context/themeContext";
-import React from "react";
+import { useTheme } from "next-themes";
 import { Toaster } from "sonner";
 
 const AdminProfilePage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   return (
     <>
       <AdminProfileMain />
       <ThemeToggler />
-      <Toaster theme={theme as "light" | "dark"} />
+      <Toaster theme={resolvedTheme as "light" | "dark"} />
     </>
   );
 };

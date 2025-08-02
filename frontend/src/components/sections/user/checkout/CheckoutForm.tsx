@@ -5,7 +5,6 @@ import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { useProductContext } from "@/context/productContext";
 import { errorToast, successToast } from "@/utils/toastNotifications";
-import { useThemeContext } from "@/context/themeContext";
 import { useNavigate } from "react-router-dom";
 import { ApiError } from "@/utils/ApiError";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -13,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { z } from "zod";
 import { shippingAddressSchema } from "@/schemas/checkoutSchema";
+import { useTheme } from "next-themes";
 
 type Props = {
   totalAmount: number;
@@ -32,7 +32,7 @@ const CheckoutForm: FC<Props> = ({
   const [paymentLoading, setPaymentLoading] = useState(false);
   const stripe = useStripe();
   const elements = useElements();
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   const { completeCheckout, setCartProductsCount } = useProductContext();
   const navigate = useNavigate();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -107,10 +107,10 @@ const CheckoutForm: FC<Props> = ({
   const CARD_ELEMENT_OPTIONS = {
     style: {
       base: {
-        color: theme === "dark" ? "#ffffff" : "#1a1a1a",
+        color: resolvedTheme === "dark" ? "#ffffff" : "#1a1a1a",
         fontSize: "16px",
         "::placeholder": {
-          color: theme === "dark" ? "#a0a0a0" : "#999999",
+          color: resolvedTheme === "dark" ? "#a0a0a0" : "#999999",
         },
       },
       invalid: {

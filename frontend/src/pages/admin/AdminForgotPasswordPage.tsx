@@ -1,16 +1,16 @@
 import { AdminForgotPasswordMain } from "@/components/main/admin";
 import { ThemeToggler } from "@/components/reusable/shared";
 import { Layout } from "@/components/layout/shared";
-import { useThemeContext } from "@/context/themeContext";
 import { Toaster } from "sonner";
+import { useTheme } from "next-themes";
 
 const AdminForgotPasswordPage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   return (
     <Layout>
       <ThemeToggler />
       <AdminForgotPasswordMain />
-      <Toaster theme={theme as "dark" | "light"} />
+      <Toaster theme={resolvedTheme as "dark" | "light"} />
     </Layout>
   );
 };

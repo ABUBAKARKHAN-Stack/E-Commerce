@@ -7,15 +7,15 @@ import {
 } from "@/components/reusable/user";
 import { Button } from "@/components/ui/button";
 import { useProductContext } from "@/context/productContext";
-import { useThemeContext } from "@/context/themeContext";
 import { staticTrendingProductsData } from "@/data/trendingProducts";
 import { IProduct } from "@/types/main.types";
 import { ShoppingCart, Star } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const TrendingProductsCard = () => {
   const { topRatedProducts } = useProductContext();
-  const { theme } = useThemeContext();
-  const isDark = theme === "dark";
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
 
   if (!topRatedProducts || topRatedProducts.length === 0) {
     return staticTrendingProductsData.map((p, i) => (
@@ -35,7 +35,6 @@ const TrendingProductsCard = () => {
         >
           <div>
             <div className="lg:group relative size-48 w-full xl:size-50">
-              <ProductCardHeaderButtons />
               <CategoryBadge category={p.category} />
               <div className="absolute top-px right-px flex h-full w-[99%] items-center justify-center rounded-t bg-gray-200 p-4 dark:bg-[#2c2c2e]">
                 <img

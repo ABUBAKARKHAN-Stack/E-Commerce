@@ -1,16 +1,16 @@
 import { UserForgotPasswordMain } from "@/components/main/users";
 import { ThemeToggler } from "@/components/reusable/shared";
 import { Layout } from "@/components/layout/shared";
-import { useThemeContext } from "@/context/themeContext";
 import { Toaster } from "@/components/ui/sonner";
+import { useTheme } from "next-themes";
 
 const UserForgotPasswordPage = () => {
-  const { theme } = useThemeContext();
+  const { resolvedTheme } = useTheme();
   return (
     <Layout>
       <ThemeToggler />
       <UserForgotPasswordMain />
-      <Toaster theme={theme as "dark" | "light"} />
+      <Toaster theme={resolvedTheme as "dark" | "light"} />
     </Layout>
   );
 };
