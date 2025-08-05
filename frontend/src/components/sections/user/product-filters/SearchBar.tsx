@@ -63,6 +63,7 @@ const SearchBar: FC<Props> = ({
     setIsFocus(true);
   };
 
+
   return (
     <div className="relative w-full max-w-[500px]">
       <Label
@@ -121,7 +122,7 @@ const SearchBar: FC<Props> = ({
                   <span className="line-clamp-1">{n}</span>
                 </div>
                 {last && (
-                  <div
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleLastSearchRemove(n);
@@ -129,7 +130,7 @@ const SearchBar: FC<Props> = ({
                     className="cursor-pointer"
                   >
                     <X className="size-5 stroke-1" />
-                  </div>
+                  </button>
                 )}
               </div>
             );

@@ -14,6 +14,8 @@ import {
   AdminForgotPasswordPage,
   AdminResetPasswordPage,
   AdminProfilePage,
+  AdminOrdersPage,
+  AdminOrderDetailsPage,
 } from "@/pages/admin"; //* Admin Pages
 import {
   HomePage,
@@ -60,6 +62,8 @@ import {
 import { OrderProvider } from "./context/orderContext";
 import { ActivityProvider } from "./context/activityContext";
 import { Toaster } from "sonner";
+import { adminOrderDetailsLoader } from "./utils/loaders/adminLoader/orderDetailsLoader";
+import { AdminOrderErrorPage } from "./pages/admin/error";
 
 const router = createBrowserRouter([
   {
@@ -303,6 +307,16 @@ const router = createBrowserRouter([
         path: "me",
         element: <AdminProfilePage />,
       },
+      {
+        path: 'orders',
+        element: <AdminOrdersPage />
+      },
+      {
+        path: 'orders/:orderId',
+        element: <AdminOrderDetailsPage />,
+        loader: adminOrderDetailsLoader,
+        errorElement: <AdminOrderErrorPage />
+      }
     ],
   },
 ]);

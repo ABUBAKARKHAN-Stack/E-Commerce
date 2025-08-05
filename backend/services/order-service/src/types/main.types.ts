@@ -68,7 +68,8 @@ interface IOrder extends Document {
     refund: IRefundInfo;
     paymentStatus: PaymentStatus;
     createdAt:Date;
-    deliveryDate: Date
+    deliveryDate: Date;
+    cancelledAt:Date;
 }
 
 interface JwtUpdtedPayload extends JwtPayload {
@@ -87,8 +88,7 @@ type CompleteCheckoutBody = {
     paymentMethod: string;
     shippingAddress: IShippingAddress;
     shippingMethod?: ShippingMethod;
-    shipping?: number
-
+    shipping?: number;
 }
 
 

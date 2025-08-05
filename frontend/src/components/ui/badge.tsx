@@ -12,22 +12,23 @@ export const Badge = ({
 }: BadgeProps) => {
   const variantClasses = {
     default:
-      "bg-cyan-500 text-cyan-50 border border-cyan-300 dark:border-orange-300 dark:bg-orange-500 dark:text-orange-100",
+      "bg-blue-100 text-blue-800 border border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700",
     success:
-      "bg-green-100 text-green-700 border border-green-300 dark:bg-green-900 dark:text-green-300",
+      "bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-900 dark:text-emerald-200 dark:border-emerald-700",
     warning:
-      "bg-yellow-100 text-yellow-700 border border-yellow-300 dark:bg-yellow-900 dark:text-yellow-300",
+      "bg-amber-100 text-amber-800 border border-amber-300 dark:bg-amber-900 dark:text-amber-200 dark:border-amber-700",
     error:
-      "bg-red-100 text-red-700 border border-red-300 dark:bg-red-900 dark:text-red-300",
-    info: "bg-cyan-100 text-cyan-700 border border-cyan-300 dark:bg-cyan-900 dark:text-cyan-300",
+      "bg-rose-100 text-rose-800 border border-rose-300 dark:bg-rose-900 dark:text-rose-200 dark:border-rose-700",
+    info:
+      "bg-sky-100 text-sky-800 border border-sky-300 dark:bg-sky-900 dark:text-sky-200 dark:border-sky-700",
   };
 
   return (
     <span
       className={cn(
-        "inline-block rounded-md px-3 py-1 text-sm font-medium capitalize",
+        "inline-flex items-center rounded-lg px-2.5 py-0.5 text-sm font-medium transition-colors",
         variantClasses[variant],
-        className,
+        className
       )}
       {...props}
     />

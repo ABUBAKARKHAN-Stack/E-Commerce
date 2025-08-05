@@ -8,6 +8,8 @@ import AdminViewProductMain from "./AdminViewProductMain";
 import AdminForgotPasswordMain from "./AdminForgotPasswordMain";
 import AdminResetPasswordMain from "./AdminResetPasswordMain";
 import AdminProfileMain from "./AdminProfileMain";
+import AdminOrdersMain from "./AdminOrdersMain";
+import AdminOrderDetailsMain from "./AdminOrderDetailsMain";
 
 export {
   AdminAddProductMain,
@@ -20,4 +22,6 @@ export {
   AdminForgotPasswordMain,
   AdminResetPasswordMain,
   AdminProfileMain,
+  AdminOrdersMain,
+  AdminOrderDetailsMain 
 };

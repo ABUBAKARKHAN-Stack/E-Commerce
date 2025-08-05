@@ -65,6 +65,10 @@ const orderSchema = new Schema<IOrder>({
     deliveryDate: {
         type: Date,
         default: null
+    },
+    cancelledAt: {
+        type:Date,
+        default: null
     }
 }, { timestamps: true })
 const orderModel = model<IOrder>("Order", orderSchema);

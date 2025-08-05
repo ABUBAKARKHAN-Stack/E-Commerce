@@ -2,39 +2,43 @@ import { Separator } from "@/components/ui/separator";
 import React, { FC, JSX } from "react";
 
 type Props = {
-  mainIcon: JSX.Element;
-  mainHeading: string;
-  subIcon: JSX.Element;
-  subText: string;
-  animateClassName?: string;
+    mainIcon: JSX.Element;
+    mainHeading: string;
+    subIcon: JSX.Element;
+    subText: string;
+    animateClassName?: string;
 };
 
 const DashboardMainHeader: FC<Props> = ({
-  mainIcon,
-  mainHeading,
-  subIcon,
-  subText,
-  animateClassName,
+    mainIcon,
+    mainHeading,
+    subIcon,
+    subText,
+    animateClassName,
 }) => {
-  return (
-    <div className={`relative ${animateClassName}`}>
-      <section
-        className={`py-4" flex flex-col rounded bg-cyan-500 p-4 pr-4 md:flex-row md:items-center md:justify-between dark:bg-orange-500`}
-      >
-        <div className="w-full space-y-2">
-          <h1 className="xsm:text-xl flex items-center gap-2 text-lg font-bold text-white sm:text-2xl md:text-3xl">
-            {mainIcon}
-            {mainHeading}
-          </h1>
-          <p className="xsm:text-sm flex items-center gap-2 text-xs tracking-wide text-cyan-100 sm:text-base dark:text-orange-100">
-            {subIcon}
-            {subText}
-          </p>
+    return (
+        <div className={`relative ${animateClassName}`}>
+            <section
+                role="banner"
+                className="relative flex flex-col selection:bg-black items-start justify-center gap-3 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 dark:from-orange-500 dark:to-orange-600 px-4 py-5 xsm:p-5 "
+            >
+                {/* Glow effect */}
+                <div className="pointer-events-none absolute inset-0 -z-10 h-full w-full animate-pulse-slow rounded-lg shadow-2xl shadow-cyan-500/30 dark:shadow-orange-400/30" />
+
+                {/* Main Heading */}
+                <h1 className="flex items-center gap-2 text-lg font-bold text-white sm:text-2xl md:text-3xl">
+                    {mainIcon}
+                    <span>{mainHeading}</span>
+                </h1>
+
+                {/* Subtext */}
+                <p className="flex items-center gap-2 text-[11px] font-medium tracking-wide text-cyan-100 sm:text-sm dark:text-orange-100">
+                    {subIcon}
+                    <span>{subText}</span>
+                </p>
+            </section>
         </div>
-      </section>
-      <div className="animate-pulse-slow -pulse absolute top-1/2 left-1/2 -z-10 h-24 w-full -translate-1/2 rounded bg-transparent shadow-lg shadow-cyan-500/40 dark:shadow-orange-400/40"></div>
-    </div>
-  );
+    );
 };
 
 export default DashboardMainHeader;

@@ -18,7 +18,7 @@ const DashboardSectionHeader: FC<Props> = ({
 }) => {
   return (
     <section
-      className={`${animateClassName} py-4" flex flex-col pr-4 md:flex-row md:items-center md:justify-between`}
+      className={`${animateClassName} py-4 flex flex-col pr-4 md:flex-row md:items-center md:justify-between`}
     >
       <div className="w-full space-y-3">
         <h1 className="xsm:text-xl flex items-center gap-2 text-lg font-bold text-gray-950 sm:text-2xl md:text-3xl dark:text-white">

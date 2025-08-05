@@ -8,6 +8,9 @@ import AdminViewProductPage from "./AdminViewProductPage";
 import AdminForgotPasswordPage from "./AdminForgotPasswordPage";
 import AdminResetPasswordPage from "./AdminResetPasswordPage";
 import AdminProfilePage from "./AdminProfilePage";
+import AdminOrdersPage from "./AdminOrdersPage";
+import AdminOrderDetailsPage from "./AdminOrderDetailsPage";
+
 export {
   AdminAddProductPage,
   AdminDashboardPage,
@@ -19,4 +22,6 @@ export {
   AdminForgotPasswordPage,
   AdminResetPasswordPage,
   AdminProfilePage,
+  AdminOrdersPage,
+  AdminOrderDetailsPage
 };

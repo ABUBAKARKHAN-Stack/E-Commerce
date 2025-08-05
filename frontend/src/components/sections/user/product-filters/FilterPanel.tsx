@@ -92,6 +92,7 @@ const FilterPanel: FC<Props> = ({
 
             <Button
               onClick={onFilterRemove}
+              disabled={filterCount <= 0}
               className="rounded-none px-4 py-5 text-base transition-colors ease-linear"
             >
               Remove All Filters

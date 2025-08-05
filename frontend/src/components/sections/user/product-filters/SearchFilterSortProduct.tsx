@@ -126,7 +126,7 @@ const SearchFilterSortProduct: FC<Props> = ({
       count++;
     } else if (debouncedMaxPrice) {
       count++;
-    }
+    } 
     setFilterCount(count);
   };
 

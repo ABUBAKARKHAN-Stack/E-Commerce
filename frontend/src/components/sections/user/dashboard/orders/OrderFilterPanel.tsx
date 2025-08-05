@@ -74,7 +74,7 @@ const OrderFilterPanel: FC<Props> = ({
         { value: "confirmed", label: "Confirmed", group: "status" },
         { value: "cancelled", label: "Cancelled", group: "status" },
         { value: "processing", label: "Processing", group: "status" },
-        { value: "shippied", label: "Shipped", group: "status" },
+        { value: "shipped", label: "Shipped", group: "status" },
         { value: "delivered", label: "Delivered", group: "status" },
       ],
     },

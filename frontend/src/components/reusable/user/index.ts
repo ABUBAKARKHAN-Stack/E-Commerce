@@ -9,8 +9,8 @@ import ProductImageSelector from "./ProductImageSelector";
 import AddReviewForm from "./AddReviewForm";
 import DeliveryInfo from "./DeliveryInfo";
 import OrderIdBadge from "./OrderIdBadge";
-import OrderStatusBadge from "./OrderStatusBadge";
 import PaymentStatusBadge from "./PaymentStatusBadge";
+import { OrderStatusBadge } from "../shared";
 
 export {
   SectionHeader,
@@ -24,6 +24,6 @@ export {
   AddReviewForm,
   DeliveryInfo,
   OrderIdBadge,
-  OrderStatusBadge,
   PaymentStatusBadge,
+  OrderStatusBadge
 };

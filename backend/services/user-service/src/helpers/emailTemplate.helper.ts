@@ -121,77 +121,274 @@ const orderConfirmationTemplate = (
   orderId: string,
 ) => {
   return `
-  <html>
+  <!DOCTYPE html>
+  <html lang="en">
     <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Order Confirmation - ShopNex</title>
       <style>
-        body {
-          font-family: 'Arial', sans-serif;
-          background-color: #f4faff;
+        * {
           margin: 0;
           padding: 0;
-          color: #333;
+          box-sizing: border-box;
         }
-        .container {
+        
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+          background-color: #f8fafc;
+          margin: 0;
+          padding: 20px 0;
+          color: #334155;
+          line-height: 1.6;
+        }
+        
+        .email-container {
           max-width: 600px;
-          margin: 30px auto;
+          margin: 0 auto;
           background-color: #ffffff;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .header {
+          background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+          padding: 40px 40px 30px;
+          text-align: center;
+          color: white;
+        }
+        
+        .logo {
+          width: 160px;
+          height: auto;
+          margin-bottom: 20px;
+          filter: invert(1);
+        }
+        
+        .header h1 {
+          font-size: 32px;
+          font-weight: 700;
+          margin-bottom: 8px;
+          letter-spacing: -0.5px;
+        }
+        
+        .header p {
+          font-size: 16px;
+          opacity: 0.9;
+          margin: 0;
+        }
+        
+        .content {
           padding: 40px;
+        }
+        
+        .greeting {
+          font-size: 18px;
+          margin-bottom: 24px;
+          color: #1e293b;
+        }
+        
+        .customer-name {
+          font-weight: 600;
+          color: #0ea5e9;
+        }
+        
+        .message {
+          font-size: 16px;
+          margin-bottom: 32px;
+          color: #475569;
+        }
+        
+        .order-details {
+          background: linear-gradient(135deg, #f1f9ff 0%, #e0f2fe 100%);
+          border: 2px solid #bae6fd;
           border-radius: 12px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+          padding: 24px;
+          margin: 32px 0;
           text-align: center;
         }
-        .logo {
-          width: 120px;
-          margin-bottom: 20px;
+        
+        .order-details h3 {
+          color: #0c4a6e;
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 12px;
         }
-        h1 {
-          color: #06b6d4;
-          font-size: 28px;
-          font-weight: bold;
-          margin-bottom: 20px;
+        
+        .order-id {
+          font-size: 20px;
+          font-weight: 700;
+          color: #0ea5e9;
+          font-family: 'Courier New', monospace;
+          background-color: #ffffff;
+          padding: 12px 20px;
+          border-radius: 8px;
+          display: inline-block;
+          border: 1px solid #e2e8f0;
         }
-        p {
-          font-size: 16px;
-          line-height: 1.6;
-          color: #555;
+        
+        .tracking-section {
+          background-color: #f8fafc;
+          border-radius: 12px;
+          padding: 24px;
+          margin: 32px 0;
+          text-align: center;
         }
-        .highlight {
-          font-weight: bold;
-          color: #06b6d4;
+        
+        .tracking-section h3 {
+          color: #1e293b;
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 16px;
         }
-        .order-box {
-          background-color: #ecfeff;
-          border: 1px solid #bae6fd;
-          border-radius: 10px;
-          padding: 20px;
-          margin: 20px 0;
-        }
-        .footer {
-          margin-top: 30px;
-          font-size: 14px;
-          color: #777;
-        }
-        .footer a {
-          color: #06b6d4;
+        
+        .track-button {
+          display: inline-block;
+          background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+          color: white;
           text-decoration: none;
+          padding: 14px 28px;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 16px;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+        
+        .track-button:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+        }
+        
+        .support-section {
+          margin-top: 40px;
+          padding-top: 32px;
+          border-top: 1px solid #e2e8f0;
+        }
+        
+        .support-text {
+          font-size: 15px;
+          color: #64748b;
+          margin-bottom: 20px;
+        }
+        
+        .footer {
+          background-color: #f8fafc;
+          padding: 32px 40px;
+          text-align: center;
+          border-top: 1px solid #e2e8f0;
+        }
+        
+        .footer-brand {
+          font-size: 18px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 8px;
+        }
+        
+        .footer-text {
+          font-size: 14px;
+          color: #64748b;
+          margin-bottom: 16px;
+        }
+        
+        .contact-info {
+          font-size: 14px;
+          color: #64748b;
+        }
+        
+        .contact-info a {
+          color: #0ea5e9;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        
+        .contact-info a:hover {
+          text-decoration: underline;
+        }
+        
+        .divider {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+          margin: 24px 0;
+        }
+        
+        @media (max-width: 640px) {
+          body {
+            padding: 10px 0;
+          }
+          
+          .header, .content, .footer {
+            padding: 24px 20px;
+          }
+          
+          .header h1 {
+            font-size: 28px;
+          }
+          
+          .order-id {
+            font-size: 18px;
+            padding: 10px 16px;
+          }
+          
+          .track-button {
+            padding: 12px 24px;
+            font-size: 15px;
+          }
         }
       </style>
     </head>
     <body>
-      <div class="container">
-        <img src="https://placehold.co/600x400?text=ShopNex+Logo" alt="ShopNex Logo" class="logo" />
-        <h1>Order Confirmed!</h1>
-        <p>Dear <span class="highlight">${customerName}</span>,</p>
-        <p>Thank you for shopping with <strong>ShopNex</strong>. Your order has been successfully placed.</p>
-        <div class="order-box">
-          <p><strong>Order ID:</strong> ${orderId}</p>
+      <div class="email-container">
+        <div class="header">
+          <img src="https://res.cloudinary.com/ddlrtyx9h/image/upload/v1753896009/shopnex_iuy8nb.webp" alt="ShopNex Logo" class="logo" />
+          <h1>Order Confirmed</h1>
+          <p>Your order has been successfully processed</p>
         </div>
-        <p>You can track your order using the ShopNex website by using your <strong>Order ID: ${orderId}</strong>. Click <a href="http://localhost:5173/track-order?orderId=${orderId}" style="color: #00bcd4; text-decoration: none;">here</a> to track your order.</p>
-        <p>If you have any questions, feel free to reply to this email.</p>
+        
+        <div class="content">
+          <div class="greeting">
+            Dear <span class="customer-name">${customerName}</span>,
+          </div>
+          
+          <div class="message">
+            Thank you for choosing <strong>ShopNex</strong>. We're pleased to confirm that your order has been successfully placed and is now being processed by our fulfillment team.
+          </div>
+          
+          <div class="order-details">
+            <h3>Order Confirmation</h3>
+            <div class="order-id">${orderId}</div>
+          </div>
+          
+          <div class="tracking-section">
+            <h3>Track Your Order</h3>
+            <p style="margin-bottom: 20px; color: #64748b;">You can monitor your order status in real-time using your Order ID.</p>
+            <a href="http://localhost:5173/track-order?orderId=${orderId}" class="track-button" style="color:white;">Track Order Status</a>
+          </div>
+          
+          <div class="divider"></div>
+          
+          <div class="support-section">
+            <div class="support-text">
+              <strong>What's Next?</strong><br>
+              • You'll receive a shipping confirmation email once your order is dispatched<br>
+              • Estimated delivery time will be provided with tracking information<br>
+              • Keep your Order ID handy for any future inquiries
+            </div>
+            
+            <div class="support-text">
+              If you have any questions about your order or need assistance, our customer support team is here to help.
+            </div>
+          </div>
+        </div>
+        
         <div class="footer">
-          <p>Best regards,</p>
-          <p><strong>ShopNex Team</strong></p>
-          <p>Need help? Email us at <a href="mailto:official.shopnex@gmail.com">official.shopnex@gmail.com</a></p>
+          <div class="footer-brand">ShopNex</div>
+          <div class="footer-text">Thank you for your business. We appreciate your trust in us.</div>
+          <div class="contact-info">
+            Questions? Contact us at <a href="mailto:official.shopnex@gmail.com">official.shopnex@gmail.com</a>
+          </div>
         </div>
       </div>
     </body>

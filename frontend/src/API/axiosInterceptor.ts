@@ -48,9 +48,33 @@ const userActivityInterceptor = attachInterceptor(
   }),
 );
 
+//* Admin Interceptor Helper 
+const attachAdminInterceptor = (instance: AxiosInstance) => {
+  instance.interceptors.response.use(
+    (res) => res,
+    (err) => {
+      if (err.response?.status === 401) {
+        Cookies.remove('adminToken');
+        localStorage.removeItem('adminToken');
+        errorToast("Login session expired. Please sign in again to continue.");
+      }
+      return Promise.reject(err);
+    },
+  );
+  return instance;
+};
+
+const adminInterceptor = attachAdminInterceptor(
+  axios.create({
+    baseURL: "http://localhost:3006/admin",
+    withCredentials: true
+  })
+)
+
 export {
   userInterceptor,
   userProductInterceptor,
   userOrderInterceptor,
   userActivityInterceptor,
+  adminInterceptor
 };

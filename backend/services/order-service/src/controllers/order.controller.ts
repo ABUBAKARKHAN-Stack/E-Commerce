@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import orderModel from "../models/order.model";
-import { ApiResponse, ApiError, isOrderCancelable } from "../utils";
+import { ApiResponse, ApiError } from "../utils";
 import { publishEvent } from '../utils/kafka'
 import { Request, Response } from "express";
 import { stripeClient } from "../config/stripe.config";
@@ -95,6 +95,8 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
         method: ShippingMethod.STANDARD
     };
 
+    let deliveryDate: Date = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+
     if (shippingMethod) {
         switch (shippingMethod) {
             case ShippingMethod.EXPRESS:
@@ -102,18 +104,21 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
                     cost: 9.99,
                     method: ShippingMethod.EXPRESS
                 }
+                deliveryDate = deliveryDate = new Date(Date.now() + 1.5 * 24 * 60 * 60 * 1000);
                 break;
             case ShippingMethod.STANDARD:
                 shippingPayload = {
                     cost: 6.99,
                     method: ShippingMethod.STANDARD
                 }
+                deliveryDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
                 break;
             default:
                 shippingPayload = {
                     cost: 6.99,
                     method: ShippingMethod.STANDARD
                 }
+                deliveryDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
                 break;
         }
     }
@@ -123,6 +128,7 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
             cost: 0,
             method: ShippingMethod.FREE
         }
+        deliveryDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
     }
 
     const order = await orderModel.findOne({
@@ -142,7 +148,7 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
         order.shipping = shippingPayload.cost;
         order.confirmedAt = new Date();
         order.cart.totalAmount = order.cart.totalAmount + order.shipping;
-        order.deliveryDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+        order.deliveryDate = deliveryDate;
         await order.save()
         await publishEvent("cart.clear", 'cleared-cart', { userId });
         await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId: order.orderId }); //* For User
@@ -165,7 +171,8 @@ const completeCheckout = expressAsyncHandler(async (req: Request, res: Response)
             userId: order.userId,
             paymentMethod: PaymentMethod.STRIPE,
             shippingAddress: JSON.stringify(shippingAddress),
-            shippingPayload: JSON.stringify(shippingPayload)
+            shippingPayload: JSON.stringify(shippingPayload),
+            deliveryDate: deliveryDate.toISOString()
         }
     })
 
@@ -202,8 +209,9 @@ const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Respo
             const paymentMethod = intent.metadata?.paymentMethod;
             const shippingAddress = intent.metadata?.shippingAddress;
             const shippingPayload = intent.metadata?.shippingPayload;
+            const deliveryDate = intent.metadata?.deliveryDate;
             const intentId = intent.id;
-            if (!orderId || !userId || !paymentMethod || !shippingAddress) {
+            if (!orderId || !userId || !paymentMethod || !shippingAddress || !deliveryDate) {
                 res
                     .status(400)
                     .send("Missing metadata");
@@ -215,7 +223,8 @@ const stripeWebhookHandler = expressAsyncHandler(async (req: Request, res: Respo
                 intentId,
                 paymentMethod,
                 shippingAddress,
-                shippingPayload
+                shippingPayload,
+                deliveryDate
             })
             break;
         default:
@@ -336,6 +345,7 @@ const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {
     const cancelAsUnpaid = async () => {
         order.status = OrderStatus.CANCELLED;
         order.paymentStatus = PaymentStatus.UNPAID;
+        order.cancelledAt = new Date();
         await order.save();
         res.status(200).json(new ApiResponse(200, 'Order has been cancelled'));
     };
@@ -381,7 +391,7 @@ const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {
             refundAt: new Date(),
             stripeRefundId: refund.id,
         };
-
+        order.cancelledAt = new Date();
         await order.save();
         res.status(200).json(new ApiResponse(200, 'Order has been cancelled'));
         return

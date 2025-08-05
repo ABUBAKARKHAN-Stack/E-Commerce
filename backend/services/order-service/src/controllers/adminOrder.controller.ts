@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import orderModel from "../models/order.model";
 import expressAsyncHandler from "express-async-handler";
-import { ApiError, ApiResponse } from "../utils";
-import { OrderStatus } from "../types/main.types";
+import { ApiError, ApiResponse, sendEmail } from "../utils";
+import { OrderStatus, PaymentStatus } from "../types/main.types";
+import { orderDeliveredTemplate, orderShippingTemplate } from "../helpers/emailTemplate";
+
 
 const getAllOrder = expressAsyncHandler(async (req: Request, res: Response) => {
     const {
@@ -13,6 +15,7 @@ const getAllOrder = expressAsyncHandler(async (req: Request, res: Response) => {
         sortBy,
         page,
         limit,
+        customerName
     }
         = req.query;
 
@@ -22,6 +25,7 @@ const getAllOrder = expressAsyncHandler(async (req: Request, res: Response) => {
     if (paymentStatus) query.paymentStatus = paymentStatus;
     if (shippingMethod) query.shippingMethod = shippingMethod;
     if (paymentMethod) query.paymentMethod = paymentMethod;
+    if (customerName) query['shippingAddress.fullName'] = { $regex: customerName, $options: 'i' }
 
     //* Apply Sorting
     const sortOptions: any = {};
@@ -31,9 +35,9 @@ const getAllOrder = expressAsyncHandler(async (req: Request, res: Response) => {
         } else if (sortBy === "oldest") {
             sortOptions.createdAt = 1;
         } else if (sortBy === "amountAsc") {
-            sortOptions.cart.totalAmount = 1;
+            sortOptions['cart.totalAmount'] = 1;
         } else if (sortBy === "amountDesc") {
-            sortOptions.cart.totalAmount = -1;
+            sortOptions['cart.totalAmount'] = -1;
         } else if (sortBy === "etaSoonest") {
             sortOptions.deliveryDate = 1
         } else if (sortBy === "etaLatest") {
@@ -112,6 +116,7 @@ const markOrderAsProcessing = expressAsyncHandler(async (req: Request, res: Resp
     order.status = OrderStatus.PROCESSING;
     await order.save();
 
+
     res
         .status(200)
         .json(new ApiResponse(200, "Order Marked As Processing"))
@@ -136,6 +141,24 @@ const markOrderAsShipped = expressAsyncHandler(async (req: Request, res: Respons
     order.status = OrderStatus.SHIPPED;
     await order.save();
 
+
+    try {
+        await sendEmail(
+            'shopnex.official@gmail.com',
+            order.shippingAddress.email,
+            "Order Shipped",
+            orderShippingTemplate(
+                order.shippingAddress.fullName,
+                order.orderId,
+                {
+                    deliveryDate: new Date(order.deliveryDate).toLocaleString(),
+                }
+            )
+        )
+    } catch (error) {
+        throw new ApiError(400, "Failed to send shipping email")
+    }
+
     res
         .status(200)
         .json(new ApiResponse(200, "Order Marked As Shipped"))
@@ -158,8 +181,23 @@ const markOrderAsDelivered = expressAsyncHandler(async (req: Request, res: Respo
     }
 
     order.status = OrderStatus.DELIVERED;
-    order.isDelivered = true
+    order.paymentStatus = PaymentStatus.PAID;
+    order.isDelivered = true;
     await order.save();
+
+    try {
+        await sendEmail(
+            'shopnex.official@gmail.com',
+            order.shippingAddress.email,
+            "Order Delivered",
+            orderDeliveredTemplate(
+                order.shippingAddress.fullName,
+                order.orderId,
+            )
+        )
+    } catch (error) {
+        throw new ApiError(400, "Failed to send the 'Delivered' confirmation email.");
+    }
 
     res
         .status(200)

@@ -12,8 +12,6 @@ const createOrder = async (orderData: any) => {
             status: OrderStatus.PENDING
         })
 
-
-
         if (order) {
             order.cart.products = orderData.products;
             order.cart.totalAmount = +orderData.totalAmount;
@@ -56,7 +54,8 @@ const confirmOrder = async ({
     intentId,
     paymentMethod,
     shippingAddress,
-    shippingPayload
+    shippingPayload,
+    deliveryDate
 }: {
     orderId: string,
     userId: string,
@@ -64,6 +63,7 @@ const confirmOrder = async ({
     paymentMethod: string,
     shippingAddress: string,
     shippingPayload?: string;
+    deliveryDate: string
 }) => {
     const parsedShippingAddress = JSON.parse(shippingAddress);
     const parsedShippingPayload = shippingPayload ? JSON.parse(shippingPayload) : null;
@@ -83,7 +83,7 @@ const confirmOrder = async ({
         $inc: {
             "cart.totalAmount": parsedShippingPayload.cost
         },
-        deliveryDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+        deliveryDate: new Date(deliveryDate)
     }, { new: true });
     await publishEvent("cart.clear", 'cleared-cart', { userId });
     await publishEvent("order.user.confirmed", 'user-confirmed', { userId, orderId }); //* For User

@@ -167,6 +167,12 @@ export enum ShippingMethod {
   EXPRESS = "EXPRESS",
 }
 
+export type Refund = {
+  refundAmount: number;
+  refundAt: string;
+  stripeRefundId: string;
+}
+
 export interface IOrder {
   orderId: string;
   cart: {
@@ -177,12 +183,12 @@ export interface IOrder {
   createdAt: string;
   confirmedAt?: string;
   paymentMethod?: PaymentMethod;
-  refund?: {
-    refundAmount?: number;
-    refundAt?: string;
-  };
+  refund?: Refund;
   shipping?: number;
   paymentStatus: string;
+  shippingAddress?: IShippingAddress;
+  deliveryDate?: Date;
+  cancelledAt?: Date;
 }
 
 export enum PaymentStatus {
@@ -206,3 +212,23 @@ export type OrderedProduct = {
   price: number;
   thumbnail?: string;
 };
+
+
+export enum AdminOrderLoading {
+  GET_ALL_ORDERS = "GET_ALL_ORDERS",
+  GET_SINGLE_ORDER = "GET_SINGLE_ORDER",
+  MARK_AS_PROCESSING = "MARK_AS_PROCESSING",
+  MARK_AS_SHIPPIED = "MARK_AS_SHIPPIED",
+  MARK_AS_DELIVERED = "MARK_AS_DELIVERED"
+}
+
+export type AdminOrderFiltersType = {
+  status: string;
+  paymentMethod: string;
+  paymentStatus: string;
+  shippingMethod: string;
+  sortBy: string;
+  searchOrderByCustomerName?: string;
+  page?: number;
+  limit?: number
+}

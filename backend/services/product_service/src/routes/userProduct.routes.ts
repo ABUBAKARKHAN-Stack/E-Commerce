@@ -23,7 +23,7 @@ const router = Router()
 
 //? ✅ Product Routes
 router.get("/all", getAllProducts);                // Get all products
-router.post('/bulk', userAuth,bulkProducts);
+router.post('/bulk', bulkProducts);
 router.get("/categories", getCategories);           // Get all categories
 router.get("/top-rated", topProducts);              
 router.get('/top-categories', topCategories)            // Get top-rated products

@@ -22,7 +22,7 @@ export const sendEmail = async (
             from,
             to,
             subject,
-            html: htmlContent, // Use HTML content here
+            html: htmlContent,
         });
         console.log(mail.messageId);
     } catch (error: any) {
