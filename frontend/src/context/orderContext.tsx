@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 import {
-  getConfirmedOrderDetails as getConfirmedOrderDetailsApi,
   getAllOrders as getAllOrdersApi,
+  userTrackOrder as userTrackOrderApi,
   cancelOrder as cancelOrderApi,
   downloadOrderInvoice as downloadOrderInvoiceApi,
 } from "@/API/userApi";
@@ -23,10 +23,7 @@ import {
 import { errorToast, successToast } from "@/utils/toastNotifications";
 
 type OrderContextType = {
-  getConfirmedOrderDetails: (
-    orderId: string,
-    navigate: (path: string) => void,
-  ) => Promise<void>;
+  userTrackOrder: (orderId: string, navigate: (path: string) => void) => Promise<void>;
   getAllOrders: (params?: any) => Promise<any>;
   ordersData: IOrder[];
   setOrdersData: Dispatch<SetStateAction<IOrder[]>>;
@@ -52,14 +49,14 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
   const [ordersData, setOrdersData] = useState<IOrder[]>([]);
   const [ordersCount, setOrdersCount] = useState(0);
 
-  const getConfirmedOrderDetails = async (
+  const userTrackOrder = async (
     orderId: string,
     navigate: (path: string) => void,
   ) => {
     try {
       setLoading(OrderLoading.TRACK_ORDER_LOADING);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      const res = await getConfirmedOrderDetailsApi(orderId);
+      const res = await userTrackOrderApi(orderId);
 
       if (res.status === 200) {
         successToast(res.data.message);
@@ -68,7 +65,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       const err = error as AxiosError<ApiErrorType>;
       const errMsg = err.response?.data.message || "Something went wrong";
-      // errorToast(errMsg);
+      errorToast(errMsg);
     } finally {
       setLoading(null);
     }
@@ -156,7 +153,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
   return (
     <OrderContext.Provider
       value={{
-        getConfirmedOrderDetails,
+        userTrackOrder,
         getAllOrders,
         pendingOrders,
         cancelledOrders,

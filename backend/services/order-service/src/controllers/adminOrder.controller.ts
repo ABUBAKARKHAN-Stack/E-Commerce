@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import orderModel from "../models/order.model";
 import expressAsyncHandler from "express-async-handler";
 import { ApiError, ApiResponse, sendEmail } from "../utils";
-import { OrderStatus, PaymentStatus } from "../types/main.types";
-import { orderDeliveredTemplate, orderShippingTemplate } from "../helpers/emailTemplate";
+import { OrderStatus, PaymentMethod, PaymentStatus } from "../types/main.types";
+import { orderCancelledTemplate, orderDeliveredTemplate, orderShippingTemplate } from "../helpers/emailTemplate";
+import { stripeClient } from "../config/stripe.config";
 
 
 const getAllOrder = expressAsyncHandler(async (req: Request, res: Response) => {
@@ -144,9 +145,9 @@ const markOrderAsShipped = expressAsyncHandler(async (req: Request, res: Respons
 
     try {
         await sendEmail(
-            'shopnex.official@gmail.com',
+            '<official.shopnex@gmail.com>',
             order.shippingAddress.email,
-            "Order Shipped",
+            `Your ShopNex Order #${orderId}`,
             orderShippingTemplate(
                 order.shippingAddress.fullName,
                 order.orderId,
@@ -187,9 +188,9 @@ const markOrderAsDelivered = expressAsyncHandler(async (req: Request, res: Respo
 
     try {
         await sendEmail(
-            'shopnex.official@gmail.com',
+            '<official.shopnex@gmail.com>',
             order.shippingAddress.email,
-            "Order Delivered",
+            `Your ShopNex Order #${orderId}`,
             orderDeliveredTemplate(
                 order.shippingAddress.fullName,
                 order.orderId,
@@ -204,10 +205,112 @@ const markOrderAsDelivered = expressAsyncHandler(async (req: Request, res: Respo
         .json(new ApiResponse(200, "Order Marked As Delivered"))
 })
 
+const cancelOrder = expressAsyncHandler(async (req: Request, res: Response) => {
+    const {
+        orderId,
+        cancellationReason,
+    } = req.body;
+
+    if (!orderId) {
+        throw new ApiError(400, "Order Id is required")
+    }
+
+    if (!cancellationReason) {
+        throw new ApiError(400, "Order Cancellation reason is required")
+    }
+
+    const order = await orderModel.findOne({
+        orderId
+    })
+
+    if (!order) {
+        throw new ApiError(404, "Order not found.");
+    }
+
+    if (order.status === OrderStatus.CANCELLED) {
+        throw new ApiError(409, "Order has already been cancelled.");
+    }
+
+    if ([OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED].includes(order.status)) {
+        throw new ApiError(400, "You cannot cancel an order that has already been shipped or delivered.");
+    }
+
+    //* Flags For Easier Logic
+    const isCod = order.paymentMethod === PaymentMethod.COD;
+    const isStripe = order.paymentMethod === PaymentMethod.STRIPE;
+    const isPending = order.status === OrderStatus.PENDING;
+    const isConfirmed = order.status === OrderStatus.CONFIRMED;
+
+    //* Helper: Cancel order as unpaid (no refund)
+    const cancelAsUnpaid = async () => {
+        order.status = OrderStatus.CANCELLED;
+        order.paymentStatus = PaymentStatus.UNPAID;
+        order.cancelledAt = new Date();
+        await order.save();
+        res.status(200).json(new ApiResponse(200, 'Order has been cancelled'));
+    };
+
+    //* Helper Send Cancellation Email
+    const sendCancellationEmail = async () => {
+        await sendEmail(
+            '<official.shopnex@gmail.com>',
+            order.shippingAddress.email,
+            `Your ShopNex Order #${order.orderId} Has Been Cancelled`,
+            orderCancelledTemplate(
+                order.shippingAddress.fullName,
+                order.orderId,
+                cancellationReason
+            )
+        );
+    };
+
+
+    //* Cancel PENDING orders first — no need to check payment method
+    if (isPending) {
+        await cancelAsUnpaid();
+        return;
+    }
+
+    //* Cancel Confirmed orders on COD
+    if (isCod && isConfirmed) {
+        sendCancellationEmail()
+        await cancelAsUnpaid();
+        return;
+    }
+
+    //* Cancel Stripe (Card Payment) with confirmed status
+    if (isStripe && isConfirmed) {
+        if (!order.intentId) {
+            throw new ApiError(400, "No payment intent found for this order.");
+        }
+        const refund = await stripeClient.refunds.create({
+            payment_intent: order.intentId,
+        })
+        if (!refund) {
+            throw new ApiError(400, "Refund not made.");
+        }
+
+        order.status = OrderStatus.CANCELLED;
+        order.paymentStatus = PaymentStatus.REFUNDED;
+        order.refund = {
+            refundAmount: refund.amount / 100,
+            refundAt: new Date(),
+            stripeRefundId: refund.id,
+        }
+        order.cancelledAt = new Date();
+        await order.save();
+        sendCancellationEmail()
+        res.status(200).json(new ApiResponse(200, 'Order has been cancelled'));
+        return
+    }
+    throw new ApiError(400, "Invalid order cancellation state.");
+})
+
 export {
     getAllOrder,
     getSingleOrder,
     markOrderAsProcessing,
     markOrderAsShipped,
-    markOrderAsDelivered
+    markOrderAsDelivered,
+    cancelOrder
 }

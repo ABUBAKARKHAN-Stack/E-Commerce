@@ -17,7 +17,9 @@ const CheckoutSuccessMain = () => {
     confirmedAt,
     shippingMethod,
     shipping,
+    deliveryDate
   } = useLoaderData();
+ 
 
   const containerRef = useRef(null);
   const checkIconRef = useRef(null);
@@ -177,6 +179,7 @@ const CheckoutSuccessMain = () => {
             totalAmount={totalAmount}
             confirmedAt={confirmedAt}
             shipping={shipping}
+            deliveryDate={deliveryDate}
           />
 
           {/* Action Buttons: Track Order & Continue Shopping */}

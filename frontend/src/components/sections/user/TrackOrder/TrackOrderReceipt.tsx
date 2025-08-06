@@ -1,7 +1,6 @@
-import { DeliveryInfo } from "@/components/reusable/user";
+import { DeliveryInfo, OrderStatusBadge } from "@/components/reusable/user";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import useFormattedDateTime from "@/hooks/useFormattedDateTime";
 import { ReceiptText } from "lucide-react";
 import { FC } from "react";
 
@@ -10,10 +9,18 @@ type Props = {
 };
 
 const TrackOrderReceipt: FC<Props> = ({ order }) => {
-  const { orderId, products, totalAmount, confirmedAt, orderStatus } = order;
+  const {
+    orderId,
+    products,
+    totalAmount,
+    confirmedAt,
+    orderStatus,
+    deliveryDate,
+    shipping
+  } = order;
 
-  const formattedDate = new Date(confirmedAt);
-  const etaDate = new Date(formattedDate.getTime() + 2 * 24 * 60 * 60 * 1000);
+
+  const subTotal = totalAmount - shipping;
 
   return (
     <div className="w-full rounded-2xl shadow-lg shadow-black transition-all duration-500">
@@ -32,12 +39,12 @@ const TrackOrderReceipt: FC<Props> = ({ order }) => {
         {/* Order ID and Status */}
         <div className="flex items-center justify-between">
           <h3 className="text-muted-foreground text-lg font-semibold">
-            Order ID:{" "}
-            <span className="text-black dark:text-white">{orderId}</span>
+            Order:{" "}
+            <span className="text-black dark:text-white">#{orderId}</span>
           </h3>
-          <Badge variant={orderStatus === "confirmed" ? "success" : "default"}>
-            {orderStatus}
-          </Badge>
+          <OrderStatusBadge
+            orderStatus={orderStatus}
+          />
         </div>
 
         <Separator />
@@ -67,12 +74,12 @@ const TrackOrderReceipt: FC<Props> = ({ order }) => {
           <div className="flex justify-between text-gray-900 dark:text-gray-300">
             <span className="text-lg font-medium">Items Total</span>
             <span className="text-lg font-semibold">
-              ${(totalAmount - 50).toFixed(2)}
+              ${subTotal.toFixed(2)}
             </span>
           </div>
           <div className="flex justify-between text-gray-900 dark:text-gray-300">
             <span className="text-lg font-medium">Shipping Fee</span>
-            <span className="text-lg font-semibold">$50.00</span>
+            <span className="text-lg font-semibold">${shipping}</span>
           </div>
           <Separator />
           <div className="flex justify-between pt-2">
@@ -82,7 +89,7 @@ const TrackOrderReceipt: FC<Props> = ({ order }) => {
         </div>
 
         {/* Delivery Info */}
-        <DeliveryInfo formattedDate={formattedDate} etaDate={etaDate} />
+        <DeliveryInfo confirmedAt={confirmedAt} deliveryDate={deliveryDate} />
       </div>
     </div>
   );

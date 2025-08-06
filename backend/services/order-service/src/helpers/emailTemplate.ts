@@ -1,77 +1,102 @@
 interface EmailTemplateData {
-  customerName: string;
-  orderId: string;
-  deliveryDate?: string;
+    customerName: string;
+    orderId: string;
+    deliveryDate?: string;
+    cancellationReason?: string;
 }
 
 interface EmailContent {
-  subject: string;
-  headerTitle: string;
-  headerSubtitle: string;
-  mainMessage: string;
-  actionButton?: {
-    text: string;
-    url: string;
-  };
-  additionalSections?: string[];
-  footerMessage: string;
+    subject: string;
+    headerTitle: string;
+    headerSubtitle: string;
+    mainMessage: string;
+    actionButton?: {
+        text: string;
+        url: string;
+    };
+    additionalSections?: string[];
+    footerMessage: string;
+    theme?: 'default' | 'cancelled'; // Add theme property
 }
 
 const emailConfigs: Record<string, (data: EmailTemplateData) => EmailContent> = {
-  orderShipping: (data) => ({
-    subject: `Your Order is On Its Way - ${data.orderId}`,
-    headerTitle: "Order Shipped",
-    headerSubtitle: "Your package is now on its way to you",
-    mainMessage: `Great news! Your <strong>ShopNex</strong> order has been shipped and is now on its way to your delivery address.`,
-    actionButton: {
-      text: "Track Your Package",
-      url: `http://localhost:5173/track-order?orderId=${data.orderId}`
-    },
-    additionalSections: [
-      `<strong>Shipping Details:</strong><br>
+    orderCancelled: (data) => ({
+        subject: `Order Cancelled - ${data.orderId}`,
+        headerTitle: "Order Cancelled",
+        headerSubtitle: "Your order has been successfully cancelled",
+        mainMessage: `We regret to inform you that your <strong>ShopNex</strong> order has been cancelled.${data.cancellationReason ? ` Reason: <strong>${data.cancellationReason}</strong>.` : ""}`,
+        actionButton: {
+            text: "Browse More Products",
+            url: `http://localhost:5173/`
+        },
+        additionalSections: [
+            `<strong>Next Steps:</strong><br>
+             • If you were charged, your refund will be processed within 5–7 business days.<br>
+             • Please check your bank or card statement to confirm the refund.<br>
+             • You can also visit your <a href="http://localhost:5173/orders">Orders</a> page for more details.<br>
+             • If you haven't received your refund after 7 business days, please <a href="mailto:official.shopnex@gmail.com">contact us</a> for assistance.<br>`
+        ],
+        footerMessage: "We're sorry this order didn't work out. We hope to serve you better next time!",
+        theme: 'cancelled'
+    }),
+
+    orderShipping: (data) => ({
+        subject: `Your Order is On Its Way - ${data.orderId}`,
+        headerTitle: "Order Shipped",
+        headerSubtitle: "Your package is now on its way to you",
+        mainMessage: `Great news! Your <strong>ShopNex</strong> order has been shipped and is now on its way to your delivery address.`,
+        actionButton: {
+            text: "Track Your Package",
+            url: `http://localhost:5173/track-order?orderId=${data.orderId}`
+        },
+        additionalSections: [
+            `<strong>Shipping Details:</strong><br>
        • ${data.deliveryDate ? `Expected delivery: <strong>${data.deliveryDate}</strong><br>` : ''}
        • You can track your package in real-time using the button above<br>
        • You'll receive email updates as your package moves<br>
        • Make sure someone is available to receive the package`,
-    ].filter(Boolean),
-    footerMessage: "We hope you'll love your purchase. Thank you for shopping with us!"
-  }),
+        ].filter(Boolean),
+        footerMessage: "We hope you'll love your purchase. Thank you for shopping with us!",
+        theme: 'default'
+    }),
 
-  orderDelivered: (data) => ({
-    subject: `Order Delivered Successfully - ${data.orderId}`,
-    headerTitle: "Order Delivered",
-    headerSubtitle: "Your package has been successfully delivered",
-    mainMessage: `Wonderful! Your <strong>ShopNex</strong> order has been successfully delivered. We hope you're thrilled with your purchase!`,
-    actionButton: {
-      text: "Leave a Review",
-      url: `http://localhost:5173/review-order?orderId=${data.orderId}`
-    },
-    additionalSections: [
-      `<strong>What's Next?</strong><br>
+    orderDelivered: (data) => ({
+        subject: `Order Delivered Successfully - ${data.orderId}`,
+        headerTitle: "Order Delivered",
+        headerSubtitle: "Your package has been successfully delivered",
+        mainMessage: `Wonderful! Your <strong>ShopNex</strong> order has been successfully delivered. We hope you're thrilled with your purchase!`,
+        actionButton: {
+            text: "Leave a Review",
+            url: `http://localhost:5173/review-order?orderId=${data.orderId}`
+        },
+        additionalSections: [
+            `<strong>What's Next?</strong><br>
        • Share your experience by leaving a product review<br>
        • Keep your order details for warranty purposes<br>
        • Follow us on social media for exclusive deals<br>
       `,
-      `<strong>Need Help?</strong><br>
+            `<strong>Need Help?</strong><br>
        If you have any issues with your order, please don't hesitate to contact our customer support team within 7 days of delivery.`
-    ],
-    footerMessage: "Thank you for choosing ShopNex. We look forward to serving you again!"
-  })
+        ],
+        footerMessage: "Thank you for choosing ShopNex. We look forward to serving you again!",
+        theme: 'default'
+    })
 };
 
 //* Base email template generator
 const generateEmailTemplate = (
-  templateType: keyof typeof emailConfigs,
-  data: EmailTemplateData
+    templateType: keyof typeof emailConfigs,
+    data: EmailTemplateData
 ): string => {
-  const config = emailConfigs[templateType];
-  if (!config) {
-    throw new Error(`Email template type "${templateType}" not found`);
-  }
+    const config = emailConfigs[templateType];
+    if (!config) {
+        throw new Error(`Email template type "${templateType}" not found`);
+    }
 
-  const content = config(data);
+    const content = config(data);
+    const isCancelled = content.theme === 'cancelled';
 
-  return `
+    return `
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -104,7 +129,7 @@ const generateEmailTemplate = (
         }
         
         .header {
-          background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+          background: ${isCancelled ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)'};
           padding: 40px 40px 30px;
           text-align: center;
           color: white;
@@ -136,7 +161,7 @@ const generateEmailTemplate = (
         
         .customer-name {
           font-weight: 600;
-          color: #0ea5e9;
+          color: ${isCancelled ? '#ef4444' : '#0ea5e9'};
         }
         
         .message {
@@ -146,8 +171,8 @@ const generateEmailTemplate = (
         }
         
         .order-details {
-          background: linear-gradient(135deg, #f1f9ff 0%, #e0f2fe 100%);
-          border: 2px solid #bae6fd;
+          background: ${isCancelled ? 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' : 'linear-gradient(135deg, #f1f9ff 0%, #e0f2fe 100%)'};
+          border: ${isCancelled ? '2px solid #fca5a5' : '2px solid #bae6fd'};
           border-radius: 12px;
           padding: 24px;
           margin: 32px 0;
@@ -155,7 +180,7 @@ const generateEmailTemplate = (
         }
         
         .order-details h3 {
-          color: #0c4a6e;
+          color: ${isCancelled ? '#7f1d1d' : '#0c4a6e'};
           font-size: 18px;
           font-weight: 600;
           margin-bottom: 12px;
@@ -164,7 +189,7 @@ const generateEmailTemplate = (
         .order-id {
           font-size: 20px;
           font-weight: 700;
-          color: #0ea5e9;
+          color: ${isCancelled ? '#ef4444' : '#0ea5e9'};
           font-family: 'Courier New', monospace;
           background-color: #ffffff;
           padding: 12px 20px;
@@ -190,7 +215,7 @@ const generateEmailTemplate = (
         
         .action-button {
           display: inline-block;
-          background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+          background: ${isCancelled ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)'};
           text-decoration: none;
           padding: 14px 28px;
           border-radius: 8px;
@@ -236,7 +261,7 @@ const generateEmailTemplate = (
         }
         
         .contact-info a {
-          color: #0ea5e9;
+          color: ${isCancelled ? '#ef4444' : '#0ea5e9'};
           text-decoration: none;
           font-weight: 500;
         }
@@ -302,9 +327,9 @@ const generateEmailTemplate = (
           <div class="action-section">
             <h3>${content.actionButton.text.includes('Track') ? 'Track Your Order' : content.actionButton.text.includes('Review') ? 'Share Your Experience' : 'Take Action'}</h3>
             <p style="margin-bottom: 20px; color: #64748b;">
-              ${content.actionButton.text.includes('Track') ? 'Monitor your order status in real-time.' : 
-                content.actionButton.text.includes('Review') ? 'Help other customers by sharing your experience.' : 
-                'Click the button below to proceed.'}
+              ${content.actionButton.text.includes('Track') ? 'Monitor your order status in real-time.' :
+                content.actionButton.text.includes('Review') ? 'Help other customers by sharing your experience.' :
+                    'Click the button below to proceed.'}
             </p>
             <a href="${content.actionButton.url}" style="color: white" class="action-button">${content.actionButton.text}</a>
           </div>
@@ -336,33 +361,46 @@ const generateEmailTemplate = (
   `;
 };
 
+const orderCancelledTemplate = (
+    customerName: string,
+    orderId: string,
+    cancellationReason?: string
+) => {
+    return generateEmailTemplate('orderCancelled', {
+        customerName,
+        orderId,
+        cancellationReason
+    });
+};
+
 
 const orderShippingTemplate = (
-  customerName: string,
-  orderId: string,
-  options: {
-    deliveryDate?: string;
-    
-  } = {}
+    customerName: string,
+    orderId: string,
+    options: {
+        deliveryDate?: string;
+
+    } = {}
 ) => {
-  return generateEmailTemplate('orderShipping', {
-    customerName,
-    orderId,
-    ...options
-  });
+    return generateEmailTemplate('orderShipping', {
+        customerName,
+        orderId,
+        ...options
+    });
 };
 
 const orderDeliveredTemplate = (customerName: string, orderId: string, reviewUrl?: string) => {
-  return generateEmailTemplate('orderDelivered', {
-    customerName,
-    orderId,
-  });
+    return generateEmailTemplate('orderDelivered', {
+        customerName,
+        orderId,
+    });
 };
 
 export {
-  generateEmailTemplate,
-  orderShippingTemplate,
-  orderDeliveredTemplate,
-  type EmailTemplateData,
-  type EmailContent
+    generateEmailTemplate,
+    orderShippingTemplate,
+    orderDeliveredTemplate,
+    orderCancelledTemplate,
+    type EmailTemplateData,
+    type EmailContent
 };

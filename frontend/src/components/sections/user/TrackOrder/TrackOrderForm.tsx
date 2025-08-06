@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const TrackOrderForm = () => {
-  const { getConfirmedOrderDetails, loading } = useOrderContext();
+  const { userTrackOrder, loading } = useOrderContext();
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof trackOrderSchema>>({
     resolver: zodResolver(trackOrderSchema),
@@ -28,7 +28,7 @@ const TrackOrderForm = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof trackOrderSchema>) => {
-    await getConfirmedOrderDetails(data.orderId, navigate);
+    await userTrackOrder(data.orderId, navigate);
   };
   return (
     <Form {...form}>

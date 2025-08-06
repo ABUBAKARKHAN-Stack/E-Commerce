@@ -111,6 +111,12 @@ const markOrderAsDelivered = async (orderId: string) => {
   return await adminOrderApi.get(`/mark-as/delivered/${orderId}`)
 }
 
+const adminCancelOrder = async (data:any) => {
+  return await adminOrderApi.post('/cancel-order',data,{
+    withCredentials: true
+  })
+}
+
 
 export {
   createAdmin,
@@ -129,5 +135,6 @@ export {
   getSingleOrder,
   markOrderAsProcessing,
   markOrderAsShipped,
-  markOrderAsDelivered
+  markOrderAsDelivered,
+  adminCancelOrder
 };

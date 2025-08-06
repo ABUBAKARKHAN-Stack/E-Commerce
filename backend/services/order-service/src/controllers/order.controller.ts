@@ -54,6 +54,35 @@ const getConfirmedOrder = expressAsyncHandler(async (req: Request, res: Response
         .json(new ApiResponse(200, 'Order fetched successfully', order));
 });
 
+const trackOrder = expressAsyncHandler(async (req: Request, res: Response) => {
+    const { orderId } = req.query;
+    const userId = res.locals.user.userId;
+
+
+    if (!orderId) {
+        throw new ApiError(400, 'Order ID is required');
+    }
+
+    const order = await orderModel.findOne({
+        orderId,
+        status: {
+            $in: [OrderStatus.CONFIRMED, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]
+        }
+    }).lean();
+
+    if (!order) {
+        throw new ApiError(404, "Trackable order not found.");
+    }
+
+    if (order.userId !== userId) {
+        throw new ApiError(403, "You're not allowed to view this order");
+    }
+    res
+        .status(200)
+        .json(new ApiResponse(200, 'Order fetched successfully', order));
+
+})
+
 
 const completeCheckout = expressAsyncHandler(async (req: Request, res: Response) => {
     const {
@@ -482,6 +511,7 @@ const downloadOrderInvoice = expressAsyncHandler(async (req: Request, res: Respo
 export {
     getPendingOrder,
     getConfirmedOrder,
+    trackOrder,
     completeCheckout,
     stripeWebhookHandler,
     getUserOrders,

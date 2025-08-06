@@ -58,6 +58,7 @@ import {
   confirmOrderDetailsLoader,
   pendingOrderDetailsLoader,
   singleOrderDetailsLoader,
+  userTrackOrderLoader,
 } from "./utils/loaders/orderDetailsLoader";
 import { OrderProvider } from "./context/orderContext";
 import { ActivityProvider } from "./context/activityContext";
@@ -235,7 +236,7 @@ const router = createBrowserRouter([
         <TrackOrderPage />
       </UserAuthLayout>
     ),
-    loader: confirmOrderDetailsLoader,
+    loader: userTrackOrderLoader,
     errorElement: <TrackOrderErrorPage />,
   },
   {

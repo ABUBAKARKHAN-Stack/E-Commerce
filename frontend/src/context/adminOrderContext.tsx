@@ -13,6 +13,7 @@ import {
     markOrderAsProcessing as markOrderAsProcessingApi,
     markOrderAsShipped as markOrderAsShippedApi,
     markOrderAsDelivered as markOrderAsDeliveredApi,
+    adminCancelOrder as adminCancelOrderApi
 } from '@/API/adminApi'
 import { AxiosError } from "axios";
 import { errorToast, successToast } from "@/utils/toastNotifications";
@@ -28,6 +29,7 @@ type AdminOrderContextType = {
     markOrderAsShipped: (orderId: string, revalidate: () => void) => Promise<void>;
     markOrderAsDelivered: (orderId: string, revalidate: () => void) => Promise<void>;
     totalOrders: number | null;
+    adminCancelOrder: (data: any, revalidate: () => void) => Promise<void>;
 
 
 }
@@ -51,9 +53,7 @@ const AdminOrderProvider = ({ children }: { children: ReactNode }) => {
             const err = error as AxiosError<ApiErrorType>
             console.log(err);
         } finally {
-            setTimeout(() => {
-                setLoading(null)
-            }, 1000);
+            setLoading(null)
         }
     }
 
@@ -126,6 +126,23 @@ const AdminOrderProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    const adminCancelOrder = async (data: any, revalidate: () => void) => {
+        setLoading(AdminOrderLoading.CANCEL_ORDER)
+        try {
+            const res = await adminCancelOrderApi(data);
+            if (res.status === 200) {
+                successToast(res.data.message)
+                revalidate()
+            }
+        } catch (error) {
+            const err = error as AxiosError<ApiErrorType>            
+            const errMsg = err.response?.data.message || "Something went wrong";
+            errorToast(errMsg)
+
+        } finally {
+            setLoading(null)
+        }
+    }
 
 
     return (
@@ -138,7 +155,8 @@ const AdminOrderProvider = ({ children }: { children: ReactNode }) => {
                 markOrderAsProcessing,
                 markOrderAsShipped,
                 markOrderAsDelivered,
-                totalOrders
+                totalOrders,
+                adminCancelOrder,
             }}
         >
             {children}

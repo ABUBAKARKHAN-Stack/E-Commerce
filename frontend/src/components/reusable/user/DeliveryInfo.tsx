@@ -1,15 +1,19 @@
 import { Separator } from "@/components/ui/separator";
-import useFormattedDateTime from "@/hooks/useFormattedDateTime";
+import { formatDate } from "date-fns";
 import { FC } from "react";
 
 type Props = {
-  formattedDate: Date;
-  etaDate: Date;
+  confirmedAt: string
+  deliveryDate: string;
   className?: string;
 };
 
-const DeliveryInfo: FC<Props> = ({ formattedDate, etaDate, className }) => {
-  const { formatDate, formatTime } = useFormattedDateTime();
+const DeliveryInfo: FC<Props> = ({ confirmedAt, deliveryDate, className }) => {
+
+  const getFormattedDateAndTime = (date: string) => {
+    return formatDate(new Date(date), 'MMM dd, yyyy • hh:mm a')
+  }
+
   return (
     <div
       className={`p-4 ${className} border border-cyan-100 bg-cyan-50 dark:border-orange-500/20 dark:bg-orange-500/10`}
@@ -20,7 +24,7 @@ const DeliveryInfo: FC<Props> = ({ formattedDate, etaDate, className }) => {
             Order Confirmed At:
           </span>
           <span className="font-medium text-cyan-700 dark:text-orange-300">
-            {formatDate(formattedDate)} - {formatTime(formattedDate)}
+            {getFormattedDateAndTime(confirmedAt)}
           </span>
         </div>
         <div className="flex justify-between">
@@ -28,7 +32,7 @@ const DeliveryInfo: FC<Props> = ({ formattedDate, etaDate, className }) => {
             Estimated Delivery:
           </span>
           <span className="font-semibold text-cyan-700 dark:text-orange-300">
-            {formatDate(etaDate)} - {formatTime(formattedDate)}
+            {getFormattedDateAndTime(deliveryDate)}
           </span>
         </div>
         <Separator className="border-muted-foreground border" />

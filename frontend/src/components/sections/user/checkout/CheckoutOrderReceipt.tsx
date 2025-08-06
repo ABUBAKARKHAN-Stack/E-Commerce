@@ -8,7 +8,8 @@ type Props = {
   receiptRef: Ref<HTMLDivElement>;
   products: any[];
   totalAmount: number;
-  confirmedAt: Date;
+  confirmedAt: string;
+  deliveryDate: string
   shippingMethod: string;
   shipping: number;
 };
@@ -20,9 +21,8 @@ const CheckoutOrderReceipt: FC<Props> = ({
   confirmedAt,
   shippingMethod,
   shipping,
+  deliveryDate
 }) => {
-  const formattedDate = new Date(confirmedAt);
-  const etaDate = new Date(formattedDate.getTime() + 2 * 24 * 60 * 60 * 1000);
   return (
     <div
       ref={receiptRef}
@@ -92,7 +92,10 @@ const CheckoutOrderReceipt: FC<Props> = ({
         </div>
 
         {/* Estimated Delivery Box */}
-        <DeliveryInfo formattedDate={formattedDate} etaDate={etaDate} />
+        <DeliveryInfo
+          confirmedAt={confirmedAt}
+          deliveryDate={deliveryDate}
+        />
       </div>
     </div>
   );

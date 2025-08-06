@@ -216,6 +216,13 @@ const getConfirmedOrderDetails = async (orderId: string) => {
   });
 };
 
+const userTrackOrder = async (orderId: string) => {
+  return await orderApi.get("/track-order", {
+    params: { orderId },
+    withCredentials: true,
+  });
+}
+
 const getAllOrders = async (params?: any) => {
   return await orderApi.get("/all-orders", {
     params,
@@ -297,6 +304,7 @@ export {
   proceedToCheckout,
   getPendingOrderDetails,
   getConfirmedOrderDetails,
+  userTrackOrder,
   getAllOrders,
   cancelOrder,
   downloadOrderInvoice,

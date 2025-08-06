@@ -92,6 +92,7 @@ type CompleteCheckoutBody = {
 }
 
 
+
 export {
     IOrder,
     OrderStatus,
@@ -101,6 +102,6 @@ export {
     PaymentStatus,
     ShippingMethod,
     CompleteCheckoutBody,
-    IShippingAddress
+    IShippingAddress,
 
 }

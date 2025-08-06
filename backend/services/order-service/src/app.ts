@@ -26,7 +26,7 @@ app.use('/', orderRoutes);
 app.use('/admin', adminOrderRoutes)
 
 
-const PORT = env.PORT || 3001;
+const PORT = env.PORT || 3004;
 
 Promise.all([
     consumeCheckoutEvent()

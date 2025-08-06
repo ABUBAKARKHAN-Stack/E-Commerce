@@ -35,6 +35,7 @@ const UserOrderMain = () => {
     paymentStatus,
     refund,
     paymentMethod,
+    deliveryDate,
     isDelivered,
     orderPlaceAt,
   } = useLoaderData();
@@ -43,9 +44,6 @@ const UserOrderMain = () => {
   const { cancelOrder, loading, downloadOrderInvoice } = useOrderContext();
   const { revalidate } = useRevalidator();
   const navigate = useNavigate();
-
-  const formattedDate = new Date(confirmedAt);
-  const etaDate = new Date(formattedDate.getTime() + 2 * 24 * 60 * 60 * 1000);
 
   const handleOrderCanel = async () => {
     await cancelOrder(orderId);
@@ -118,8 +116,8 @@ const UserOrderMain = () => {
               />
               {confirmedAt && (
                 <DeliveryInfo
-                  etaDate={etaDate}
-                  formattedDate={formattedDate}
+                  confirmedAt={confirmedAt}
+                  deliveryDate={deliveryDate}
                   className="rounded-md"
                 />
               )}

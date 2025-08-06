@@ -1,7 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/index";
 import { env } from "../config/env";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import { JsonWebTokenError, TokenExpiredError, } from "jsonwebtoken";
+import {
+    StripeRefundError
+} from '../types/errors.types'
+
+
+function isStripeRefundError(err: any): err is StripeRefundError {
+    return (
+        err &&
+        typeof err === 'object' &&
+        'error' in err &&
+        typeof err.error === 'object' &&
+        typeof err.error.type === 'string' &&
+        typeof err.error.message === 'string'
+    );
+}
+
 
 const errorHandler = (
     err: Error,
@@ -31,8 +47,15 @@ const errorHandler = (
         return;
     }
 
+    if (isStripeRefundError(err)) {
+        res
+            .status(400)
+            .json(new ApiError(400, err.error.message, err))
+        return;
+    }
+
     // Handle all other errors
-    res.status(500).json(new ApiError(500, "Internal Server Error", env.NODE_ENV === "development" ? err.stack : err.stack));
+    res.status(500).json(new ApiError(500, err.message || "Internal Server Error", env.NODE_ENV === "development" ? err.stack : err.stack));
 };
 
 export default errorHandler;
