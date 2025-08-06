@@ -22,11 +22,11 @@ app.use(cors({
 app.use('/user', proxy(env.USER_SERVICE_URL));
 app.use('/admin', proxy(env.ADMIN_SERVICE_URL));
 app.use('/product', (req, res, next) => {
-    // Check if the request is a file upload
+    //* Check if the request is a file upload
     const isFileUpload = req.headers['content-type']?.includes('multipart/form-data');
     proxy(env.PRODUCT_SERVICE_URL, {
         limit: '50mb',
-        parseReqBody: !isFileUpload, // Disable parsing only if it's a file upload
+        parseReqBody: !isFileUpload,
     })(req, res, next);
 });
 app.use('/order', proxy(env.ORDER_SERVICE_URL));

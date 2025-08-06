@@ -7,7 +7,7 @@ import { productEventsConsumer, userEventsConsumer } from './utils/kafka';
 
 const app = express();
 app.use(json({ 
-    limit: '50mb'
+    limit: '50mb' 
 }));
 app.use(urlencoded({ 
     extended: true

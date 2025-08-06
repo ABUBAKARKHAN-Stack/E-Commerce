@@ -1,11 +1,9 @@
 "use client";
 import {
   Dispatch,
-  FC,
   forwardRef,
   SetStateAction,
-  useEffect,
-  useState,
+ 
 } from "react";
 import {
   LayoutDashboard,
@@ -14,18 +12,15 @@ import {
   ShoppingCart,
   User,
   LogOut,
-  LifeBuoy,
   Package,
   Home,
+  BarChart3,
 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
 import { useAuthContext } from "@/context/authContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToolTip } from "@/components/reusable/shared";
-import { handleScrollToSection } from "@/utils/HandleScrollToSection";
-import { useScrollPosition } from "@/hooks/useScrollPosition";
-
 type Props = {
   isDrawerOpen: boolean;
   setIsDrawerOpen: Dispatch<SetStateAction<boolean>>;
@@ -54,6 +49,11 @@ const Sidebar = forwardRef<HTMLElement, Props>(
               icon: <ShoppingBag strokeWidth={3} className="h-5 w-5" />,
               text: "Orders",
               path: "/admin/orders",
+            },
+            {
+              icon: <BarChart3 strokeWidth={3} className="h-5 w-5" />,
+              text: "Analytics",
+              path: "/admin/analytics",
             },
             {
               icon: <User strokeWidth={3} className="h-5 w-5" />,

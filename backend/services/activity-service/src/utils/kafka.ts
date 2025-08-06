@@ -31,7 +31,7 @@ const activityEventConsumer = async () => {
             'activity.user.review.delete',
             'activity.user.order.placed',
             'activity.user.order.paid'
-        ]
+        ],
     });
 
     console.log('Running Consumer...');
