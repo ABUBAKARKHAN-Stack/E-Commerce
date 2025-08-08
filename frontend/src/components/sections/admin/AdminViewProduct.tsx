@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useParams, useNavigate, useLoaderData } from "react-router-dom";
 import {
   Dialog,
   DialogTrigger,
@@ -13,44 +13,24 @@ import {
 import { Eye, CircleX, Pencil } from "lucide-react";
 import { useAdminProductContext } from "@/context/adminProductContext";
 import { Button } from "@/components/ui/button";
+import { IProduct } from "@/types/main.types";
 
 const AdminViewProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getProduct, removeThumbnail } = useAdminProductContext();
-  const [product, setProduct] = useState<any>(null);
+  const { removeThumbnail } = useAdminProductContext();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-
-  console.log(product);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const res = await getProduct(id!);
-        setProduct(res);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-      }
-    };
-    fetchProduct();
-  }, [id]);
+  const product: IProduct = useLoaderData()
 
   const handleRemoveThumbnail = async (i: number) => {
     await removeThumbnail(id!, i);
   };
 
+
   return (
-    <div className="space-y-6 px-4">
-      {/* Header */}
-      <div className="flex flex-row items-center justify-between border-b-2 py-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-950 dark:text-white">
-            Product Details
-          </h1>
-          <p className="font-mono text-sm font-bold text-gray-900 dark:text-gray-300">
-            View product information in detail! 🛍️
-          </p>
-        </div>
+    <div className="space-y-4">
+
+      <div className="flex justify-end">
         {/* Edit Button */}
         <Button
           onClick={() => navigate(`/admin/products/edit/${id}`)}

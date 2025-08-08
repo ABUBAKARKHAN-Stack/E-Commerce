@@ -14,7 +14,6 @@ const UserAuthLayout: FC<Props> = ({
 }) => {
   const userToken = Cookies.get("userToken");
   const navigate = useNavigate();
-  const { fetchData } = useAuthContext();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,11 +22,6 @@ const UserAuthLayout: FC<Props> = ({
     } else if (!authenticationRequired && userToken) {
       navigate("/");
     }
-
-    if (userToken) {
-      fetchData("user");
-    }
-
     setLoading(false);
   }, [authenticationRequired, userToken, navigate]);
 

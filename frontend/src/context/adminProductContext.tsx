@@ -9,7 +9,7 @@ import {
   deleteProduct as removeProduct,
 } from "@/API/adminApi";
 import { getProducts, getSingleProduct } from "@/API/userApi";
-import { AdminProductLoading, IProduct } from "@/types/main.types";
+import { AdminProductLoading, ApiErrorType, IProduct } from "@/types/main.types";
 import { AxiosError } from "axios";
 
 type AdminProductContextType = {
@@ -18,7 +18,7 @@ type AdminProductContextType = {
   getProduct: (productId: string) => Promise<any>;
   getAllProducts: (query?: any) => Promise<any>;
   productsData: IProduct[] | null;
-  editProduct: (productId: string, updatedData: any) => Promise<void>;
+  editProduct: (productId: string, updatedData: any,) => Promise<boolean>;
   removeThumbnail: (productId: string, thumbnailIndex: number) => Promise<void>;
   loading: string | null;
 };
@@ -97,7 +97,7 @@ const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const editProduct = async (productId: string, updatedData: any) => {
+  const editProduct = async (productId: string, updatedData: any,) => {
     const formData = new FormData();
     formData.append("name", updatedData.name);
     formData.append("description", updatedData.description);
@@ -115,12 +115,17 @@ const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setLoading(AdminProductLoading.EDIT);
       const res = await updateProduct(productId, formData);
-      successToast(res.data.message);
-      await getAllProducts();
-      await getProduct(productId);
+      if (res.status === 200) {
+        successToast(res.data.message);
+        await getAllProducts();
+        return true;
+      }
+      return false
     } catch (error: any) {
-      const errorMsg = error.response?.data?.message || "An error occurred";
+      const err = error as AxiosError<ApiErrorType>;
+      const errorMsg = err.response?.data.message || "An error occurred";
       errorToast(errorMsg);
+      return false;
     } finally {
       setLoading(null);
     }
@@ -129,9 +134,13 @@ const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
   const removeThumbnail = async (productId: string, thumbnailIndex: number) => {
     try {
       const res = await removeProductThumbnail(productId, thumbnailIndex);
-      console.log(res);
+      if (res.status === 200) {
+        successToast(res.data.message)
+      }
     } catch (error) {
-      console.error(error);
+      const err = error as AxiosError<ApiErrorType>;
+      const errorMsg = err.response?.data.message || "An error occurred";
+      errorToast(errorMsg);
     }
   };
 

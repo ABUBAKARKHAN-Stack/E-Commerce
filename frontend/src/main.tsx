@@ -63,8 +63,13 @@ import {
 import { OrderProvider } from "./context/orderContext";
 import { ActivityProvider } from "./context/activityContext";
 import { Toaster } from "sonner";
-import { adminOrderDetailsLoader } from "./utils/loaders/adminLoader/orderDetailsLoader";
-import { AdminOrderErrorPage } from "./pages/admin/error";
+import { adminOrderDetailsLoader } from "./utils/loaders/adminLoaders/orderDetailsLoader";
+import { AdminOrderErrorPage, AdminProductDetailsErrorPage } from "./pages/admin/error";
+import { singleProductDetailsLoader } from "./utils/loaders/adminLoaders/adminProductLoaders";
+import {
+  QueryClientProvider
+} from '@tanstack/react-query'
+import { queryClient } from "./utils/tanstackQueryClient";
 
 const router = createBrowserRouter([
   {
@@ -299,10 +304,14 @@ const router = createBrowserRouter([
       {
         path: "products/edit/:id",
         element: <AdminUpdateProductPage />,
+        loader: singleProductDetailsLoader,
+        errorElement: <AdminProductDetailsErrorPage />
       },
       {
         path: "products/product/:id",
         element: <AdminViewProductPage />,
+        loader: singleProductDetailsLoader,
+        errorElement: <AdminProductDetailsErrorPage />
       },
       {
         path: "me",
@@ -324,21 +333,23 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
-  <ThemeProvider
-    attribute="class"
-    defaultTheme="system"
-    enableSystem
-  >
-    <AuthProvider>
-      <ProductProvider>
-        <OrderProvider>
-          <ActivityProvider>
-            <RouterProvider router={router} />
-            <Toaster />
-          </ActivityProvider>
-        </OrderProvider>
-      </ProductProvider>
-    </AuthProvider>
-  </ThemeProvider>
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+    >
+      <AuthProvider>
+        <ProductProvider>
+          <OrderProvider>
+            <ActivityProvider>
+              <RouterProvider router={router} />
+              <Toaster />
+            </ActivityProvider>
+          </OrderProvider>
+        </ProductProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
   // </StrictMode >
 );

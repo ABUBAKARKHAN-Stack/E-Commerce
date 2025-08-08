@@ -7,15 +7,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   updatePasswordFields,
-  updateProfileFields,
 } from "@/constants/formFields";
 import { useAuthContext } from "@/context/authContext";
-import { updatePasswordSchema } from "@/schemas/update-ProfileSchema";
+import {  updatePasswordSchema, } from "@/schemas/update-ProfileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import PasswordVisibilityToggler from "./PasswordVisibilityToggler";
@@ -24,7 +22,9 @@ type Props = {
   isAdmin?: boolean;
 };
 
+
 const UpdatePasswordForm: FC<Props> = ({ isAdmin = false }) => {
+
   const { updatePassword } = useAuthContext();
 
   const form = useForm({

@@ -15,34 +15,57 @@ import { z } from "zod";
 import { productFields } from "@/constants/formFields";
 import { Input } from "@/components/ui/input";
 import Dropzone from "./Dropzone";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRevalidator } from "react-router-dom";
 import { useAdminProductContext } from "@/context/adminProductContext";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { AdminProductLoading } from "@/types/main.types";
+import { Select } from "@/components/ui/select";
+import { categoryOptions } from "@/data/categories";
+import { Textarea } from "@/components/ui/textarea";
+
+type Product = {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  category: string;
+  thumbnails: string[];
+};
 
 type Props = {
-  product?: any;
+  product?: Product;
 };
 
 const ProductForm: FC<Props> = ({ product }) => {
   const form = useForm<z.infer<typeof productSchema>>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema.refine((data) => {
+      const totalThumbnails = existingThumbnails.length + files.length;
+      return totalThumbnails > 0;
+    }, {
+      message: "At least one thumbnail is required",
+      path: ["thumbnails"],
+    })),
     defaultValues: {
       name: product?.name || "",
       description: product?.description || "",
       price: product?.price || 0,
       quantity: product?.quantity || 0,
       category: product?.category || "",
-      thumbnails: product?.thumbnails || [],
+      thumbnails: [],
     },
   });
+
   const [files, setFiles] = useState<File[]>([]);
   const [existingThumbnails, setExistingThumbnails] = useState<string[]>(
     product?.thumbnails || [],
   );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const navigate = useNavigate();
-  const { addProduct, editProduct, removeThumbnail, loading } =
-    useAdminProductContext();
+  const { addProduct, editProduct, removeThumbnail, loading } = useAdminProductContext();
+  const { revalidate } = useRevalidator();
 
   useEffect(() => {
     if (product) {
@@ -52,26 +75,76 @@ const ProductForm: FC<Props> = ({ product }) => {
         price: product.price,
         quantity: product.quantity,
         category: product.category,
-        thumbnails: product.thumbnails || [],
+        thumbnails: [],
       });
       setExistingThumbnails(product.thumbnails || []);
+      setFiles([]);
     }
   }, [product, form]);
 
-  const onSubmit = async (data: z.infer<typeof productSchema>) => {
-    const submissionData = {
-      ...data,
-      thumbnails: files.length > 0 ? files : data.thumbnails,
-    };
+  const resetForm = () => {
+    form.reset({
+      name: "",
+      description: "",
+      price: 0,
+      quantity: 0,
+      category: "",
+      thumbnails: [],
+    });
+    setFiles([]);
+    setExistingThumbnails([]);
+    setSubmitError(null);
+  };
 
-    if (product) {
-      await editProduct(product._id, submissionData);
-    } else {
-      await addProduct(submissionData);
-      form.reset();
-      setFiles([]);
+  const onSubmit = async (data: z.infer<typeof productSchema>) => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+
+      const submissionData = {
+        ...data,
+        thumbnails: files,
+        existingThumbnails: product ? existingThumbnails : [],
+      };
+
+      if (product) {
+        const res = await editProduct(product._id, submissionData);
+        if (!res) return;
+
+        form.reset({
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          quantity: product.quantity,
+          category: product.category,
+          thumbnails: [],
+        });
+        setFiles([]);
+        revalidate()
+      } else {
+        await addProduct(submissionData);
+        resetForm();
+      }
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "An error occurred while saving the product"
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const handleGoBack = () => {
+    if (!isSubmitting) {
+      navigate(-1);
+    }
+  };
+
+  const isLoading =
+    isSubmitting ||
+    (product && loading === AdminProductLoading.EDIT) ||
+    (!product && loading === AdminProductLoading.ADD);
 
   return (
     <Form {...form}>
@@ -79,6 +152,12 @@ const ProductForm: FC<Props> = ({ product }) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex w-full flex-col gap-4.5"
       >
+        {submitError && (
+          <div className="rounded-md border border-red-300 bg-red-50 p-3 text-red-700 dark:border-red-600 dark:bg-red-900/20 dark:text-red-300">
+            <p className="text-sm">{submitError}</p>
+          </div>
+        )}
+
         {productFields
           .filter((field) => field.name !== "thumbnails")
           .map(({ name, label, type, placeholder }, i) => (
@@ -90,7 +169,35 @@ const ProductForm: FC<Props> = ({ product }) => {
                 <FormItem>
                   <FormLabel>{label}</FormLabel>
                   <FormControl>
-                    <Input {...field} type={type} placeholder={placeholder} />
+                    {name === "category" ? (
+                      <Select
+                        value={form.getValues("category") ?? ""}
+                        onChange={(value) => form.setValue("category", value)}
+                        options={categoryOptions}
+                        disabled={isLoading}
+                        placeholder="Select an category..."
+                        selectContentColor="scrollbar-thin w-full dark:scrollbar-thumb-orange-500 scrollbar-thumb-cyan-500 scrollbar-track-transparent dark:bg-[#18181b] backdrop-blur-xl shadow-xl bg-[#f8f7f7] max-h-80 overflow-auto max-w-lg !shadow-8px dark:shadow-neutral-900 shadow-neutral-300"
+                      />
+                    ) : name === "description" ? (
+                      <Textarea
+                        {...field}
+                        disabled={isLoading}
+                        placeholder={placeholder}
+                      />
+                    ) : ((
+                      <Input
+                        {...field}
+                        type={type}
+                        placeholder={placeholder}
+                        disabled={isLoading}
+                        onChange={(e) => {
+                          const value = type === "number" ?
+                            (e.target.value === "" ? 0 : Number(e.target.value)) :
+                            e.target.value;
+                          field.onChange(value);
+                        }}
+                      />
+                    ))}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -123,21 +230,20 @@ const ProductForm: FC<Props> = ({ product }) => {
 
         <div className="flex gap-x-2">
           <Button
-            disabled={
-              product
-                ? loading === AdminProductLoading.EDIT
-                : loading === AdminProductLoading.ADD
-            }
+            disabled={isLoading}
             className="xsm:w-fit w-full"
             type="submit"
           >
+            {isLoading && <Loader2 className="animate-spin-faster" />}
             {product ? "Edit Product" : "Add Product"}
           </Button>
           <Button
-            onClick={() => navigate(-1)}
+            onClick={handleGoBack}
             className="xsm:w-fit w-full"
             type="button"
-            variant={"outline"}
+            variant="outline"
+            disabled={isLoading}
+            aria-label="Go back to previous page"
           >
             <ArrowLeft />
             Go Back

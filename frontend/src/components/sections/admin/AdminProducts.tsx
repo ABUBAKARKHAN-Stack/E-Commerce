@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { FC } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Pencil, Trash, Eye, PlusCircle, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAdminProductContext } from "@/context/adminProductContext";
@@ -26,8 +25,13 @@ import {
 
 import { AdminProductLoading } from "@/types/main.types";
 
-const AdminProducts = () => {
-  const [search, setSearch] = useState("");
+type Props = {
+  search: string;
+}
+
+const AdminProducts: FC<Props> = ({
+  search
+}) => {
   const { productsData, deleteProduct, loading } = useAdminProductContext();
   const navigate = useNavigate();
 
@@ -35,7 +39,6 @@ const AdminProducts = () => {
     deleteProduct(productId);
   };
 
-  console.log(productsData);
 
   const filteredProducts = productsData?.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase()),
@@ -46,24 +49,8 @@ const AdminProducts = () => {
   }
 
   return (
-    <div className="space-y-6 px-4">
-      <div className="flex flex-col w-full  gap-6 border-b-2 py-4 md:flex-row md:items-center md:justify-between">
-        <div className="w-full">
-          <h1 className="text-3xl font-bold text-gray-950 dark:text-white">
-            Manage Products
-          </h1>
-          <p className="font-mono text-sm font-bold text-gray-900 dark:text-gray-300">
-            Manage your store efficiently! 🚀
-          </p>
-        </div>
-        <Input
-          placeholder="Search Products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="mt-2  md:mt-0"
-        />
-      </div>
 
+    <>
       <div className="rounded-lg border-2 border-dashed bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] p-4 shadow-md dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F]">
         <Table>
           <TableHeader>
@@ -112,7 +99,7 @@ const AdminProducts = () => {
                       size="icon"
                       variant="outline"
                     >
-                      <Eye className="h-4 w-4" />
+                      <Eye className="size-4" />
                     </Button>
                     <Button
                       onClick={() =>
@@ -121,12 +108,12 @@ const AdminProducts = () => {
                       size="icon"
                       variant="outline"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="size-4" />
                     </Button>
                     <Dialog>
                       <DialogTrigger>
                         <Button size="icon" variant="destructive">
-                          <Trash className="h-4 w-4" />
+                          <Trash className="size-4" />
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
@@ -180,7 +167,7 @@ const AdminProducts = () => {
       >
         <PlusCircle className="h-6 w-6 text-white" />
       </Button>
-    </div>
+    </>
   );
 };
 

@@ -1,6 +1,5 @@
 import {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -14,9 +13,9 @@ import {
   AdminUpdatedJwtPayload,
   ApiErrorType,
   RoleType,
+  QueryKeys,
 } from "@/types/main.types";
 import {
-  getUser,
   loginUser,
   logoutUser,
   forgotPasswordUser,
@@ -25,7 +24,6 @@ import {
   updateUserPassword,
 } from "@/API/userApi";
 import {
-  getAdmin,
   loginAdmin,
   logoutAdmin,
   forgotPasswordAdmin,
@@ -49,6 +47,8 @@ import {
   updateProfileSchema,
 } from "@/schemas/update-ProfileSchema";
 import { AxiosError } from "axios";
+import { useUserByRole } from "@/hooks/useUserByRole";
+import { queryClient } from "@/utils/tanstackQueryClient";
 
 type AuthContextType = {
   user: IUser | IAdmin | null;
@@ -59,7 +59,6 @@ type AuthContextType = {
     navigate: (path: string) => void,
     isUsingInAuthDialog?: boolean,
   ) => Promise<void>;
-  fetchData: (role: RoleType) => Promise<void>;
   logout: (navigate: (path: string) => void) => Promise<void>;
   forgotPassword: (
     isAdmin: boolean,
@@ -82,6 +81,7 @@ type AuthContextType = {
   ) => Promise<boolean>;
   setRole: (role: RoleType) => void;
   loading: boolean;
+  userLoading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -90,7 +90,30 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | IAdmin | null>(null);
   const [role, setRole] = useState<RoleType>(null);
   const [loading, setLoading] = useState(false);
+  const {
+    data: currentUser,
+    isLoading: userLoading,
+    isError: userError
+  } = useUserByRole(role);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (currentUser) {
+      console.log('calling it again');
+
+      setUser(currentUser)
+    }
+  }, [currentUser])
+
+  useEffect(() => {
+    if (userError) {
+      setUser(null);
+      setRole(null);
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("adminToken");
+    }
+  }, [userError]);
+
 
   const login = async (
     data: z.infer<typeof signinSchema>,
@@ -125,22 +148,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const fetchData = useCallback(async (role: RoleType) => {
-    try {
-      setLoading(true);
-      if (role === "user") {
-        const res = await getUser();
-        setUser(res.data.data);
-      } else if (role === "admin") {
-        const res = await getAdmin();
-        setUser(res.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   const logout = async (navigate: (path: string) => void) => {
     try {
@@ -196,11 +203,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (role) {
-      fetchData(role);
-    }
-  }, [role]);
+
 
   const forgotPassword = async (
     isAdmin: boolean,
@@ -253,13 +256,15 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     role: RoleType,
   ) => {
     try {
-      console.log(data, isAdmin, role);
 
       const res = isAdmin
         ? await updateAdminProfile(data)
         : await updateUserProfile(data);
       if (res.status === 200) {
-        await fetchData(role);
+        queryClient.invalidateQueries({
+          queryKey: [QueryKeys.FETCH_USER, role],
+          exact: false
+        })
         successToast("Profile Updated Successfully!");
         return true;
       }
@@ -283,7 +288,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const res = isAdmin
         ? await updateAdminPassword(data)
         : await updateUserPassword(data);
-      console.log(res.data);
 
       if (res.status === 200) {
         successToast("Password Updated Successfully!");
@@ -307,15 +311,17 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, []);
 
+
+
   return (
     <AuthContext.Provider
       value={{
         user,
         role,
         login,
-        fetchData,
         logout,
         forgotPassword,
+        userLoading,
         resetPassword,
         setRole,
         loading,

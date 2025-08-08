@@ -10,7 +10,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { updateProfileFields } from "@/constants/formFields";
 import { useAuthContext } from "@/context/authContext";
-import { updateProfileSchema } from "@/schemas/update-ProfileSchema";
+import {
+  adminUpdateProfileSchema,
+  updateProfileSchema,
+} from "@/schemas/update-ProfileSchema";
 import { IAdmin, IUser, RoleType } from "@/types/main.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useState } from "react";
@@ -25,37 +28,32 @@ const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
   const { user, updateProfile } = useAuthContext();
   const [isEditing, setIsEditing] = useState(false);
 
-  const form = useForm({
-    resolver: zodResolver(updateProfileSchema),
+  const schema = isAdmin ? adminUpdateProfileSchema : updateProfileSchema;
+  type FormSchema = z.infer<typeof schema>;
+
+  const form = useForm<FormSchema>({
+    resolver: zodResolver(schema),
     defaultValues: {
-      address: "",
+      username: "",
       email: "",
       phone: "",
-      username: "",
-    },
+      ...(isAdmin ? {} : { address: "" }),
+    } as any,
   });
 
   useEffect(() => {
-    const currentUser = user as IUser;
-    const currentAdmin = user as IAdmin;
+    if (!user) return;
 
-    if (!isAdmin && currentUser) {
-      form.setValue("username", currentUser.username);
-      form.setValue("email", currentUser.email);
-      form.setValue("phone", currentUser.phone);
-      form.setValue("address", currentUser.address || "");
-    }
+    form.setValue("username", user.username);
+    form.setValue("email", user.email);
+    form.setValue("phone", user.phone);
 
-    if (isAdmin && currentAdmin) {
-      form.setValue("username", currentAdmin.username);
-      form.setValue("email", currentAdmin.email);
-      form.setValue("phone", currentAdmin.phone);
+    if (!isAdmin && "address" in user) {
+      form.setValue("address", user.address || "");
     }
   }, [user, isAdmin]);
 
-  const onSubmit = async (data: z.infer<typeof updateProfileSchema>) => {
-    console.log(data);
-
+  const onSubmit = async (data: FormSchema) => {
     if (!user) return;
     const res = await updateProfile(isAdmin, data, user.role as RoleType);
     if (!res) return;
@@ -73,7 +71,6 @@ const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="relative space-y-6"
       >
-        {/* Edit button at top-right */}
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Personal Information</h3>
           <Button
@@ -85,13 +82,12 @@ const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
           </Button>
         </div>
 
-        {/* Fields */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           {filteredFields.map(({ label, name, placeholder, type }, i) => (
             <FormField
               key={i}
               control={form.control}
-              name={name}
+              name={name as keyof FormSchema}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{label}</FormLabel>
@@ -102,9 +98,7 @@ const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
                       {...field}
                       readOnly={!isEditing}
                       disabled={!isEditing}
-                      className={
-                        !isEditing ? "bg-muted cursor-not-allowed" : ""
-                      }
+                      className={!isEditing ? "bg-muted cursor-not-allowed" : ""}
                     />
                   </FormControl>
                   <FormMessage />

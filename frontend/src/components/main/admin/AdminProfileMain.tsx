@@ -11,7 +11,7 @@ import { IdCard, Lock, User } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 
 const AdminProfileMain = () => {
-  const { user } = useAuthContext();
+  const { user, userLoading } = useAuthContext();
   const [isOpen, setIsOpen] = useState(false);
   const sideBarRef = useRef<HTMLElement>(null);
   const [activeTab, setActiveTab] = useState("profile");
@@ -37,7 +37,7 @@ const AdminProfileMain = () => {
           <div className="space-y-10 px-4">
             <DashboardMainHeader
               mainIcon={<User className="size-8 stroke-3" />}
-              mainHeading={`Account Overview – ${user?.username || "User"}`}
+              mainHeading={`Account Overview – ${userLoading ? "...." :(user?.username ?? "Admin")}`}
               subIcon={
                 <IdCard className="size-5 text-cyan-100 dark:text-orange-100" />
               }

@@ -16,7 +16,7 @@ import { useProductContext } from "@/context/productContext";
 
 const Header: FC = () => {
   //* Get user and logout method from auth context
-  const { user, logout } = useAuthContext();
+  const { user, logout, userLoading } = useAuthContext();
 
   const { cartProductsCount } = useProductContext();
 
@@ -62,7 +62,7 @@ const Header: FC = () => {
           )}
 
           {/* === User Profile Dropdown or Sign In === */}
-          <UserMenu logout={logout} user={user as IUser} />
+          <UserMenu logout={logout} user={user as IUser} userLoading={userLoading} />
 
           {/* === Mobile Navigation Drawer === */}
           <MobileMenu navItems={navItems} user={user as IUser} />

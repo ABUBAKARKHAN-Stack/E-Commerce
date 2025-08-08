@@ -233,3 +233,8 @@ export type AdminOrderFiltersType = {
   page?: number;
   limit?: number
 }
+
+
+export enum QueryKeys {
+  FETCH_USER = "fetch_user"
+}

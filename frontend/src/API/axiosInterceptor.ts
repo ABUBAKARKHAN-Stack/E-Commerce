@@ -53,16 +53,23 @@ const attachAdminInterceptor = (instance: AxiosInstance) => {
   instance.interceptors.response.use(
     (res) => res,
     (err) => {
-      if (err.response?.status === 401) {
+      const status = err.response?.status;
+
+      if ([401, 403].includes(status)) {
         Cookies.remove('adminToken');
         localStorage.removeItem('adminToken');
         errorToast("Login session expired. Please sign in again to continue.");
+        setTimeout(() => {
+          window.location.href = "/admin/sign-in";
+        }, 1500);
       }
+
       return Promise.reject(err);
     },
   );
   return instance;
 };
+
 
 const adminInterceptor = attachAdminInterceptor(
   axios.create({

@@ -3,13 +3,12 @@ import { Layout, SideBar } from '@/components/layout/shared';
 import { DashboardMainHeader } from '@/components/reusable/shared';
 import { OrderDetails } from '@/components/sections/admin/orders';
 import { Package, ShoppingBag } from 'lucide-react';
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 
 const AdminOrderDetailsMain = () => {
     const order = useLoaderData();
     const [isOpen, setIsOpen] = useState(false)
-    console.log(order);
 
 
     return (

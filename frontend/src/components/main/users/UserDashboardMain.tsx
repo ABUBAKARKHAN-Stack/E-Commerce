@@ -20,7 +20,10 @@ const UserDashboardMain = () => {
   const [isOpen, setIsOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const sideBarRef = useRef<HTMLElement>(null);
-  const { user } = useAuthContext();
+  const {
+    user,
+    userLoading
+  } = useAuthContext()
   useGSAP(() => {
     const tl = gsap.timeline({
       defaults: {
@@ -71,7 +74,9 @@ const UserDashboardMain = () => {
           <div className="space-y-10 px-4">
             <DashboardMainHeader
               mainIcon={<Handshake className="size-8 stroke-3" />}
-              mainHeading={`Welcome back, ${user?.username}!`}
+              mainHeading={
+                userLoading ? "Welcome back, ..." : `Welcome back, ${user?.username || "Guest"}!`
+              }
               subIcon={
                 <Sparkles className="size-5 text-cyan-100 dark:text-orange-100" />
               }

@@ -11,6 +11,8 @@ const AdminOrderErrorPage = () => {
       icon={<Package className="h-16 w-16 text-gray-900 dark:text-gray-300" />}
       status={error.status}
       message={error.message}
+      forAdmin
+      showContinue={false}
     />
   );
 };

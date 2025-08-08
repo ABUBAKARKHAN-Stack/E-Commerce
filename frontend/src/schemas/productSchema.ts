@@ -13,19 +13,12 @@ const productSchema = z.object({
   quantity: z.coerce.number().min(1, {
     message: "Quantity must be at least 1",
   }),
-  category: z.string().min(5, {
-    message: "Category must be at least 5 characters long",
+  category: z.string().min(2, {
+    message: "Category must be at least 2 characters long",
   }),
-  thumbnails: z
-    .union([
-      z
-        .array(z.string())
-        .min(1, { message: "At least one thumbnail is required" }), // For existing thumbnails (strings)
-      z
-        .array(z.instanceof(File))
-        .min(1, { message: "At least one thumbnail is required" }), // For new files
-    ])
-    .optional(), // Make optional to allow existing thumbnails to persist without forcing new uploads
+thumbnails: z
+  .array(z.instanceof(File))
+  .optional()
 });
 
 export default productSchema;

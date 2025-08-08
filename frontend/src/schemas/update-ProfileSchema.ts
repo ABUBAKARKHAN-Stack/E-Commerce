@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+
+
 const updateProfileSchema = z
   .object({
     username: z
@@ -20,6 +22,18 @@ const updateProfileSchema = z
       message: "Please provide at least one field to update.",
     },
   );
+
+const adminUpdateProfileSchema = z
+  .object({
+    username: z
+      .string()
+      .min(2, { message: "Username must be at least 2 characters." }),
+    email: z.string().email({ message: "Please enter a valid email address." }),
+    phone: z
+      .string()
+      .min(11, { message: "Phone number must be at least 11 numbers." }),
+  })
+  .partial()
 
 const updatePasswordSchema = z.object({
   oldPassword: z
@@ -48,4 +62,4 @@ const updatePasswordSchema = z.object({
     ),
 });
 
-export { updatePasswordSchema, updateProfileSchema };
+export { updatePasswordSchema, adminUpdateProfileSchema, updateProfileSchema };
