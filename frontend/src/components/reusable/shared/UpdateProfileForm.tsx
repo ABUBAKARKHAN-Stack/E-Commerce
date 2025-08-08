@@ -14,18 +14,20 @@ import {
   adminUpdateProfileSchema,
   updateProfileSchema,
 } from "@/schemas/update-ProfileSchema";
-import { IAdmin, IUser, RoleType } from "@/types/main.types";
+import { AuthLoadingStates, IAdmin, IUser, RoleType } from "@/types/main.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import ButtonLoader from "./loaders/ButtonLoader";
 
 type Props = {
   isAdmin?: boolean;
 };
 
 const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
-  const { user, updateProfile } = useAuthContext();
+  const { user, updateProfile, loading } = useAuthContext();
+  const updateProfileLoading = loading === AuthLoadingStates.UPDATE_PROFILE_LOADING;
   const [isEditing, setIsEditing] = useState(false);
 
   const schema = isAdmin ? adminUpdateProfileSchema : updateProfileSchema;
@@ -112,10 +114,14 @@ const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
           <div className="flex justify-start pt-2">
             <Button
               type="submit"
-              disabled={!form.formState.isDirty}
+              disabled={!form.formState.isDirty || updateProfileLoading}
               className="w-fit"
             >
-              Update Profile
+              {
+                updateProfileLoading ? <ButtonLoader
+                  loaderText="Updating Profile..."
+                /> : "Update Profile"
+              }
             </Button>
           </div>
         )}

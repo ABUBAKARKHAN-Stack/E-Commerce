@@ -1,3 +1,4 @@
+import { ButtonLoader } from "@/components/reusable/shared";
 import { ProfileIconSkeleton } from "@/components/reusable/shared/skeleton";
 import { Button } from "@/components/ui/button";
 import {
@@ -5,27 +6,30 @@ import {
   DropdownItems,
   DropdownMain,
 } from "@/components/ui/dropdown-menu2";
-import { IUser } from "@/types/main.types";
+import { useAuthContext } from "@/context/authContext";
+import { AuthLoadingStates } from "@/types/main.types";
 import { LayoutDashboardIcon, LocateFixed, LogOutIcon } from "lucide-react";
 import { FC, useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
-type Props = {
-  user: IUser;
-  logout: (navigate: (path: string) => void) => void;
-  userLoading: boolean
-};
 
-const UserMenu: FC<Props> = ({ user, logout, userLoading }) => {
+
+const UserMenu: FC = () => {
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const {
+    user,
+    userLoading,
+    loading,
+    logout
+  } = useAuthContext();
+  const logoutLoading = loading === AuthLoadingStates.LOGOUT_LOADING;
+
   const openDropDown = () => {
     setIsDropDownOpen((prev) => !prev);
   };
-  const handleLogout = () => {
-    logout(navigate);
-  };
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -80,8 +84,19 @@ const UserMenu: FC<Props> = ({ user, logout, userLoading }) => {
               </Link>
             </DropdownItem>
             <DropdownItem>
-              <button onClick={handleLogout}>
-                Sign Out <LogOutIcon className="ml-2 inline-block h-5 w-5" />
+              <button
+                disabled={logoutLoading}
+                className="disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                onClick={() => logout(navigate)}>
+                {
+                  logoutLoading ? <ButtonLoader
+                    row_reverse
+                    loaderText="Signing Out..."
+                  /> : <>
+                    Sign Out{" "}
+                    <LogOutIcon className="ml-2 inline-block h-5 w-5" />
+                  </>
+                }
               </button>
             </DropdownItem>
           </DropdownItems>

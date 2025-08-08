@@ -16,6 +16,8 @@ import { useAuthContext } from "@/context/authContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import PasswordVisibilityToggler from "./PasswordVisibilityToggler";
+import { AuthLoadingStates } from "@/types/main.types";
+import ButtonLoader from "./loaders/ButtonLoader";
 
 type Props = {
   isAdmin: boolean;
@@ -32,6 +34,7 @@ const ResetPasswordForm: FC<Props> = ({ isAdmin, queryParameters }) => {
   const navigate = useNavigate();
 
   const { resetPassword, loading } = useAuthContext();
+  const resetPasswordLoading = loading === AuthLoadingStates.RESET_PASSWORD_LOADING;
 
   const onSubmit = async (data: z.infer<typeof resetPasswordSchema>) => {
     await resetPassword(isAdmin, data, navigate, queryParameters);
@@ -62,8 +65,12 @@ const ResetPasswordForm: FC<Props> = ({ isAdmin, queryParameters }) => {
           )}
         />
         <div className="flex items-center gap-x-2">
-          <Button type="submit" className="xsm:w-fit w-full" disabled={loading}>
-            Reset Password
+          <Button type="submit" className="xsm:w-fit w-full" disabled={resetPasswordLoading}>
+            {
+              resetPasswordLoading ? <ButtonLoader
+                loaderText="Resetting Password..."
+              /> : "Reset Password"
+            }
           </Button>
           <Button
             type="button"

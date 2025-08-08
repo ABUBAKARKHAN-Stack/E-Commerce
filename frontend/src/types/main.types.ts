@@ -1,4 +1,7 @@
+import { signinSchema } from "@/schemas";
 import { JwtPayload } from "jwt-decode";
+import { Dispatch, SetStateAction } from "react";
+import { z } from "zod";
 
 export type RoleType = "user" | "admin" | null;
 
@@ -234,7 +237,26 @@ export type AdminOrderFiltersType = {
   limit?: number
 }
 
+export type LoginPayload = {
+  data: z.infer<typeof signinSchema>;
+  isAdmin: boolean;
+  navigate: (path: string) => void;
+  isUsingInAuthDialog: boolean;
+  setRole?: Dispatch<SetStateAction<RoleType>>;
+}
+
 
 export enum QueryKeys {
-  FETCH_USER = "fetch_user"
+  FETCH_USER = "fetch_user",
+  LOGIN = "login"
+}
+
+export enum AuthLoadingStates {
+  idle = "idle",
+  LOGIN_LOADING = "login_loading",
+  LOGOUT_LOADING = "logout_loading",
+  FORGOT_PASSWORD_LOADING = "forgot_password_loading",
+  RESET_PASSWORD_LOADING = "reset_password_loading",
+  UPDATE_PROFILE_LOADING = "update_profile_loading",
+  UPDATE_PASSWORD_LOADING = "update_password_loading",
 }

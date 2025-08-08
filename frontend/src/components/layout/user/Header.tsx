@@ -4,7 +4,7 @@ import { ShoppingCart } from "lucide-react";
 import { Logo } from "@/components/reusable/shared";
 import { Layout } from "@/components/layout/shared";
 import { useAuthContext } from "@/context/authContext";
-import { IUser, NavItem } from "@/types/main.types";
+import { NavItem } from "@/types/main.types";
 
 //* Header Subcomponents
 import {
@@ -16,7 +16,7 @@ import { useProductContext } from "@/context/productContext";
 
 const Header: FC = () => {
   //* Get user and logout method from auth context
-  const { user, logout, userLoading } = useAuthContext();
+  const { user } = useAuthContext();
 
   const { cartProductsCount } = useProductContext();
 
@@ -62,10 +62,10 @@ const Header: FC = () => {
           )}
 
           {/* === User Profile Dropdown or Sign In === */}
-          <UserMenu logout={logout} user={user as IUser} userLoading={userLoading} />
+          <UserMenu />
 
           {/* === Mobile Navigation Drawer === */}
-          <MobileMenu navItems={navItems} user={user as IUser} />
+          <MobileMenu navItems={navItems}  />
         </div>
       </Layout>
     </header>

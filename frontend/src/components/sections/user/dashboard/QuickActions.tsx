@@ -13,11 +13,14 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { animations } from "@/utils/animations/animations";
+import { AuthLoadingStates } from "@/types/main.types";
+import ShoppingCartLoader from "@/components/reusable/shared/loaders/ShoppingCartLoader";
 gsap.registerPlugin(ScrollTrigger);
 
 const QuickActions = () => {
-  const { logout } = useAuthContext();
+  const { logout, loading } = useAuthContext();
   const navigate = useNavigate();
+  const logoutLoading = loading === AuthLoadingStates.LOGOUT_LOADING;
 
   const quickLinks = [
     {
@@ -50,9 +53,9 @@ const QuickActions = () => {
     },
     {
       id: 8,
-      title: "Logout",
+      title: "Sign Out",
       icon: LogOut,
-      onClick: async () => await logout(navigate),
+      onClick: () => logout(navigate),
       description: "Sign out of your account",
     },
   ];
@@ -106,15 +109,28 @@ const QuickActions = () => {
                 <button
                   key={id}
                   onClick={onClick}
-                  className={`${sharedClasses} cursor-pointer`}
+                  disabled={logoutLoading}
+                  className={`${sharedClasses} disabled:!opacity-30 disabled:!cursor-not-allowed cursor-pointer`}
                 >
-                  <Icon size={40} />
-                  <h4 className="px-2 text-center font-semibold text-wrap uppercase">
-                    {title}
-                  </h4>
-                  <p className="mx-auto max-w-[90%] text-center text-xs text-white">
-                    {description}
-                  </p>
+                  {
+                    logoutLoading ? <>
+                      <ShoppingCartLoader
+                        isUsingInButton
+                        className="size-14"
+                      />
+                      <h4 className="px-2 text-center font-semibold text-wrap uppercase">
+                        Signing you out...
+                      </h4>
+                    </> : <>
+                      <Icon size={40} />
+                      <h4 className="px-2 text-center font-semibold text-wrap uppercase">
+                        {title}
+                      </h4>
+                      <p className="mx-auto max-w-[90%] text-center text-xs text-white">
+                        {description}
+                      </p>
+                    </>
+                  }
                 </button>
               );
             }

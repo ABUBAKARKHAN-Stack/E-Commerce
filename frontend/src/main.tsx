@@ -70,6 +70,7 @@ import {
   QueryClientProvider
 } from '@tanstack/react-query'
 import { queryClient } from "./utils/tanstackQueryClient";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const router = createBrowserRouter([
   {
@@ -339,6 +340,8 @@ createRoot(document.getElementById("root")!).render(
       defaultTheme="system"
       enableSystem
     >
+      <ReactQueryDevtools initialIsOpen={false} />
+
       <AuthProvider>
         <ProductProvider>
           <OrderProvider>

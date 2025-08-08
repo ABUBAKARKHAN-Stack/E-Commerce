@@ -11,6 +11,8 @@ import {
   DropdownMain,
 } from "@/components/ui/dropdown-menu2";
 import { ProfileIconSkeleton } from "@/components/reusable/shared/skeleton";
+import { AuthLoadingStates } from "@/types/main.types";
+import { ButtonLoader } from "@/components/reusable/shared";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,7 +21,9 @@ type Props = {
 const AdminHeader: FC<Props> = ({ setIsOpen }) => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const [isDropDownOpen, setIsDropDownOpen] = useState<boolean>(false);
-  const { logout, user, userLoading } = useAuthContext();
+  const { logout, user, userLoading, loading } = useAuthContext();
+  const logoutLoading = loading === AuthLoadingStates.LOGOUT_LOADING;
+
 
   const navigate = useNavigate();
 
@@ -78,9 +82,19 @@ const AdminHeader: FC<Props> = ({ setIsOpen }) => {
                         </Link>
                       </DropdownItem>
                       <DropdownItem>
-                        <button onClick={() => logout(navigate)}>
-                          Sign Out{" "}
-                          <LogOutIcon className="ml-2 inline-block h-5 w-5" />
+                        <button
+                          disabled={logoutLoading}
+                          className="disabled:opacity-20 cursor-pointer disabled:cursor-not-allowed"
+                          onClick={() => logout(navigate)}>
+                          {
+                            logoutLoading ? <ButtonLoader
+                            row_reverse
+                              loaderText="Signing Out..."
+                            /> : <>
+                              Sign Out{" "}
+                              <LogOutIcon className="ml-2 inline-block h-5 w-5" />
+                            </>
+                          }
                         </button>
                       </DropdownItem>
                     </DropdownItems>

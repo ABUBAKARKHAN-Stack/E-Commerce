@@ -1,16 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { IUser, NavItem } from "@/types/main.types";
+import { useAuthContext } from "@/context/authContext";
+import {  NavItem } from "@/types/main.types";
 import { Menu, ShoppingCart } from "lucide-react";
 import { FC } from "react";
 import { NavLink } from "react-router-dom";
 
 type Props = {
-  user: IUser;
   navItems: NavItem[];
 };
 
-const MobileMenu: FC<Props> = ({ user, navItems }) => {
+const MobileMenu: FC<Props> = ({ navItems }) => {
+  const { user } = useAuthContext()
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -33,8 +34,7 @@ const MobileMenu: FC<Props> = ({ user, navItems }) => {
               key={href}
               to={href}
               className={({ isActive }) =>
-                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${
-                  isActive ? "text-cyan-500 dark:text-orange-500" : ""
+                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
                 }`
               }
             >
@@ -44,8 +44,7 @@ const MobileMenu: FC<Props> = ({ user, navItems }) => {
           <NavLink
             to="/cart"
             className={({ isActive }) =>
-              `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${
-                isActive ? "text-cyan-500 dark:text-orange-500" : ""
+              `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
               }`
             }
           >
@@ -55,8 +54,7 @@ const MobileMenu: FC<Props> = ({ user, navItems }) => {
             <NavLink
               to="/sign-in"
               className={({ isActive }) =>
-                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${
-                  isActive ? "text-cyan-500 dark:text-orange-500" : ""
+                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
                 }`
               }
             >

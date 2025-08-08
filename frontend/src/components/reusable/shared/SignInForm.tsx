@@ -15,7 +15,8 @@ import { FC } from "react";
 import { signInFields } from "@/constants/formFields";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "@/context/authContext";
-import PasswordVisibilityToggler from "./PasswordVisibilityToggler";
+import { AuthLoadingStates } from "@/types/main.types";
+import { ButtonLoader, PasswordVisibilityToggler } from ".";
 
 type Props = {
   isAdmin: boolean;
@@ -30,9 +31,10 @@ const SignInForm: FC<Props> = ({ isAdmin, isUsingInAuthDialog = false }) => {
   const navigate = useNavigate();
   const { login, loading } = useAuthContext();
 
+  const loginLoading = loading === AuthLoadingStates.LOGIN_LOADING;
+
   const onSubmit = async (data: z.infer<typeof signinSchema>) => {
     login(data, isAdmin, navigate, isUsingInAuthDialog);
-    console.log("Login Data:", data);
   };
 
   return (
@@ -65,8 +67,12 @@ const SignInForm: FC<Props> = ({ isAdmin, isUsingInAuthDialog = false }) => {
           );
         })}
 
-        <Button disabled={loading} className="xsm:w-fit w-full" type="submit">
-          {loading ? "Signing In..." : "Sign In"}
+        <Button disabled={loginLoading} className="xsm:w-fit w-full" type="submit">
+          {loginLoading ? <>
+            <ButtonLoader
+              loaderText="Signing In..."
+            />
+          </> : "Sign In"}
         </Button>
       </form>
     </Form>

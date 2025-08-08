@@ -11,32 +11,11 @@ import {
   IUser,
   UserUpdatedJwtPayload,
   AdminUpdatedJwtPayload,
-  ApiErrorType,
   RoleType,
-  QueryKeys,
+  AuthLoadingStates,
 } from "@/types/main.types";
-import {
-  loginUser,
-  logoutUser,
-  forgotPasswordUser,
-  resetPasswordUser,
-  updateUserProfile,
-  updateUserPassword,
-} from "@/API/userApi";
-import {
-  loginAdmin,
-  logoutAdmin,
-  forgotPasswordAdmin,
-  resetPasswordAdmin,
-  updateAdminProfile,
-  updateAdminPassword,
-} from "@/API/adminApi";
+
 import { z } from "zod";
-import {
-  errorToast,
-  infoToast,
-  successToast,
-} from "@/utils/toastNotifications";
 import {
   forgotPasswordSchema,
   signinSchema,
@@ -46,9 +25,7 @@ import {
   updatePasswordSchema,
   updateProfileSchema,
 } from "@/schemas/update-ProfileSchema";
-import { AxiosError } from "axios";
-import { useUserByRole } from "@/hooks/useUserByRole";
-import { queryClient } from "@/utils/tanstackQueryClient";
+import { useAuthQuery } from "@/hooks/useAuthQuery";
 
 type AuthContextType = {
   user: IUser | IAdmin | null;
@@ -57,19 +34,19 @@ type AuthContextType = {
     data: z.infer<typeof signinSchema>,
     isAdmin: boolean,
     navigate: (path: string) => void,
-    isUsingInAuthDialog?: boolean,
-  ) => Promise<void>;
-  logout: (navigate: (path: string) => void) => Promise<void>;
+    isUsingInAuthDialog?: boolean
+  ) => void;
+  logout: (navigate: (path: string) => void) => void;
   forgotPassword: (
     isAdmin: boolean,
     data: z.infer<typeof forgotPasswordSchema>,
-  ) => Promise<void>;
+  ) => void;
   resetPassword: (
     isAdmin: boolean,
     data: z.infer<typeof resetPasswordSchema>,
     navigate: (path: string) => void,
     params: any,
-  ) => Promise<void>;
+  ) => void;
   updateProfile: (
     isAdmin: boolean,
     data: z.infer<typeof updateProfileSchema>,
@@ -80,27 +57,46 @@ type AuthContextType = {
     data: z.infer<typeof updatePasswordSchema>,
   ) => Promise<boolean>;
   setRole: (role: RoleType) => void;
-  loading: boolean;
+  loading: AuthLoadingStates;
   userLoading: boolean;
 };
+
+
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | IAdmin | null>(null);
   const [role, setRole] = useState<RoleType>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<AuthLoadingStates>(AuthLoadingStates.idle);
+  const {
+    useLogin,
+    useLogout,
+    useForgotPassword,
+    useResetPassword,
+    useUpdateProfile,
+    useUpdatePassword,
+    useFetchUserByRole,
+  } = useAuthQuery();
+
+  const loginMutation = useLogin(role, setLoading) //* Login Mutation
+  const logoutMutation = useLogout(setLoading) //* Logout Mutation
+  const forgotPasswordMutation = useForgotPassword(setLoading) //* Forgot Password Mutation
+  const resetPasswordMutation = useResetPassword(setLoading) //* Reset Password Mutation
+  const updateProfileMutation = useUpdateProfile(setLoading) //* Update Profile Mutation
+  const updatePasswordMutation = useUpdatePassword(setLoading) //* Update Password Mutation
+
+
   const {
     data: currentUser,
     isLoading: userLoading,
     isError: userError
-  } = useUserByRole(role);
+  } = useFetchUserByRole(role); //* Fetch User on role based
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (currentUser) {
-      console.log('calling it again');
-
       setUser(currentUser)
     }
   }, [currentUser])
@@ -115,68 +111,33 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [userError]);
 
 
-  const login = async (
+  const login = (
     data: z.infer<typeof signinSchema>,
     isAdmin: boolean,
     navigate: (path: string) => void,
-    isUsingInAuthDialog = false,
+    isUsingInAuthDialog = false
   ) => {
-    try {
-      setLoading(true);
-      const res = isAdmin ? await loginAdmin(data) : await loginUser(data);
-      if (isAdmin && res.data.data.adminToken) {
-        localStorage.setItem("adminToken", res.data.data.adminToken);
-        setRole("admin");
-        navigate("/admin/dashboard");
-      } else if (res.data.data.userToken) {
-        localStorage.setItem("userToken", res.data.data.userToken);
-        setRole("user");
-        if (isUsingInAuthDialog) {
-          successToast("User Logged in Successfully");
-          return;
-        }
-        navigate("/");
-      } else {
-        infoToast("Something went wrong");
-      }
-    } catch (error: any) {
-      console.log(error);
-      const errorMsg = error.response.data.message;
-      errorToast(errorMsg);
-    } finally {
-      setLoading(false);
-    }
+    const mutation = loginMutation;
+    mutation.mutate({
+      data,
+      isAdmin,
+      navigate,
+      isUsingInAuthDialog,
+      setRole,
+    });
   };
 
-
-  const logout = async (navigate: (path: string) => void) => {
-    try {
-      if (role === "user") {
-        const res = await logoutUser();
-        if (res.data.success) {
-          localStorage.removeItem("userToken");
-          setUser(null);
-          setRole(null);
-          navigate("/sign-in");
-          console.log("User Logged Out");
-        }
-      } else if (role === "admin") {
-        const res = await logoutAdmin();
-        if (res.data.success) {
-          localStorage.removeItem("adminToken");
-          setUser(null);
-          setRole(null);
-          navigate("/admin/sign-in");
-          console.log("Admin Logged Out");
-        }
-      }
-    } catch (error) {
-      errorToast("Logout failed. Please try again.");
-      console.error("Logout Error:", error);
-    }
+  const logout = (navigate: (path: string) => void) => {
+    logoutMutation.mutate({
+      navigate,
+      role,
+      setRole,
+      setUser
+    })
   };
 
   useEffect(() => {
+    
     const userToken = localStorage.getItem("userToken");
     const adminToken = localStorage.getItem("adminToken");
 
@@ -205,49 +166,29 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
 
-  const forgotPassword = async (
+  const forgotPassword = (
     isAdmin: boolean,
     data: z.infer<typeof forgotPasswordSchema>,
   ) => {
-    try {
-      setLoading(true);
-      const res = isAdmin
-        ? await forgotPasswordAdmin(data)
-        : await forgotPasswordUser(data);
-      if (res.status === 200) {
-        successToast(res.data.message);
-      }
-    } catch (error: any) {
-      const errMsg = error.response.data.message || "Something went wrong";
-      errorToast(errMsg);
-    } finally {
-      setLoading(false);
-    }
+    forgotPasswordMutation.mutate({
+      isAdmin,
+      data
+    })
   };
 
-  const resetPassword = async (
+  const resetPassword = (
     isAdmin: boolean,
     data: z.infer<typeof resetPasswordSchema>,
     navigate: (path: string) => void,
     params: any,
   ) => {
-    try {
-      setLoading(true);
-      const res = isAdmin
-        ? await resetPasswordAdmin(data, params)
-        : await resetPasswordUser(data, params);
-      if (res.status === 200) {
-        successToast(res.data.message);
-        timeoutRef.current = setTimeout(() => {
-          navigate(isAdmin ? "/admin/sign-in" : "/sign-in");
-        }, 1000);
-      }
-    } catch (error: any) {
-      const errMsg = error.response.data.message || "Something went wrong";
-      errorToast(errMsg);
-    } finally {
-      setLoading(false);
-    }
+    resetPasswordMutation.mutate({
+      isAdmin,
+      data,
+      navigate,
+      params,
+      timeoutRef
+    })
   };
 
   const updateProfile = async (
@@ -255,52 +196,23 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     data: z.infer<typeof updateProfileSchema>,
     role: RoleType,
   ) => {
-    try {
-
-      const res = isAdmin
-        ? await updateAdminProfile(data)
-        : await updateUserProfile(data);
-      if (res.status === 200) {
-        queryClient.invalidateQueries({
-          queryKey: [QueryKeys.FETCH_USER, role],
-          exact: false
-        })
-        successToast("Profile Updated Successfully!");
-        return true;
-      }
-      errorToast("Failed to update profile.");
-      return false;
-    } catch (error) {
-      const err = error as AxiosError<ApiErrorType>;
-      console.log(err);
-
-      const errMsg = err.response?.data.message || "Something went wrong";
-      errorToast(errMsg);
-      return false;
-    }
+    const success = await updateProfileMutation.mutateAsync({
+      data,
+      isAdmin,
+      role
+    })
+    return success ?? false
   };
 
   const updatePassword = async (
     isAdmin: boolean,
     data: z.infer<typeof updatePasswordSchema>,
   ) => {
-    try {
-      const res = isAdmin
-        ? await updateAdminPassword(data)
-        : await updateUserPassword(data);
-
-      if (res.status === 200) {
-        successToast("Password Updated Successfully!");
-        return true;
-      }
-      errorToast("Failed to update password.");
-      return false;
-    } catch (error) {
-      const err = error as AxiosError<ApiErrorType>;
-      const errMsg = err.response?.data.message || "Something went wrong";
-      errorToast(errMsg);
-      return false;
-    }
+    const success = await updatePasswordMutation.mutateAsync({
+      isAdmin,
+      data
+    })
+    return success ?? false;
   };
 
   useEffect(() => {

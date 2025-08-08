@@ -11,12 +11,14 @@ import {
   updatePasswordFields,
 } from "@/constants/formFields";
 import { useAuthContext } from "@/context/authContext";
-import {  updatePasswordSchema, } from "@/schemas/update-ProfileSchema";
+import { updatePasswordSchema, } from "@/schemas/update-ProfileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import PasswordVisibilityToggler from "./PasswordVisibilityToggler";
+import { AuthLoadingStates } from "@/types/main.types";
+import ButtonLoader from "./loaders/ButtonLoader";
 
 type Props = {
   isAdmin?: boolean;
@@ -25,7 +27,9 @@ type Props = {
 
 const UpdatePasswordForm: FC<Props> = ({ isAdmin = false }) => {
 
-  const { updatePassword } = useAuthContext();
+  const { updatePassword, loading } = useAuthContext();
+  const updatePasswordLoading = loading === AuthLoadingStates.UPDATE_PASSWORD_LOADING;
+
 
   const form = useForm({
     resolver: zodResolver(updatePasswordSchema),
@@ -78,10 +82,14 @@ const UpdatePasswordForm: FC<Props> = ({ isAdmin = false }) => {
         <div className="flex justify-start pt-2">
           <Button
             type="submit"
-            disabled={!form.formState.isDirty}
+            disabled={!form.formState.isDirty || updatePasswordLoading}
             className="w-fit"
           >
-            Update Password
+            {
+              updatePasswordLoading ? <ButtonLoader
+                loaderText="Updating Password..."
+              /> : "Update Password"
+            }
           </Button>
         </div>
       </form>

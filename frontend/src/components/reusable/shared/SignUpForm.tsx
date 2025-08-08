@@ -17,6 +17,8 @@ import { FC, useState } from "react";
 import { successToast, errorToast } from "@/utils/toastNotifications";
 import { createAdmin } from "@/API/adminApi";
 import PasswordVisibilityToggler from "./PasswordVisibilityToggler";
+import ButtonLoader from "./loaders/ButtonLoader";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   isAdmin: boolean;
@@ -34,6 +36,7 @@ const SignUpForm: FC<Props> = ({ isAdmin }) => {
   });
 
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
 
   const onSubmit = async (data: z.infer<typeof signupSchema>) => {
     try {
@@ -42,10 +45,9 @@ const SignUpForm: FC<Props> = ({ isAdmin }) => {
       console.log(res);
       if (res.status === 201) {
         successToast(res.data.message);
+        isAdmin ? navigate('/admin/sign-in') : navigate('/sign-in')
       }
     } catch (error: any) {
-      console.log(error);
-
       const errorMsg = error.response.data.message;
       errorToast(errorMsg);
     } finally {
@@ -83,8 +85,12 @@ const SignUpForm: FC<Props> = ({ isAdmin }) => {
             />
           );
         })}
-        <Button className="xsm:w-fit w-full" type="submit">
-          {loading ? "Signing UP.." : "Sign UP"}
+        <Button
+          disabled={loading}
+          className="xsm:w-fit w-full" type="submit">
+          {loading ? <ButtonLoader
+            loaderText="Sign Up..."
+          /> : "Sign Up"}
         </Button>
       </form>
     </Form>
