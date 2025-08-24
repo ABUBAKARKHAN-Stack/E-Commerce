@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
 import { Logo } from "@/components/reusable/shared";
 import { Layout } from "@/components/layout/shared";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { NavItem } from "@/types/main.types";
 
 //* Header Subcomponents
@@ -12,13 +12,13 @@ import {
   MobileMenu,
   UserMenu,
 } from "@/components/sections/user/header";
-import { useProductContext } from "@/context/productContext";
+import { useCartContext } from "@/context/cart.context";
 
 const Header: FC = () => {
   //* Get user and logout method from auth context
   const { user } = useAuthContext();
 
-  const { cartProductsCount } = useProductContext();
+  const { cartProductsCount } = useCartContext();
 
   //* Dynamically generate navigation items, conditionally show Wishlist if user is logged in
   const navItems: NavItem[] = [
@@ -53,8 +53,8 @@ const Header: FC = () => {
               aria-label="View your cart"
             >
               <div className="relative">
-                <ShoppingCart className="h-6 w-6 transition-colors duration-300 hover:text-cyan-600/90 dark:hover:text-orange-600/90" />
-                <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                <ShoppingCart className="size-6 transition-colors duration-300 hover:text-cyan-600/90 dark:hover:text-orange-600/90" />
+                <span className="absolute -top-2 -right-2 flex size-4.5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
                   {cartProductsCount}
                 </span>
               </div>
@@ -65,7 +65,7 @@ const Header: FC = () => {
           <UserMenu />
 
           {/* === Mobile Navigation Drawer === */}
-          <MobileMenu navItems={navItems}  />
+          <MobileMenu navItems={navItems} />
         </div>
       </Layout>
     </header>

@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 
 type Props = {
   children: React.ReactNode;

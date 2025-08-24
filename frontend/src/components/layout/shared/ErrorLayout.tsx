@@ -1,5 +1,11 @@
 import { FC, ReactNode, useEffect, useRef, useState } from "react";
-import { ShoppingCart, AlertCircle, RefreshCw, Home, LayoutDashboardIcon } from "lucide-react";
+import {
+  ShoppingCart,
+  AlertCircle,
+  RefreshCw,
+  Home,
+  LayoutDashboardIcon,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggler } from "@/components/reusable/shared";
@@ -12,7 +18,7 @@ type ErrorLayoutProps = {
   status?: number;
   onRetry?: () => void;
   showContinue?: boolean;
-  forAdmin?: boolean
+  forAdmin?: boolean;
 };
 
 const ErrorLayout: FC<ErrorLayoutProps> = ({
@@ -24,7 +30,7 @@ const ErrorLayout: FC<ErrorLayoutProps> = ({
   status = 500,
   onRetry,
   showContinue = true,
-  forAdmin = false
+  forAdmin = false,
 }) => {
   const navigate = useNavigate();
   const timeourRef = useRef<NodeJS.Timeout | null>(null);
@@ -88,29 +94,27 @@ const ErrorLayout: FC<ErrorLayoutProps> = ({
               {isRetrying ? "Retrying..." : "Try Again"}
             </Button>
 
-            {
-              forAdmin ? (
-                <Button className="hover:!bg-accent hover:!text-accent-foreground !text-accent !bg-accent-foreground w-full border">
-                  <Link
-                    to="/admin/dashboard"
-                    className="flex w-full items-center justify-center gap-2"
-                  >
-                    <LayoutDashboardIcon className="h-4 w-4" />
-                    Go to Dashboard
-                  </Link>
-                </Button>
-              ) : (
-                <Button className="hover:!bg-accent hover:!text-accent-foreground !text-accent !bg-accent-foreground w-full border">
-                  <Link
-                    to="/"
-                    className="flex w-full items-center justify-center gap-2"
-                  >
-                    <Home className="h-4 w-4" />
-                    Go to Home
-                  </Link>
-                </Button>
-              )
-            }
+            {forAdmin ? (
+              <Button className="hover:!bg-accent hover:!text-accent-foreground !text-accent !bg-accent-foreground w-full border">
+                <Link
+                  to="/admin/dashboard"
+                  className="flex w-full items-center justify-center gap-2"
+                >
+                  <LayoutDashboardIcon className="h-4 w-4" />
+                  Go to Dashboard
+                </Link>
+              </Button>
+            ) : (
+              <Button className="hover:!bg-accent hover:!text-accent-foreground !text-accent !bg-accent-foreground w-full border">
+                <Link
+                  to="/"
+                  className="flex w-full items-center justify-center gap-2"
+                >
+                  <Home className="h-4 w-4" />
+                  Go to Home
+                </Link>
+              </Button>
+            )}
 
             {showContinue && (
               <Button variant={"outline"} className="w-full p-5">

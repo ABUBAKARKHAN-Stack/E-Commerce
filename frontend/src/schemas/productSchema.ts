@@ -16,9 +16,7 @@ const productSchema = z.object({
   category: z.string().min(2, {
     message: "Category must be at least 2 characters long",
   }),
-thumbnails: z
-  .array(z.instanceof(File))
-  .optional()
+  thumbnails: z.array(z.instanceof(File)).optional(),
 });
 
 export default productSchema;

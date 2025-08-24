@@ -2,23 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import CategoryFilter from "./CategoryFilter";
 import PriceRange from "./PriceRange";
 import SortSelector from "./SortSelector";
+import { ProductFilterParams } from "@/types/main.types";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  categories: string[] | null;
-  category: string;
-  setCategory: (val: string) => void;
-  minPrice: string;
-  setMinPrice: (price: string) => void;
-  maxPrice: string;
-  setMaxPrice: (price: string) => void;
-  sortBy: string;
-  setSortBy: (val: string) => void;
+  setSearchFiltersSort: Dispatch<SetStateAction<ProductFilterParams>>;
+  searchFiltersSort: ProductFilterParams;
   filterCount: number;
   onFilterRemove: () => void;
 };
@@ -26,15 +20,8 @@ type Props = {
 const FilterPanel: FC<Props> = ({
   isOpen,
   setIsOpen,
-  categories,
-  category,
-  setCategory,
-  minPrice,
-  setMinPrice,
-  maxPrice,
-  setMaxPrice,
-  sortBy,
-  setSortBy,
+  searchFiltersSort,
+  setSearchFiltersSort,
   filterCount,
   onFilterRemove,
 }) => {
@@ -74,21 +61,23 @@ const FilterPanel: FC<Props> = ({
             <Separator className="bg-accent-foreground/10" />
 
             <CategoryFilter
-              categories={categories}
-              categoryValue={category}
-              setCategoryValue={setCategory}
+              categoryValue={searchFiltersSort.category}
+              setCategoryValue={setSearchFiltersSort}
             />
             <Separator className="bg-accent-foreground/10" />
 
             <PriceRange
-              minPriceValue={minPrice}
-              setMinPriceValue={setMinPrice}
-              maxPriceValue={maxPrice}
-              setMaxPriceValue={setMaxPrice}
+              minPriceValue={searchFiltersSort.minPrice}
+              setMinPriceValue={setSearchFiltersSort}
+              maxPriceValue={searchFiltersSort.maxPrice}
+              setMaxPriceValue={setSearchFiltersSort}
             />
             <Separator className="bg-accent-foreground/10" />
 
-            <SortSelector sortByValue={sortBy} setSortByValue={setSortBy} />
+            <SortSelector
+              sortByValue={searchFiltersSort.sortBy}
+              setSortByValue={setSearchFiltersSort}
+            />
 
             <Button
               onClick={onFilterRemove}

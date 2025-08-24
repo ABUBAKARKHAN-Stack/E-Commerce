@@ -25,5 +25,5 @@ export {
   DeliveryInfo,
   OrderIdBadge,
   PaymentStatusBadge,
-  OrderStatusBadge
+  OrderStatusBadge,
 };

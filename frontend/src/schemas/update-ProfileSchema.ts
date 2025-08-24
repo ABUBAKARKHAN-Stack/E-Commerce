@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-
-
 const updateProfileSchema = z
   .object({
     username: z
@@ -33,7 +31,7 @@ const adminUpdateProfileSchema = z
       .string()
       .min(11, { message: "Phone number must be at least 11 numbers." }),
   })
-  .partial()
+  .partial();
 
 const updatePasswordSchema = z.object({
   oldPassword: z

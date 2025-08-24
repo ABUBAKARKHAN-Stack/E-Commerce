@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useAuthContext } from "@/context/authContext";
-import {  NavItem } from "@/types/main.types";
+import { useAuthContext } from "@/context/auth.context";
+import { useCartContext } from "@/context/cart.context";
+import { NavItem } from "@/types/main.types";
 import { Menu, ShoppingCart } from "lucide-react";
 import { FC } from "react";
 import { NavLink } from "react-router-dom";
@@ -11,7 +12,8 @@ type Props = {
 };
 
 const MobileMenu: FC<Props> = ({ navItems }) => {
-  const { user } = useAuthContext()
+  const { user } = useAuthContext();
+  const { cartProductsCount } = useCartContext();
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -34,7 +36,8 @@ const MobileMenu: FC<Props> = ({ navItems }) => {
               key={href}
               to={href}
               className={({ isActive }) =>
-                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
+                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${
+                  isActive ? "text-cyan-500 dark:text-orange-500" : ""
                 }`
               }
             >
@@ -44,17 +47,19 @@ const MobileMenu: FC<Props> = ({ navItems }) => {
           <NavLink
             to="/cart"
             className={({ isActive }) =>
-              `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
+              `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${
+                isActive ? "text-cyan-500 dark:text-orange-500" : ""
               }`
             }
           >
-            <ShoppingCart className="h-6 w-6" /> Cart (3)
+            <ShoppingCart className="h-6 w-6" /> Cart ({cartProductsCount})
           </NavLink>
           {!user && (
             <NavLink
               to="/sign-in"
               className={({ isActive }) =>
-                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${isActive ? "text-cyan-500 dark:text-orange-500" : ""
+                `flex w-fit items-center gap-2 text-lg font-semibold text-[#1B1B1F] transition-all duration-300 hover:scale-105 hover:text-cyan-600/90 dark:text-white dark:hover:text-orange-600/90 ${
+                  isActive ? "text-cyan-500 dark:text-orange-500" : ""
                 }`
               }
             >

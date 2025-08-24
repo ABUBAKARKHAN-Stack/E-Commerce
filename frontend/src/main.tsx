@@ -39,20 +39,20 @@ import {
   UserOrdersPage,
   UserOrderPage,
 } from "@/pages/users"; //* User Pages
-import { ThemeProvider } from "@/context/themeContext";
+import { ThemeProvider } from "@/context/theme.context";
 import { UserAuthLayout } from "@/components/layout/user";
 import { AdminAuthLayout, AdminRoot } from "@/components/layout/admin";
-import { AuthProvider } from "@/context/authContext";
-import { ProductProvider } from "@/context/productContext";
+import { AuthProvider } from "@/context/auth.context";
+import { ProductProvider } from "@/context/product.context";
 import { cartLoader } from "@/utils/loaders/cartLoader";
 import {
   CartErrorPage,
   CheckoutErrorPage,
   CheckoutSuccessErrorPage,
+  ProductDetailsErrorPage,
   TrackOrderErrorPage,
   UserOrderErrorPage,
 } from "@/pages/users/error";
-import { wishlistLoader } from "./utils/loaders/wishlistLoader";
 import WishlistErrorPage from "./pages/users/error/WishlistErrorPage";
 import {
   confirmOrderDetailsLoader,
@@ -60,17 +60,21 @@ import {
   singleOrderDetailsLoader,
   userTrackOrderLoader,
 } from "./utils/loaders/orderDetailsLoader";
-import { OrderProvider } from "./context/orderContext";
-import { ActivityProvider } from "./context/activityContext";
+import { OrderProvider } from "./context/order.context";
+import { ActivityProvider } from "./context/activity.context";
 import { Toaster } from "sonner";
 import { adminOrderDetailsLoader } from "./utils/loaders/adminLoaders/orderDetailsLoader";
-import { AdminOrderErrorPage, AdminProductDetailsErrorPage } from "./pages/admin/error";
-import { singleProductDetailsLoader } from "./utils/loaders/adminLoaders/adminProductLoaders";
 import {
-  QueryClientProvider
-} from '@tanstack/react-query'
+  AdminOrderErrorPage,
+  AdminProductDetailsErrorPage,
+} from "./pages/admin/error";
+import { singleProductDetailsLoader } from "./utils/loaders/adminLoaders/adminProductLoaders";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/tanstackQueryClient";
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { productDetailsLoader } from "./utils/loaders/productLoader";
+import { CartProvider } from "./context/cart.context";
+import { WishlistProvider } from "./context/wishlist.context";
 
 const router = createBrowserRouter([
   {
@@ -168,6 +172,8 @@ const router = createBrowserRouter([
         <ProductPage />
       </AdminAuthLayout>
     ),
+    loader: productDetailsLoader,
+    errorElement: <ProductDetailsErrorPage />,
   },
 
   //! Protected Routes (Require Auth For Users)
@@ -194,7 +200,6 @@ const router = createBrowserRouter([
         <CartPage />
       </UserAuthLayout>
     ),
-    loader: cartLoader,
     errorElement: <CartErrorPage />,
   },
   {
@@ -252,7 +257,7 @@ const router = createBrowserRouter([
         <WishlistPage />
       </UserAuthLayout>
     ),
-    loader: wishlistLoader,
+    // loader: wishlistLoader,
     errorElement: <WishlistErrorPage />,
   },
 
@@ -306,28 +311,28 @@ const router = createBrowserRouter([
         path: "products/edit/:id",
         element: <AdminUpdateProductPage />,
         loader: singleProductDetailsLoader,
-        errorElement: <AdminProductDetailsErrorPage />
+        errorElement: <AdminProductDetailsErrorPage />,
       },
       {
         path: "products/product/:id",
         element: <AdminViewProductPage />,
         loader: singleProductDetailsLoader,
-        errorElement: <AdminProductDetailsErrorPage />
+        errorElement: <AdminProductDetailsErrorPage />,
       },
       {
         path: "me",
         element: <AdminProfilePage />,
       },
       {
-        path: 'orders',
-        element: <AdminOrdersPage />
+        path: "orders",
+        element: <AdminOrdersPage />,
       },
       {
-        path: 'orders/:orderId',
+        path: "orders/:orderId",
         element: <AdminOrderDetailsPage />,
         loader: adminOrderDetailsLoader,
-        errorElement: <AdminOrderErrorPage />
-      }
+        errorElement: <AdminOrderErrorPage />,
+      },
     ],
   },
 ]);
@@ -335,24 +340,23 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-    >
-      <ReactQueryDevtools initialIsOpen={false} />
-
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ReactQueryDevtools initialIsOpen={true} />
       <AuthProvider>
         <ProductProvider>
-          <OrderProvider>
-            <ActivityProvider>
-              <RouterProvider router={router} />
-              <Toaster />
-            </ActivityProvider>
-          </OrderProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <OrderProvider>
+                <ActivityProvider>
+                  <RouterProvider router={router} />
+                  <Toaster />
+                </ActivityProvider>
+              </OrderProvider>
+            </CartProvider>
+          </WishlistProvider>
         </ProductProvider>
       </AuthProvider>
     </ThemeProvider>
-  </QueryClientProvider>
+  </QueryClientProvider>,
   // </StrictMode >
 );

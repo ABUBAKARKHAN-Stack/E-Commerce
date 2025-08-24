@@ -1,19 +1,37 @@
-import { proceedToCheckout } from "@/API/userApi";
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useProductContext } from "@/context/productContext";
-import { CheckCircle, CheckCircle2, Lock } from "lucide-react";
-import React, { FC } from "react";
+import { useCartContext } from "@/context/cart.context";
+import { useOrderContext } from "@/context/order.context";
+import { useProductContext } from "@/context/product.context";
+import {
+  CartLoadingStates,
+  ICartedProduct,
+  OrderLoadingStates,
+} from "@/types/main.types";
+import { CheckCircle2 } from "lucide-react";
+import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
   totalAmount: number;
   totalProducts: number;
+  products: ICartedProduct[];
 };
 
-const CartSummary: FC<Props> = ({ totalAmount, totalProducts }) => {
-  const { proceedToCheckout } = useProductContext();
+const CartSummary: FC<Props> = ({ totalAmount, totalProducts, products }) => {
+  const { proceedToCheckout, orderLoading } = useOrderContext();
+  const { cartLoading } = useCartContext();
   const navigate = useNavigate();
+
+  const isInvalidQuantityPresent = products.some(
+    (p) => p.cartedProductQuantity > p.quantity || p.cartedProductQuantity <= 0,
+  );
+  const proceedToCheckoutLoading =
+    orderLoading === OrderLoadingStates.PROCEED_TO_CHECKOUT;
+
+  const isCartLoading = Object.values(cartLoading).some(
+    (state) => state !== CartLoadingStates.IDLE,
+  );
 
   const handleProceedToCheckout = () => {
     proceedToCheckout(navigate);
@@ -93,12 +111,26 @@ const CartSummary: FC<Props> = ({ totalAmount, totalProducts }) => {
       {/* Checkout Button */}
       <div className="pt-4">
         <Button
+          disabled={
+            isCartLoading ||
+            isInvalidQuantityPresent ||
+            proceedToCheckoutLoading
+          }
           onClick={handleProceedToCheckout}
           className="w-fit transform rounded-xl border-0 bg-gradient-to-r from-cyan-500 to-cyan-600 py-6 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition-all duration-300 hover:scale-[1.02] hover:from-cyan-600 hover:to-cyan-700 hover:shadow-xl hover:shadow-cyan-500/40 dark:from-orange-500 dark:to-orange-600 dark:shadow-orange-500/30 dark:hover:from-orange-600 dark:hover:to-orange-700 dark:hover:shadow-orange-500/40"
         >
           <div className="flex items-center justify-center gap-3">
-            <CheckCircle2 className="size-5" />
-            Proceed To Checkout
+            {proceedToCheckoutLoading ? (
+              <ButtonLoader
+                loaderText="Proceeding To Checkout..."
+                size="size-5.5"
+              />
+            ) : (
+              <>
+                <CheckCircle2 className="size-5" />
+                Proceed To Checkout
+              </>
+            )}
           </div>
         </Button>
       </div>

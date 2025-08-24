@@ -1,4 +1,9 @@
-import { adminApi, adminOrderApi, adminProductApi, orderApi } from "./apiClients";
+import {
+  adminApi,
+  adminOrderApi,
+  adminProductApi,
+  orderApi,
+} from "./apiClients";
 import { adminInterceptor } from "./axiosInterceptor";
 
 //* Admin APIS
@@ -91,32 +96,31 @@ const removeProductThumbnail = async (
 
 //* +++++++++++++++++++ Admin Order Apis ++++++++++++++++++++++++
 const getAllOrders = async (queryParams: any) => {
-  return await adminOrderApi.get('/orders', {
-    params: queryParams
-  })
-}
+  return await adminOrderApi.get("/orders", {
+    params: queryParams,
+  });
+};
 
 const getSingleOrder = async (orderId: string) => {
-  return await adminOrderApi.get(`/orders/${orderId}`)
-}
+  return await adminOrderApi.get(`/orders/${orderId}`);
+};
 
 const markOrderAsProcessing = async (orderId: string) => {
-  return await adminOrderApi.get(`/mark-as/processing/${orderId}`)
-}
+  return await adminOrderApi.get(`/mark-as/processing/${orderId}`);
+};
 
 const markOrderAsShipped = async (orderId: string) => {
-  return await adminOrderApi.get(`/mark-as/shipped/${orderId}`)
-}
+  return await adminOrderApi.get(`/mark-as/shipped/${orderId}`);
+};
 const markOrderAsDelivered = async (orderId: string) => {
-  return await adminOrderApi.get(`/mark-as/delivered/${orderId}`)
-}
+  return await adminOrderApi.get(`/mark-as/delivered/${orderId}`);
+};
 
-const adminCancelOrder = async (data:any) => {
-  return await adminOrderApi.post('/cancel-order',data,{
-    withCredentials: true
-  })
-}
-
+const adminCancelOrder = async (data: any) => {
+  return await adminOrderApi.post("/cancel-order", data, {
+    withCredentials: true,
+  });
+};
 
 export {
   createAdmin,
@@ -136,5 +140,5 @@ export {
   markOrderAsProcessing,
   markOrderAsShipped,
   markOrderAsDelivered,
-  adminCancelOrder
+  adminCancelOrder,
 };

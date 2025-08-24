@@ -15,8 +15,8 @@ import { useLoaderData, useNavigate, useRevalidator } from "react-router-dom";
 import { OrderDetails } from "@/components/sections/user/dashboard/orders";
 import { Button } from "@/components/ui/button";
 import { isOrderCancelable } from "@/utils/IsOrderCancelable";
-import { OrderLoading, OrderStatus } from "@/types/main.types";
-import { useOrderContext } from "@/context/orderContext";
+import { OrderLoadingStates, OrderStatus } from "@/types/main.types";
+import { useOrderContext } from "@/context/order.context";
 import { DeliveryInfo } from "@/components/reusable/user";
 
 const UserOrderMain = () => {
@@ -41,9 +41,12 @@ const UserOrderMain = () => {
   } = useLoaderData();
 
   const isCancelable = isOrderCancelable(orderStatus, confirmedAt);
-  const { cancelOrder, loading, downloadOrderInvoice } = useOrderContext();
+  const { cancelOrder, orderLoading, downloadOrderInvoice } = useOrderContext();
   const { revalidate } = useRevalidator();
   const navigate = useNavigate();
+  const downloadOrderInvoiceLoading =
+    orderLoading === OrderLoadingStates.DOWNLOAD_INVOICE;
+  const orderCancelLoading = orderLoading === OrderLoadingStates.CANCEL_ORDER;
 
   const handleOrderCanel = async () => {
     await cancelOrder(orderId);
@@ -147,12 +150,12 @@ const UserOrderMain = () => {
                 onClick={handleDownloadInvoice}
                 disabled={
                   orderStatus === OrderStatus.PENDING ||
-                  loading === OrderLoading.DOWNLOAD_INVOICE
+                  downloadOrderInvoiceLoading
                 }
                 size="lg"
                 variant="outline"
               >
-                {loading === OrderLoading.DOWNLOAD_INVOICE ? (
+                {downloadOrderInvoiceLoading ? (
                   <>
                     <LoaderPinwheel className="size-4 animate-spin" />
                     Downloaing...
@@ -165,16 +168,12 @@ const UserOrderMain = () => {
                 )}
               </Button>
               <Button
-                disabled={
-                  isDelivered ||
-                  !isCancelable ||
-                  loading === OrderLoading.CANCEL_ORDER
-                }
+                disabled={isDelivered || !isCancelable || orderCancelLoading}
                 size="lg"
                 variant="destructive"
                 onClick={handleOrderCanel}
               >
-                {loading === OrderLoading.CANCEL_ORDER ? (
+                {orderCancelLoading ? (
                   <>
                     <LoaderPinwheel className="size-4 animate-spin" />
                     Cancelling...

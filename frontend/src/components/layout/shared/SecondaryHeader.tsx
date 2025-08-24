@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import { Logo } from "@/components/reusable/shared";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 
 type Props = {
   setIsOpen: Dispatch<SetStateAction<boolean>>;

@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { Toaster } from "sonner";
 
 const AdminViewProductPage = () => {
-  const {resolvedTheme} = useTheme();
+  const { resolvedTheme } = useTheme();
 
   return (
     <>

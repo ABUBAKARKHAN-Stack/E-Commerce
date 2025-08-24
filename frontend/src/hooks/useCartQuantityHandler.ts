@@ -13,7 +13,7 @@ const useCartQuantityHandler = (products: ICartedProduct[]) => {
     const initialInputs: { [key: string]: string } = {};
     const initialNewAdded: { [key: string]: number } = {};
     products.forEach((product) => {
-      initialInputs[product._id] = product.cartedProductQunatity.toString();
+      initialInputs[product._id] = product.cartedProductQuantity.toString();
       initialNewAdded[product._id] = 0;
     });
 
@@ -34,7 +34,7 @@ const useCartQuantityHandler = (products: ICartedProduct[]) => {
 
       setNewAddedQuantities((prev) => ({
         ...prev,
-        [productId]: newValue - product.cartedProductQunatity,
+        [productId]: newValue - product.cartedProductQuantity,
       }));
     }
   };
@@ -52,7 +52,7 @@ const useCartQuantityHandler = (products: ICartedProduct[]) => {
 
       setNewAddedQuantities((prev) => ({
         ...prev,
-        [productId]: newValue - product.cartedProductQunatity,
+        [productId]: newValue - product.cartedProductQuantity,
       }));
     }
   };
@@ -71,7 +71,7 @@ const useCartQuantityHandler = (products: ICartedProduct[]) => {
       }));
       setNewAddedQuantities((prev) => ({
         ...prev,
-        [productId]: 1 - product.cartedProductQunatity,
+        [productId]: 1 - product.cartedProductQuantity,
       }));
       return;
     }
@@ -86,7 +86,7 @@ const useCartQuantityHandler = (products: ICartedProduct[]) => {
 
       setNewAddedQuantities((prev) => ({
         ...prev,
-        [productId]: parsedValue - product.cartedProductQunatity,
+        [productId]: parsedValue - product.cartedProductQuantity,
       }));
     }
   };

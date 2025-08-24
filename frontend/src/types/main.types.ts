@@ -62,7 +62,7 @@ export interface IProduct {
 }
 
 export interface ICartedProduct extends IProduct {
-  cartedProductQunatity: number;
+  cartedProductQuantity: number;
 }
 
 export const enum AdminProductLoading {
@@ -71,6 +71,7 @@ export const enum AdminProductLoading {
   EDIT = "edit",
   GET_ALL = "get-products",
   GET_ONE = "get-product",
+  idle = "idle",
 }
 
 export interface NavItem {
@@ -84,21 +85,12 @@ export interface ProductFilterParams {
   minPrice: string;
   maxPrice: string;
   sortBy: string;
-  limit: number;
-  page: number;
 }
 
 export interface ApiErrorType {
   status: number;
   message: string;
   error: object;
-}
-
-export const enum OrderLoading {
-  TRACK_ORDER_LOADING = "track-order",
-  GET_ALL_ORDERS = "get-all-orders",
-  CANCEL_ORDER = "cancel-order",
-  DOWNLOAD_INVOICE = "download-invoice",
 }
 
 export enum ActivityType {
@@ -174,7 +166,7 @@ export type Refund = {
   refundAmount: number;
   refundAt: string;
   stripeRefundId: string;
-}
+};
 
 export interface IOrder {
   orderId: string;
@@ -216,7 +208,6 @@ export type OrderedProduct = {
   thumbnail?: string;
 };
 
-
 export enum AdminOrderLoading {
   GET_ALL_ORDERS = "GET_ALL_ORDERS",
   GET_SINGLE_ORDER = "GET_SINGLE_ORDER",
@@ -234,8 +225,8 @@ export type AdminOrderFiltersType = {
   sortBy: string;
   searchOrderByCustomerName?: string;
   page?: number;
-  limit?: number
-}
+  limit?: number;
+};
 
 export type LoginPayload = {
   data: z.infer<typeof signinSchema>;
@@ -243,12 +234,26 @@ export type LoginPayload = {
   navigate: (path: string) => void;
   isUsingInAuthDialog: boolean;
   setRole?: Dispatch<SetStateAction<RoleType>>;
-}
-
+};
 
 export enum QueryKeys {
   FETCH_USER = "fetch_user",
-  LOGIN = "login"
+  LOGIN = "login",
+
+  ALL_PRODUCTS = "all_products",
+  PRODUCT = "product",
+  ALL_CATEGORIES = "all_categories",
+  TOP_CATEGORIES = "top_categories",
+  TOP_RATED_PRODUCTS = "top_rated_products",
+
+  GET_WISHLIST = "get_wishlist",
+  WISHLIST_PRODUCTS = "wishlist_products",
+
+  GET_CART = "get_cart",
+  CARTED_PRODUCTS = "carted_products",
+
+  PROCEED_TO_CHECKOUT = "proceed_to_checkout",
+  COMPLETE_CHECKOUT = "complete_checkout",
 }
 
 export enum AuthLoadingStates {
@@ -259,4 +264,36 @@ export enum AuthLoadingStates {
   RESET_PASSWORD_LOADING = "reset_password_loading",
   UPDATE_PROFILE_LOADING = "update_profile_loading",
   UPDATE_PASSWORD_LOADING = "update_password_loading",
+}
+
+export enum UserProductsLoadingStates {
+  idle = "idle",
+}
+
+export enum WishlistLoadingStates {
+  ADDING = "adding",
+  REMOVING = "removing",
+  IDLE = "idle",
+}
+
+export type CartDetails = {
+  products: { productId: string; quantity: number }[];
+  totalAmount: number;
+};
+
+export enum CartLoadingStates {
+  ADDING = "adding",
+  REMOVING = "removing",
+  UPDATING = "updating",
+  IDLE = "idle",
+}
+
+export enum OrderLoadingStates {
+  IDLE = "idle",
+  PROCEED_TO_CHECKOUT = "proceed_to_checkout",
+  TRACK_ORDER = "track-order",
+  GET_ALL_ORDERS = "get-all-orders",
+  CANCEL_ORDER = "cancel-order",
+  DOWNLOAD_INVOICE = "download-invoice",
+  COMPLETE_CHECKOUT = "complete_checkout",
 }

@@ -10,7 +10,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { DashboardMainHeader } from "@/components/reusable/shared";
 import { Handshake, Sparkles } from "lucide-react";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { animations } from "@/utils/animations/animations";
 import { Link } from "react-router-dom";
 import { BlurFade } from "@/components/magicui/blur-fade";
@@ -20,10 +20,7 @@ const UserDashboardMain = () => {
   const [isOpen, setIsOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const sideBarRef = useRef<HTMLElement>(null);
-  const {
-    user,
-    userLoading
-  } = useAuthContext()
+  const { user, userLoading } = useAuthContext();
   useGSAP(() => {
     const tl = gsap.timeline({
       defaults: {
@@ -75,7 +72,9 @@ const UserDashboardMain = () => {
             <DashboardMainHeader
               mainIcon={<Handshake className="size-8 stroke-3" />}
               mainHeading={
-                userLoading ? "Welcome back, ..." : `Welcome back, ${user?.username || "Guest"}!`
+                userLoading
+                  ? "Welcome back, ..."
+                  : `Welcome back, ${user?.username || "Guest"}!`
               }
               subIcon={
                 <Sparkles className="size-5 text-cyan-100 dark:text-orange-100" />

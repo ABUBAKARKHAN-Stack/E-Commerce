@@ -39,9 +39,17 @@ interface StaticCategory {
 
 const staticCategoriesData: StaticCategory[] = [
   { icon: <LaptopIcon size={50} />, title: "Laptops", category: "laptops" },
-  { icon: <SmartphoneIcon size={50} />, title: "Smartphones", category: "smartphones" },
+  {
+    icon: <SmartphoneIcon size={50} />,
+    title: "Smartphones",
+    category: "smartphones",
+  },
   { icon: <TvIcon size={50} />, title: "Televisions", category: "televisions" },
-  { icon: <WatchIcon size={50} />, title: "Smartwatches", category: "smartwatches" },
+  {
+    icon: <WatchIcon size={50} />,
+    title: "Smartwatches",
+    category: "smartwatches",
+  },
   { icon: <GamepadIcon size={50} />, title: "Gaming", category: "gaming" },
   { icon: <CameraIcon size={50} />, title: "Cameras", category: "cameras" },
 ];
@@ -152,7 +160,11 @@ const categoryOptions = [
       { value: "motherboards", label: "Motherboards", group: "components" },
       { value: "ram", label: "RAM", group: "components" },
       { value: "storage", label: "Storage (SSD/HDD)", group: "components" },
-      { value: "power-supply", label: "Power Supply Units", group: "components" },
+      {
+        value: "power-supply",
+        label: "Power Supply Units",
+        group: "components",
+      },
     ],
   },
   {

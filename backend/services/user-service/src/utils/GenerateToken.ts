@@ -13,6 +13,6 @@ export function generateToken(payload: Record<string, unknown>, expiry: string):
 
     const token = jwt.sign(payload, secret, {
         expiresIn: expiry as jwt.SignOptions["expiresIn"]
-    })
-    return token
+    }) 
+    return token;
 }

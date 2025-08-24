@@ -3,16 +3,15 @@ import { formatDate } from "date-fns";
 import { FC } from "react";
 
 type Props = {
-  confirmedAt: string
+  confirmedAt: string;
   deliveryDate: string;
   className?: string;
 };
 
 const DeliveryInfo: FC<Props> = ({ confirmedAt, deliveryDate, className }) => {
-
   const getFormattedDateAndTime = (date: string) => {
-    return formatDate(new Date(date), 'MMM dd, yyyy • hh:mm a')
-  }
+    return formatDate(new Date(date), "MMM dd, yyyy • hh:mm a");
+  };
 
   return (
     <div

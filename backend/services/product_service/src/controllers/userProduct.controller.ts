@@ -78,8 +78,11 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
 
         //* If no products match after filtering/sorting
         if (cachedProducts.length === 0) {
-            throw new ApiError(404, "No products match your criteria");
+            res.status(200).json(
+                new ApiResponse(200, "No products match your criteria. Try adjusting or removing some filters."));
+            return;
         }
+
         let startIndex;
         let endIndex;
         if (pagination.page && pagination.limit) {
@@ -87,9 +90,10 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
             endIndex = pagination.page * pagination.limit;
         }
 
+        const totalProducts = cachedProducts.length;
+        const totalPages = Math.ceil(totalProducts / pagination.limit) || 0
         const paginatedProducts = cachedProducts.slice(startIndex, endIndex);
 
-        console.log(paginatedProducts, startIndex, endIndex);
 
 
 
@@ -98,7 +102,10 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
             .status(200)
             .json(new ApiResponse(200, "Products fetched from cache", {
                 products: paginatedProducts,
-                totalProducts: cachedProducts.length
+                totalProducts,
+                page: pagination.page,
+                limit: pagination.limit,
+                totalPages,
             }));
         return;
     }
@@ -128,25 +135,19 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
 
     //* Fetch products from DB with applied filters and sorting
     const products = await productModel
-        .find(query)
+        .find(query, { reviews: 0, updatedAt: 0, createdAt: 0, thumbnails: { $slice: 1 } })
         .sort(sortOptions)
         .limit(pagination.limit)
-        .skip((pagination.page - 1) * pagination.limit);
+        .skip((pagination.page - 1) * pagination.limit)
 
-    const totalProducts = await productModel.countDocuments(query)
+    const totalProducts = await productModel.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / pagination.limit) || 0;
 
     if (products.length === 0) {
-        throw new ApiError(404, "Products not found");
-    }
-
-
-    //* Store fetched products in Redis cache for future use
-    if (redisClient?.status === 'ready') {
-        const fullFilteredProducts = await productModel
-            .find(query)
-            .sort(sortOptions)
-        await redisClient?.set("products", JSON.stringify(fullFilteredProducts));
-        await redisClient?.expire("products", 60 * 30); //* Cache for 30 minutes
+        res.status(200).json(
+            new ApiResponse(200, "No products match your criteria. Try adjusting or removing some filters.")
+        );
+        return;
     }
 
     //* Send DB products as response
@@ -154,8 +155,19 @@ const getAllProducts = expressAsyncHandler(async (req: Request, res: Response) =
         .status(200)
         .json(new ApiResponse(200, "Products fetched successfully", {
             products,
-            totalProducts
+            totalProducts,
+            page: pagination.page,
+            limit: pagination.limit,
+            totalPages
         }));
+
+
+    //* Store fetched products in Redis cache for future use
+    const storeProductsInCache = await productModel.find({}, { reviews: 0, updatedAt: 0, createdAt: 0, thumbnails: { $slice: 1 } })
+    await redisClient?.set("products", storeProductsInCache, {
+        ex: 600
+    });
+
 });
 
 
@@ -166,17 +178,33 @@ const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
 
 
     if (token) {
-        const decodedToken = jwt.verify(token, env.JWT_SECRET!) as JwtUpdatedPayload;
-        userId = decodedToken.userId;
+        try {
+            const decodedToken = jwt.verify(
+                token,
+                env.JWT_SECRET!
+            ) as JwtUpdatedPayload;
+
+            if (decodedToken && decodedToken.userId) {
+                userId = decodedToken.userId;
+            }
+        } catch (err) {
+            console.warn("Invalid or expired token, skipping activity tracking");
+        }
     }
+
 
     if (cachedProduct) {
         if (userId) {
-            await publishEvent('activity.user.product.view', ActivityType.VIEW_PRODUCT, {
-                userId: userId,
-                activityType: ActivityType.VIEW_PRODUCT,
-                activityDescription: `${cachedProduct.name} was viewed.`
-            });
+            try {
+                await publishEvent('activity.user.product.view', ActivityType.VIEW_PRODUCT, {
+                    userId: userId,
+                    activityType: ActivityType.VIEW_PRODUCT,
+                    activityDescription: `${cachedProduct.name} was viewed.`
+                });
+            } catch (error) {
+                console.warn("ERROR WHILE PUBLISHING VIEW PRODUCT EVENT");
+            }
+
         }
         console.log("🚀 Fetched product from cache");
         res
@@ -188,14 +216,19 @@ const getProduct = expressAsyncHandler(async (req: Request, res: Response) => {
     if (!product) {
         throw new ApiError(404, "Product not found")
     }
-    await redisClient.set(`product:${product._id}`, JSON.stringify(product));
-    await redisClient.expire(`product:${product._id}`, 60 * 30);
+    await redisClient.set(`product:${product._id}`, product, {
+        ex: 600
+    });
     if (userId) {
-        await publishEvent('activity.user.product.view', ActivityType.VIEW_PRODUCT, {
-            userId: userId,
-            activityType: ActivityType.VIEW_PRODUCT,
-            activityDescription: `${product.name} was viewed.`
-        });
+        try {
+            await publishEvent('activity.user.product.view', ActivityType.VIEW_PRODUCT, {
+                userId: userId,
+                activityType: ActivityType.VIEW_PRODUCT,
+                activityDescription: `${product.name} was viewed.`
+            });
+        } catch (error) {
+            console.warn("ERROR WHILE PUBLISHING VIEW PRODUCT EVENT");
+        }
     }
 
     res
@@ -266,7 +299,6 @@ const getCategories = expressAsyncHandler(async (req: Request, res: Response) =>
     let categories = [...new Set(products.map((p) => p.category))]
     categories.unshift('all')
 
-
     res
         .status(200)
         .json(new ApiResponse(200, "Categories Fetched", categories))
@@ -311,6 +343,49 @@ const topCategories = expressAsyncHandler(async (req: Request, res: Response) =>
     res
         .status(200)
         .json(new ApiResponse(200, "Top Categories Fetched", categories))
+
+})
+
+//* Get Top Ratted Products 
+const topProducts = expressAsyncHandler(async (req: Request, res: Response) => {
+
+    const cacheKey = "top-products";
+    const cachedTopProducts: IProduct[] | null = await redisClient.get(cacheKey);
+
+    if (cachedTopProducts && cachedTopProducts.length > 0) {
+        console.log("🚀 Top products fetched from cache");
+
+        res
+            .status(200)
+            .json(new ApiResponse(200, "Top Rated Products (from cache)", cachedTopProducts));
+        return;
+    }
+
+    const products = await productModel
+        .find({
+            avgRating: { $gte: 4 }
+        }, { reviews: 0, createdAt: 0, updatedAt: 0, thumbnails: { $slice: 1 } })
+        .sort({
+            avgRating: -1
+        })
+        .limit(5)
+        .lean();
+
+    if (products.length === 0) {
+        res
+            .status(200)
+            .json(new ApiResponse(200, "Currently No Products Available"));
+        return;
+    }
+
+    res
+        .status(200)
+        .json(new ApiResponse(200, "Top Rated Products", products));
+
+    await redisClient.set(cacheKey, products, {
+        ex: 600
+    });
+
 
 })
 
@@ -600,49 +675,7 @@ const getAllReviews = expressAsyncHandler(async (req: Request, res: Response) =>
 
 })
 
-//* Get Top Ratted Products 
-const topProducts = expressAsyncHandler(async (req: Request, res: Response) => {
 
-    const cacheKey = "top-products";
-    const cached = await redisClient.get(cacheKey);
-
-    if (cached) {
-        console.log("🚀 Top products fetched from cache");
-
-        const products = JSON.parse(cached);
-        res
-            .status(200)
-            .json(new ApiResponse(200, "Top Rated Products (from cache)", products));
-        return;
-
-
-    }
-
-    const products = await productModel
-        .find({
-            avgRating: { $gte: 4 }
-        })
-        .sort({
-            avgRating: -1
-        })
-        .limit(5)
-        .lean();
-
-    if (products.length === 0) {
-        res
-            .status(200)
-            .json(new ApiResponse(200, "Currently No Products Available"));
-        return;
-    }
-
-    await redisClient.set(cacheKey, JSON.stringify(products));
-    await redisClient.expire(cacheKey, 60 * 15)
-
-    res
-        .status(200)
-        .json(new ApiResponse(200, "Top Rated Products", products));
-
-})
 
 //? Wishlist Controller Functions
 
@@ -691,7 +724,6 @@ const addToWishList = expressAsyncHandler(async (req: Request, res: Response) =>
 })
 
 //* Remove Product from Wishlist
-
 const removeFromWishList = expressAsyncHandler(async (req: Request, res: Response) => {
     const { productId } = req.params;
     const { user } = res.locals;

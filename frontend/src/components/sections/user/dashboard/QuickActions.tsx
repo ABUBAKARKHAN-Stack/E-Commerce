@@ -1,5 +1,5 @@
 import { DashboardSectionHeader } from "@/components/reusable/shared";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -14,7 +14,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { animations } from "@/utils/animations/animations";
 import { AuthLoadingStates } from "@/types/main.types";
-import ShoppingCartLoader from "@/components/reusable/shared/loaders/ShoppingCartLoader";
+import ShoppingCartLoader from "@/components/Skeleton&Loaders/loaders/ShoppingCartLoader";
 gsap.registerPlugin(ScrollTrigger);
 
 const QuickActions = () => {
@@ -98,7 +98,7 @@ const QuickActions = () => {
         animateClassName="quick-actions-header"
       />
 
-      <div className="grid grid-cols-1  gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {quickLinks.map(
           ({ id, title, icon: Icon, href, description, onClick }) => {
             const sharedClasses =
@@ -110,18 +110,17 @@ const QuickActions = () => {
                   key={id}
                   onClick={onClick}
                   disabled={logoutLoading}
-                  className={`${sharedClasses} disabled:!opacity-30 disabled:!cursor-not-allowed cursor-pointer`}
+                  className={`${sharedClasses} cursor-pointer disabled:!cursor-not-allowed disabled:!opacity-30`}
                 >
-                  {
-                    logoutLoading ? <>
-                      <ShoppingCartLoader
-                        isUsingInButton
-                        className="size-14"
-                      />
+                  {logoutLoading ? (
+                    <>
+                      <ShoppingCartLoader isUsingInButton className="size-14" />
                       <h4 className="px-2 text-center font-semibold text-wrap uppercase">
                         Signing you out...
                       </h4>
-                    </> : <>
+                    </>
+                  ) : (
+                    <>
                       <Icon size={40} />
                       <h4 className="px-2 text-center font-semibold text-wrap uppercase">
                         {title}
@@ -130,7 +129,7 @@ const QuickActions = () => {
                         {description}
                       </p>
                     </>
-                  }
+                  )}
                 </button>
               );
             }

@@ -6,7 +6,7 @@ import {
   UpdateProfileForm,
 } from "@/components/reusable/shared";
 import { Button } from "@/components/ui/button";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { IdCard, Lock, User } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 
@@ -37,7 +37,7 @@ const AdminProfileMain = () => {
           <div className="space-y-10 px-4">
             <DashboardMainHeader
               mainIcon={<User className="size-8 stroke-3" />}
-              mainHeading={`Account Overview – ${userLoading ? "...." :(user?.username ?? "Admin")}`}
+              mainHeading={`Account Overview – ${userLoading ? "...." : (user?.username ?? "Admin")}`}
               subIcon={
                 <IdCard className="size-5 text-cyan-100 dark:text-orange-100" />
               }

@@ -4,11 +4,12 @@ import CategoryBadge from "./CategoryBadge";
 import { Star } from "lucide-react";
 import { IProduct, IUser } from "@/types/main.types";
 import { FC, useState } from "react";
-import { useAuthContext } from "@/context/authContext";
-import { useProductContext } from "@/context/productContext";
+import { useAuthContext } from "@/context/auth.context";
+import { useProductContext } from "@/context/product.context";
 import ProductQuantitySelector from "./ProductQuantitySelector";
 import AddToCartButton from "./AddToCartButton";
 import { useTheme } from "next-themes";
+import { useWishlistContext } from "@/context/wishlist.context";
 
 type Props = {
   product: IProduct;
@@ -35,9 +36,11 @@ const ProductCard: FC<Props> = ({
   } = product;
   const { resolvedTheme } = useTheme();
   const { user } = useAuthContext();
-  const { wishlist } = useProductContext();
+  const { wishlist, useWishlist } = useWishlistContext();
   const [quantityCount, setQuantityCount] = useState(1);
   const isDark = resolvedTheme === "dark";
+
+  const { data: wishlistFromApi } = useWishlist();
 
   return (
     <>
@@ -55,7 +58,7 @@ const ProductCard: FC<Props> = ({
             <ProductCardHeaderButtons
               productId={_id}
               user={user as IUser}
-              wishlist={wishlist}
+              wishlist={wishlistFromApi || wishlist}
               usingLoaderData={usingLoaderData}
             />
             <CategoryBadge category={category} />

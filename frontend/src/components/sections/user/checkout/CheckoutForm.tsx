@@ -3,7 +3,7 @@ import { IShippingAddress, PaymentMethod } from "@/types/main.types";
 import { CreditCard, LoaderPinwheel } from "lucide-react";
 import { FC, FormEvent, useEffect, useRef, useState } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import { useProductContext } from "@/context/productContext";
+import { useProductContext } from "@/context/product.context";
 import { errorToast, successToast } from "@/utils/toastNotifications";
 import { useNavigate } from "react-router-dom";
 import { ApiError } from "@/utils/ApiError";

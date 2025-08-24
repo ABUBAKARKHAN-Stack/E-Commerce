@@ -9,7 +9,7 @@ type Props = {
   products: any[];
   totalAmount: number;
   confirmedAt: string;
-  deliveryDate: string
+  deliveryDate: string;
   shippingMethod: string;
   shipping: number;
 };
@@ -21,7 +21,7 @@ const CheckoutOrderReceipt: FC<Props> = ({
   confirmedAt,
   shippingMethod,
   shipping,
-  deliveryDate
+  deliveryDate,
 }) => {
   return (
     <div
@@ -92,10 +92,7 @@ const CheckoutOrderReceipt: FC<Props> = ({
         </div>
 
         {/* Estimated Delivery Box */}
-        <DeliveryInfo
-          confirmedAt={confirmedAt}
-          deliveryDate={deliveryDate}
-        />
+        <DeliveryInfo confirmedAt={confirmedAt} deliveryDate={deliveryDate} />
       </div>
     </div>
   );

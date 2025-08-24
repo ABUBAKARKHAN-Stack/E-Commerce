@@ -8,7 +8,7 @@ import {
   UpdateProfileForm,
 } from "@/components/reusable/shared";
 import { IdCard, Lock, User } from "lucide-react";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { Button } from "@/components/ui/button";
 
 const UserProfileMain = () => {

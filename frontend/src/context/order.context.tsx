@@ -9,7 +9,6 @@ import {
 } from "react";
 import {
   getAllOrders as getAllOrdersApi,
-  userTrackOrder as userTrackOrderApi,
   cancelOrder as cancelOrderApi,
   downloadOrderInvoice as downloadOrderInvoiceApi,
 } from "@/API/userApi";
@@ -18,19 +17,22 @@ import {
   ApiErrorType,
   IOrder,
   OrderedProduct,
-  OrderLoading,
+  OrderLoadingStates,
 } from "@/types/main.types";
 import { errorToast, successToast } from "@/utils/toastNotifications";
+import { useOrderQuery } from "@/hooks/useOrderQuery";
+import { UseQueryResult } from "@tanstack/react-query";
 
 type OrderContextType = {
-  userTrackOrder: (orderId: string, navigate: (path: string) => void) => Promise<void>;
+  orderLoading: OrderLoadingStates;
+  proceedToCheckout: (navigate: (path: string) => void) => void;
+  userTrackOrder: (orderId: string, navigate: (path: string) => void) => void;
   getAllOrders: (params?: any) => Promise<any>;
   ordersData: IOrder[];
   setOrdersData: Dispatch<SetStateAction<IOrder[]>>;
   pendingOrders: any[];
   cancelledOrders: any[];
   confirmedOrders: any[];
-  loading: string | null;
   cancelOrder: (orderId: string) => Promise<void>;
   ordersCount: number;
   downloadOrderInvoice: (
@@ -42,37 +44,35 @@ type OrderContextType = {
 const OrderContext = createContext<OrderContextType | null>(null);
 
 const OrderProvider = ({ children }: { children: ReactNode }) => {
-  const [loading, setLoading] = useState<string | null>(null);
+  const [orderLoading, setOrderLoading] = useState<OrderLoadingStates>(
+    OrderLoadingStates.IDLE,
+  );
   const [pendingOrders, setPendingOrders] = useState([]);
   const [cancelledOrders, setCancelledOrders] = useState([]);
   const [confirmedOrders, setConfirmedOrders] = useState([]);
   const [ordersData, setOrdersData] = useState<IOrder[]>([]);
   const [ordersCount, setOrdersCount] = useState(0);
 
-  const userTrackOrder = async (
+  const { useProceedToCheckout, useUserTrackOrder } = useOrderQuery();
+  const proceedToCheckoutMutation = useProceedToCheckout(setOrderLoading);
+  const userTrackOrderMutation = useUserTrackOrder(setOrderLoading);
+
+  const proceedToCheckout = (navigate: (path: string) => void) => {
+    proceedToCheckoutMutation.mutate(navigate);
+  };
+
+  const userTrackOrder = (
     orderId: string,
     navigate: (path: string) => void,
   ) => {
-    try {
-      setLoading(OrderLoading.TRACK_ORDER_LOADING);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const res = await userTrackOrderApi(orderId);
-
-      if (res.status === 200) {
-        successToast(res.data.message);
-        navigate(`/track-order?orderId=${res.data.data.orderId}`);
-      }
-    } catch (error) {
-      const err = error as AxiosError<ApiErrorType>;
-      const errMsg = err.response?.data.message || "Something went wrong";
-      errorToast(errMsg);
-    } finally {
-      setLoading(null);
-    }
+    userTrackOrderMutation.mutate({
+      navigate,
+      orderId,
+    });
   };
 
   const getAllOrders = async (params?: any) => {
-    setLoading(OrderLoading.GET_ALL_ORDERS);
+    setOrderLoading(OrderLoadingStates.GET_ALL_ORDERS);
     try {
       const res = await getAllOrdersApi(params);
 
@@ -96,7 +96,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       const err = error as AxiosError<ApiErrorType>;
       console.log(err);
     } finally {
-      setLoading(null);
+      setOrderLoading(OrderLoadingStates.IDLE);
     }
   };
 
@@ -107,7 +107,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const cancelOrder = async (orderId: string) => {
-    setLoading(OrderLoading.CANCEL_ORDER);
+    setOrderLoading(OrderLoadingStates.CANCEL_ORDER);
     try {
       const res = await cancelOrderApi(orderId);
       if (res.status === 200) {
@@ -118,7 +118,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       const errMsg = err.response?.data.message || "Something went wrong";
       errorToast(errMsg);
     } finally {
-      setLoading(null);
+      setOrderLoading(OrderLoadingStates.IDLE);
     }
   };
 
@@ -126,7 +126,7 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
     orderId: string,
     products: OrderedProduct[],
   ) => {
-    setLoading(OrderLoading.DOWNLOAD_INVOICE);
+    setOrderLoading(OrderLoadingStates.DOWNLOAD_INVOICE);
     try {
       const res = await downloadOrderInvoiceApi(orderId, products);
       if (res.status === 200) {
@@ -146,13 +146,15 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
       const errMsg = err.response?.data.message || "Something went wrong";
       errorToast(errMsg);
     } finally {
-      setLoading(null);
+      setOrderLoading(OrderLoadingStates.IDLE);
     }
   };
 
   return (
     <OrderContext.Provider
       value={{
+        orderLoading,
+        proceedToCheckout,
         userTrackOrder,
         getAllOrders,
         pendingOrders,
@@ -163,7 +165,6 @@ const OrderProvider = ({ children }: { children: ReactNode }) => {
         setOrdersData,
         ordersData,
         ordersCount,
-        loading,
       }}
     >
       {children}

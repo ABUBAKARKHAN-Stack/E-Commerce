@@ -1,6 +1,6 @@
 import { Layout } from "@/components/layout/shared";
 import { SectionHeader } from "@/components/reusable/user";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import React from "react";
 import TrackOrderForm from "./TrackOrderForm";
 import { BlurFade } from "@/components/magicui/blur-fade";
@@ -13,7 +13,7 @@ const TrackOrder = () => {
         <SectionHeader
           animateOnce
           mainHeading="Track Your Order"
-          subText={`Hey ${userLoading ? "..." : user?.username ?? "Guest"}, stay updated with your order status and delivery progress.`}
+          subText={`Hey ${userLoading ? "..." : (user?.username ?? "Guest")}, stay updated with your order status and delivery progress.`}
         />
         <section className="mt-10 w-full">
           <BlurFade

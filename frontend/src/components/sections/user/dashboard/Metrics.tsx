@@ -1,7 +1,7 @@
 import { DashboardSectionHeader } from "@/components/reusable/shared";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useOrderContext } from "@/context/orderContext";
-import { useProductContext } from "@/context/productContext";
+import { useOrderContext } from "@/context/order.context";
+import { useProductContext } from "@/context/product.context";
 import { animations } from "@/utils/animations/animations";
 import { useGSAP } from "@gsap/react";
 import {

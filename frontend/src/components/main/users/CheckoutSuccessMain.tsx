@@ -17,9 +17,8 @@ const CheckoutSuccessMain = () => {
     confirmedAt,
     shippingMethod,
     shipping,
-    deliveryDate
+    deliveryDate,
   } = useLoaderData();
- 
 
   const containerRef = useRef(null);
   const checkIconRef = useRef(null);

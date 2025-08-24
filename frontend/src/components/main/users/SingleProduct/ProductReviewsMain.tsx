@@ -1,13 +1,23 @@
 import { Layout } from "@/components/layout/shared";
 import { AddReviewForm, SectionHeader } from "@/components/reusable/user";
 import { ProductReviewsList } from "@/components/sections/user";
+import { useProductContext } from "@/context/product.context";
 import { FC } from "react";
+import { useLoaderData } from "react-router-dom";
 
 type Props = {
   productId: string;
 };
 
-const ProductReviewsMain: FC<Props> = ({ productId }) => {
+const ProductReviewsMain: FC<Props> = () => {
+  const { productId } = useLoaderData();
+
+  const { useProduct } = useProductContext();
+
+  const { data } = useProduct(productId);
+
+  console.log(data);
+
   return (
     <main className="relative h-full w-full min-w-screen overflow-x-hidden border-b-2 bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] py-10 backdrop-blur-xl dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F]">
       <Layout>

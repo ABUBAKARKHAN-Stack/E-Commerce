@@ -23,5 +23,5 @@ export {
   AdminResetPasswordMain,
   AdminProfileMain,
   AdminOrdersMain,
-  AdminOrderDetailsMain 
+  AdminOrderDetailsMain,
 };

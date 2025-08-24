@@ -1,70 +1,60 @@
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Separator } from '@/components/ui/separator'
-import { AdminOrderFiltersType, ShippingMethod, } from '@/types/main.types';
-import { Dispatch, FC, SetStateAction } from 'react';
-
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { AdminOrderFiltersType, ShippingMethod } from "@/types/main.types";
+import { Dispatch, FC, SetStateAction } from "react";
 
 type Props = {
-    filters: AdminOrderFiltersType;
-    setFilters: Dispatch<SetStateAction<AdminOrderFiltersType>>
-}
-const ShippingMethodFilter: FC<Props> = ({
-    filters,
-    setFilters
-}) => {
+  filters: AdminOrderFiltersType;
+  setFilters: Dispatch<SetStateAction<AdminOrderFiltersType>>;
+};
+const ShippingMethodFilter: FC<Props> = ({ filters, setFilters }) => {
+  const filterByShippingMethod = [
+    {
+      label: "Express",
+      value: ShippingMethod.EXPRESS,
+      id: "shipping-method-express",
+    },
+    {
+      label: "Standard",
+      value: ShippingMethod.STANDARD,
+      id: "shipping-method-standard",
+    },
+    { label: "Free", value: ShippingMethod.FREE, id: "shipping-method-free" },
+  ];
 
+  return (
+    <div className="flex flex-col gap-y-3">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-300">
+          Filter By Shipping Method:
+        </h3>
+        <Separator />
+      </div>
+      <RadioGroup
+        value={filters.shippingMethod || ""}
+        onValueChange={(value) =>
+          setFilters((prev) => ({
+            ...prev,
+            shippingMethod: value,
+          }))
+        }
+        className="flex flex-wrap gap-4"
+      >
+        {filterByShippingMethod.map(({ label, value, id }, i) => (
+          <div key={i} className="flex items-center gap-x-2">
+            <Label htmlFor={id} className="cursor-pointer">
+              {label}
+            </Label>
+            <RadioGroupItem value={value} id={id} className="cursor-pointer" />
+            {filterByShippingMethod.length - 1 > i && (
+              <Separator orientation="vertical" />
+            )}
+          </div>
+        ))}
+      </RadioGroup>
+    </div>
+  );
+};
 
-    const filterByShippingMethod = [
-        { label: "Express", value: ShippingMethod.EXPRESS, id: "shipping-method-express" },
-        { label: "Standard", value: ShippingMethod.STANDARD, id: "shipping-method-standard" },
-        { label: "Free", value: ShippingMethod.FREE, id: "shipping-method-free" },
-    ]
-
-    return (
-        <div className='flex flex-col gap-y-3'>
-            <div>
-                <h3 className='text-lg font-semibold dark:text-gray-300 text-gray-900'>Filter By Shipping Method:</h3>
-                <Separator />
-            </div>
-            <RadioGroup
-                value={filters.shippingMethod || ""}
-                onValueChange={(value) => setFilters((prev) => ({
-                    ...prev, shippingMethod: value
-                }))}
-                className='flex flex-wrap gap-4'
-            >
-                {filterByShippingMethod.map(({
-                    label,
-                    value,
-                    id
-                }, i) => (
-                    <div
-                        key={i}
-                        className='flex items-center gap-x-2'>
-                        <Label
-                            htmlFor={id}
-                            className='cursor-pointer'
-                        >
-                            {label}
-                        </Label>
-                        <RadioGroupItem
-                            value={value}
-                            id={id}
-                            className='cursor-pointer'
-                        />
-                        {
-                            filterByShippingMethod.length - 1 > i && <Separator
-                                orientation="vertical"
-                            />
-                        }
-                    </div>
-                ))}
-
-            </RadioGroup>
-        </div>
-
-    )
-}
-
-export default ShippingMethodFilter
+export default ShippingMethodFilter;

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { updateProfileFields } from "@/constants/formFields";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import {
   adminUpdateProfileSchema,
   updateProfileSchema,
@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import ButtonLoader from "./loaders/ButtonLoader";
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders";
 
 type Props = {
   isAdmin?: boolean;
@@ -27,7 +27,8 @@ type Props = {
 
 const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
   const { user, updateProfile, loading } = useAuthContext();
-  const updateProfileLoading = loading === AuthLoadingStates.UPDATE_PROFILE_LOADING;
+  const updateProfileLoading =
+    loading === AuthLoadingStates.UPDATE_PROFILE_LOADING;
   const [isEditing, setIsEditing] = useState(false);
 
   const schema = isAdmin ? adminUpdateProfileSchema : updateProfileSchema;
@@ -100,7 +101,9 @@ const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
                       {...field}
                       readOnly={!isEditing}
                       disabled={!isEditing}
-                      className={!isEditing ? "bg-muted cursor-not-allowed" : ""}
+                      className={
+                        !isEditing ? "bg-muted cursor-not-allowed" : ""
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -117,11 +120,11 @@ const UpdateProfileForm: FC<Props> = ({ isAdmin = false }) => {
               disabled={!form.formState.isDirty || updateProfileLoading}
               className="w-fit"
             >
-              {
-                updateProfileLoading ? <ButtonLoader
-                  loaderText="Updating Profile..."
-                /> : "Update Profile"
-              }
+              {updateProfileLoading ? (
+                <ButtonLoader loaderText="Updating Profile..." />
+              ) : (
+                "Update Profile"
+              )}
             </Button>
           </div>
         )}

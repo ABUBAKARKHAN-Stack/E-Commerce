@@ -1,3 +1,4 @@
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ICartedProduct } from "@/types/main.types";
@@ -17,6 +18,7 @@ type Props = {
   handleUpdateQuantity: (productId: string) => void;
   quantityInputs: { [key: string]: string };
   newAddedQuantities: { [key: string]: number };
+  updateCartLoading: boolean;
 };
 
 const CartQuantitySelector: FC<Props> = ({
@@ -28,6 +30,7 @@ const CartQuantitySelector: FC<Props> = ({
   handleUpdateQuantity,
   quantityInputs,
   newAddedQuantities,
+  updateCartLoading,
 }) => {
   return (
     <div className="w-40">
@@ -49,7 +52,7 @@ const CartQuantitySelector: FC<Props> = ({
             onChange={(e) =>
               handleInputChange(product._id, e.target.value, product)
             }
-            value={quantityInputs[product._id] || product.cartedProductQunatity}
+            value={quantityInputs[product._id] || product.cartedProductQuantity}
           />
         </div>
         <Separator orientation="vertical" />
@@ -65,14 +68,20 @@ const CartQuantitySelector: FC<Props> = ({
       </div>
 
       {/* Update Button - Only show if quantity changed */}
+
       {newAddedQuantities[product._id] !== 0 && (
         <Button
           size="sm"
           variant="outline"
           className="mt-2 w-full text-xs"
           onClick={() => handleUpdateQuantity(product._id)}
+          disabled={updateCartLoading}
         >
-          Update Quantity
+          {updateCartLoading ? (
+            <ButtonLoader size="size-4" loaderText="Updating Quantity..." />
+          ) : (
+            "Update Quantity"
+          )}
         </Button>
       )}
     </div>

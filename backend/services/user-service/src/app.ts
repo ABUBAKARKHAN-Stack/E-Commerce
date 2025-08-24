@@ -14,12 +14,15 @@ app.use(urlencoded({
 
 app.use(cookieparser())
 
+import { internetCheck } from './middlewares/interchecker.middlewares'
+app.use(internetCheck)
+
 //* Importing  user routes
 import userRoutes from './routes/user.routes';
 import errorHandler from './middlewares/errorHandler.middleware';
 import { cartEventConsumer, orderEventConsumer, wishListEventConsumer } from './utils/kafka';
 
-app.use("/", userRoutes); 
+app.use("/", userRoutes);
 
 //* Importing  cart routes
 import cartRoutes from './routes/cart.routes';
@@ -28,7 +31,7 @@ Promise.all([
     cartEventConsumer(),
     wishListEventConsumer(),
     orderEventConsumer(),
-    
+
 ])
     .then(() => {
         console.log("All consumers are running");
@@ -37,7 +40,7 @@ Promise.all([
         console.log("Error while running consumers :: ", error);
     })
 
-const PORT = env.PORT ||  3001;
+const PORT = env.PORT || 3001;
 
 app.use(errorHandler);
 

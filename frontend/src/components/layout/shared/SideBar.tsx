@@ -1,10 +1,5 @@
 "use client";
-import {
-  Dispatch,
-  forwardRef,
-  SetStateAction,
-
-} from "react";
+import { Dispatch, forwardRef, SetStateAction } from "react";
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -18,9 +13,10 @@ import {
 } from "lucide-react";
 import { Button } from "../../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "../../ui/sheet";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ButtonLoader, ToolTip } from "@/components/reusable/shared";
+import { ToolTip } from "@/components/reusable/shared";
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders";
 import { AuthLoadingStates } from "@/types/main.types";
 type Props = {
   isDrawerOpen: boolean;
@@ -37,64 +33,64 @@ const Sidebar = forwardRef<HTMLElement, Props>(
     const sideBarItems =
       role === "admin"
         ? [
-          {
-            icon: <LayoutDashboard strokeWidth={3} className="h-5 w-5" />,
-            text: "Dashboard",
-            path: "/admin/dashboard",
-          },
-          {
-            icon: <Package strokeWidth={3} className="h-5 w-5" />,
-            text: "Products",
-            path: "/admin/products",
-          },
-          {
-            icon: <ShoppingBag strokeWidth={3} className="h-5 w-5" />,
-            text: "Orders",
-            path: "/admin/orders",
-          },
-          {
-            icon: <BarChart3 strokeWidth={3} className="h-5 w-5" />,
-            text: "Analytics",
-            path: "/admin/analytics",
-          },
-          {
-            icon: <User strokeWidth={3} className="h-5 w-5" />,
-            text: "Profile",
-            path: "/admin/me",
-          },
-        ]
+            {
+              icon: <LayoutDashboard strokeWidth={3} className="h-5 w-5" />,
+              text: "Dashboard",
+              path: "/admin/dashboard",
+            },
+            {
+              icon: <Package strokeWidth={3} className="h-5 w-5" />,
+              text: "Products",
+              path: "/admin/products",
+            },
+            {
+              icon: <ShoppingBag strokeWidth={3} className="h-5 w-5" />,
+              text: "Orders",
+              path: "/admin/orders",
+            },
+            {
+              icon: <BarChart3 strokeWidth={3} className="h-5 w-5" />,
+              text: "Analytics",
+              path: "/admin/analytics",
+            },
+            {
+              icon: <User strokeWidth={3} className="h-5 w-5" />,
+              text: "Profile",
+              path: "/admin/me",
+            },
+          ]
         : [
-          {
-            icon: <Home strokeWidth={3} className="h-5 w-5" />,
-            text: "Home",
-            path: "/",
-          },
-          {
-            icon: <LayoutDashboard strokeWidth={3} className="h-5 w-5" />,
-            text: "Dashboard",
-            path: "/dashboard",
-          },
-          {
-            icon: <ShoppingBag strokeWidth={3} className="h-5 w-5" />,
-            text: "Orders",
-            path: "/orders",
-          },
-          {
-            icon: <Heart strokeWidth={3} className="h-5 w-5" />,
-            text: "WishList",
-            path: "/wishlist",
-          },
-          {
-            icon: <ShoppingCart strokeWidth={3} className="h-5 w-5" />,
-            text: "Cart",
-            path: "/cart",
-          },
-          {
-            icon: <User strokeWidth={3} className="h-5 w-5" />,
-            text: "Profile",
-            path: "/me",
-          },
-        ];
+            {
+              icon: <Home strokeWidth={3} className="h-5 w-5" />,
+              text: "Home",
+              path: "/",
+            },
+            {
+              icon: <LayoutDashboard strokeWidth={3} className="h-5 w-5" />,
+              text: "Dashboard",
+              path: "/dashboard",
+            },
+            {
+              icon: <ShoppingBag strokeWidth={3} className="h-5 w-5" />,
+              text: "Orders",
+              path: "/orders",
+            },
+            {
+              icon: <Heart strokeWidth={3} className="h-5 w-5" />,
+              text: "WishList",
+              path: "/wishlist",
+            },
+            {
+              icon: <ShoppingCart strokeWidth={3} className="h-5 w-5" />,
+              text: "Cart",
+              path: "/cart",
+            },
+            {
+              icon: <User strokeWidth={3} className="h-5 w-5" />,
+              text: "Profile",
+              path: "/me",
+            },
+          ];
 
     const handleNavigation = (path: string) => {
       navigate(path);
@@ -139,17 +135,18 @@ const Sidebar = forwardRef<HTMLElement, Props>(
                 ))}
                 <li>
                   <button
-                  disabled={logoutLoading}
-                  className="flex w-full disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer items-center gap-3 rounded-md p-3 transition-colors duration-200 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-zinc-700"
-                    onClick={() => logout(navigate)}>
-                    {
-                      logoutLoading ? <ButtonLoader
-                        loaderText="Signing Out..."
-                      /> : <>
+                    disabled={logoutLoading}
+                    className="flex w-full cursor-pointer items-center gap-3 rounded-md p-3 transition-colors duration-200 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-30 dark:text-gray-200 dark:hover:bg-zinc-700"
+                    onClick={() => logout(navigate)}
+                  >
+                    {logoutLoading ? (
+                      <ButtonLoader loaderText="Signing Out..." />
+                    ) : (
+                      <>
                         <LogOut strokeWidth={2.5} className="h-5 w-5" />
                         <span>Sign Out</span>
                       </>
-                    }
+                    )}
                   </button>
                 </li>
               </ul>
@@ -168,11 +165,12 @@ const Sidebar = forwardRef<HTMLElement, Props>(
                   key={i}
                   triggerValue={
                     <li
-                      className={`p-3 ${pathname === path ||
+                      className={`p-3 ${
+                        pathname === path ||
                         (path !== "/" && pathname.startsWith(path))
-                        ? "bg-cyan-500/90 text-white dark:bg-orange-500/90"
-                        : ""
-                        } cursor-pointer rounded-md text-gray-800 transition-colors duration-300 ease-in-out hover:bg-cyan-500 hover:text-white dark:text-gray-200 dark:hover:bg-orange-500`}
+                          ? "bg-cyan-500/90 text-white dark:bg-orange-500/90"
+                          : ""
+                      } cursor-pointer rounded-md text-gray-800 transition-colors duration-300 ease-in-out hover:bg-cyan-500 hover:text-white dark:text-gray-200 dark:hover:bg-orange-500`}
                       onClick={() => handleNavigation(path)}
                     >
                       {icon}

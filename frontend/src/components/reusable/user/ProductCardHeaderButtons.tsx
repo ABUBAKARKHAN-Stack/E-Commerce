@@ -22,6 +22,8 @@ const ProductCardHeaderButtons: FC<Props> = ({
   const [isInWishList, setIsInWishList] = useState(false);
   const [isViewing, setIsViewing] = useState(false);
 
+  console.log(wishlist);
+
   useEffect(() => {
     setIsInWishList(wishlist?.includes(productId));
   }, [wishlist, productId]);

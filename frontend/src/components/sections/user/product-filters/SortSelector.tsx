@@ -1,11 +1,12 @@
 import { Select } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { ProductFilterParams } from "@/types/main.types";
 import { ArrowDown01, ArrowDownAZ, Clock, SortAsc } from "lucide-react";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 
 type Props = {
   sortByValue: string;
-  setSortByValue: (value: string) => void;
+  setSortByValue: Dispatch<SetStateAction<ProductFilterParams>>;
 };
 const SortSelector: FC<Props> = ({ sortByValue, setSortByValue }) => {
   const selectOptions = [
@@ -56,7 +57,9 @@ const SortSelector: FC<Props> = ({ sortByValue, setSortByValue }) => {
       <Select
         options={selectOptions}
         value={sortByValue}
-        onChange={setSortByValue}
+        onChange={(value) =>
+          setSortByValue((prev) => ({ ...prev, sortBy: value }))
+        }
         placeholder="Sort By"
       />
     </div>

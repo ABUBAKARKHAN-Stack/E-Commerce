@@ -22,7 +22,7 @@ interface SelectProps {
   placeholder?: string;
   className?: string;
   disabled?: boolean;
-  selectContentColor?:string
+  selectContentColor?: string;
 }
 
 export function Select({
@@ -32,7 +32,7 @@ export function Select({
   placeholder = "Select an option…",
   className,
   disabled = false,
-  selectContentColor
+  selectContentColor,
 }: SelectProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
@@ -140,7 +140,7 @@ export function Select({
 
       {isOpen && (
         <div
-          className={`bg-accent ${selectContentColor}  text-popover-foreground mt-2 w-full overflow-auto rounded-md border shadow-md backdrop-blur-3xl`}
+          className={`bg-accent ${selectContentColor} text-popover-foreground mt-2 w-full overflow-auto rounded-md border shadow-md backdrop-blur-3xl`}
           role="listbox"
         >
           {filteredGroups.length === 0 ? (

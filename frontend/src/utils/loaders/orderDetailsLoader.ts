@@ -77,7 +77,7 @@ const confirmOrderDetailsLoader = async ({ request }: LoaderFunctionArgs) => {
     if (res.status === 200) {
       const orderId = res.data.data.orderId;
       const cart = res.data.data.cart;
-      const deliveryDate = res.data.data.deliveryDate
+      const deliveryDate = res.data.data.deliveryDate;
       const productIds = cart.products.map(
         ({ productId }: { productId: string }) => productId,
       );
@@ -109,7 +109,7 @@ const confirmOrderDetailsLoader = async ({ request }: LoaderFunctionArgs) => {
           orderStatus,
           shippingMethod,
           shipping,
-          deliveryDate
+          deliveryDate,
         };
       }
       throw new ApiError(bulk.status, "Failed to fetch bulk products");
@@ -144,7 +144,7 @@ const userTrackOrderLoader = async ({ request }: LoaderFunctionArgs) => {
     if (res.status === 200) {
       const orderId = res.data.data.orderId;
       const cart = res.data.data.cart;
-      const deliveryDate = res.data.data.deliveryDate
+      const deliveryDate = res.data.data.deliveryDate;
       const productIds = cart.products.map(
         ({ productId }: { productId: string }) => productId,
       );
@@ -176,16 +176,13 @@ const userTrackOrderLoader = async ({ request }: LoaderFunctionArgs) => {
           orderStatus,
           shippingMethod,
           shipping,
-          deliveryDate
+          deliveryDate,
         };
       }
       throw new ApiError(bulk.status, "Failed to fetch bulk products");
     }
 
-    throw new ApiError(
-      res.status,
-      "Unexpected response from Track Order API",
-    );
+    throw new ApiError(res.status, "Unexpected response from Track Order API");
   } catch (error) {
     const err = error as AxiosError<ApiErrorType>;
     const errStatus = err.response?.status || 500;
@@ -276,7 +273,6 @@ const singleOrderDetailsLoader = async ({ params }: LoaderFunctionArgs) => {
     throw new ApiError(errStatus, errMsg, err.response?.data);
   }
 };
-
 
 export {
   pendingOrderDetailsLoader,

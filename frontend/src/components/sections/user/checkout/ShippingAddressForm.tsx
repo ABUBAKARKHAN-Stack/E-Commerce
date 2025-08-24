@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { addressFields } from "@/constants/formFields";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { shippingAddressSchema } from "@/schemas/checkoutSchema";
 import { CheckoutTabsType, IUser } from "@/types/main.types";
 import { handleScrollToSection } from "@/utils/HandleScrollToSection";

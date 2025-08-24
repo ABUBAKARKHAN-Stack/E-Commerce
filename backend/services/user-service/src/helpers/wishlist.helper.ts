@@ -11,6 +11,9 @@ const addToWishList = async (productId: string, userId: string) => {
         return;
     }
 
+    console.log('i am hitting');
+    
+
     try {
         const user = await userModel.findById(userId);
         if (!user) {

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Pencil, Trash, Eye, PlusCircle, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAdminProductContext } from "@/context/adminProductContext";
+import { useAdminProductContext } from "@/context/adminProduct.context";
 import { Dialog } from "@radix-ui/react-dialog";
 import {
   DialogClose,
@@ -27,18 +27,15 @@ import { AdminProductLoading } from "@/types/main.types";
 
 type Props = {
   search: string;
-}
+};
 
-const AdminProducts: FC<Props> = ({
-  search
-}) => {
+const AdminProducts: FC<Props> = ({ search }) => {
   const { productsData, deleteProduct, loading } = useAdminProductContext();
   const navigate = useNavigate();
 
   const onDelete = (productId: string) => {
     deleteProduct(productId);
   };
-
 
   const filteredProducts = productsData?.filter((product) =>
     product.name.toLowerCase().includes(search.toLowerCase()),
@@ -49,7 +46,6 @@ const AdminProducts: FC<Props> = ({
   }
 
   return (
-
     <>
       <div className="rounded-lg border-2 border-dashed bg-gradient-to-b from-[#F3F4F6] via-[#E5E7EB] to-[#F3F4F6] p-4 shadow-md dark:bg-gradient-to-b dark:from-[#1B1B1F] dark:via-[#27272A] dark:to-[#1B1B1F]">
         <Table>

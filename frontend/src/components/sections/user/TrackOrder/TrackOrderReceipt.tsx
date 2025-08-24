@@ -16,9 +16,8 @@ const TrackOrderReceipt: FC<Props> = ({ order }) => {
     confirmedAt,
     orderStatus,
     deliveryDate,
-    shipping
+    shipping,
   } = order;
-
 
   const subTotal = totalAmount - shipping;
 
@@ -42,9 +41,7 @@ const TrackOrderReceipt: FC<Props> = ({ order }) => {
             Order:{" "}
             <span className="text-black dark:text-white">#{orderId}</span>
           </h3>
-          <OrderStatusBadge
-            orderStatus={orderStatus}
-          />
+          <OrderStatusBadge orderStatus={orderStatus} />
         </div>
 
         <Separator />

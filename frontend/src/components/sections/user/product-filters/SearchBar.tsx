@@ -1,17 +1,25 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ProductFilterParams } from "@/types/main.types";
 import { History, Search, SearchIcon, X } from "lucide-react";
-import { FC, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 type Props = {
   searchValue: string;
-  setSearchValue: (value: string) => void;
+  setSearchFiltersSort: Dispatch<SetStateAction<ProductFilterParams>>;
   productNames?: string[];
 };
 
 const SearchBar: FC<Props> = ({
   searchValue,
-  setSearchValue,
+  setSearchFiltersSort,
   productNames,
 }) => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
@@ -40,7 +48,7 @@ const SearchBar: FC<Props> = ({
   }, []);
 
   const handleSearchClick = (n: string) => {
-    setSearchValue(n);
+    setSearchFiltersSort((prev) => ({ ...prev, search: n }));
     let lastSearchData = getLastSearch();
     lastSearchData = lastSearchData.filter(
       (s) => s.toLowerCase() !== n.toLowerCase(),
@@ -63,7 +71,6 @@ const SearchBar: FC<Props> = ({
     setIsFocus(true);
   };
 
-
   return (
     <div className="relative w-full max-w-[500px]">
       <Label
@@ -80,7 +87,12 @@ const SearchBar: FC<Props> = ({
           name="Search Products"
           id="search-products"
           value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
+          onChange={(e) =>
+            setSearchFiltersSort((prev) => ({
+              ...prev,
+              search: e.target.value,
+            }))
+          }
           placeholder="What are you looking for today?"
           type="text"
           className="w-full"
@@ -90,7 +102,7 @@ const SearchBar: FC<Props> = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              setSearchValue("");
+              setSearchFiltersSort((prev) => ({ ...prev, search: "" }));
             }}
             className="absolute top-1/2 right-4 flex size-5.5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-cyan-500 text-white transition-colors hover:bg-cyan-600/90 dark:bg-orange-500 dark:hover:bg-orange-600/90"
           >

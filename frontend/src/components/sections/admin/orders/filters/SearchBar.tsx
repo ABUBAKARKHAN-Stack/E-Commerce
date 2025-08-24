@@ -1,26 +1,32 @@
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { AdminOrderFiltersType, IOrder } from '@/types/main.types'
-import { History, SearchIcon, X } from 'lucide-react'
-import { ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react'
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AdminOrderFiltersType, IOrder } from "@/types/main.types";
+import { History, SearchIcon, X } from "lucide-react";
+import {
+  ChangeEvent,
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 type Props = {
   setSearchOrderByCustomerName: Dispatch<SetStateAction<AdminOrderFiltersType>>;
   searchOrderByCustomerName: string;
   orders: IOrder[];
-}
+};
 
 const SearchBar: FC<Props> = ({
   setSearchOrderByCustomerName,
   searchOrderByCustomerName,
-  orders
+  orders,
 }) => {
-
   const [uniqueFullNames, setUniqueFullNames] = useState<string[]>([]);
   const [isFocus, setIsFocus] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [lastSearch, setLastSearch] = useState<string[]>([]);
-
 
   useEffect(() => {
     const clickOutSide = (e: Event) => {
@@ -33,15 +39,17 @@ const SearchBar: FC<Props> = ({
     return () => document.removeEventListener("click", clickOutSide);
   }, [isFocus]);
 
-
-
   useEffect(() => {
-    setUniqueFullNames([...new Set(orders.map(({ shippingAddress }) => {
-      return shippingAddress?.fullName;
-    }).filter((name): name is string => !!name && name.trim() !== ""))])
-  }, [
-    orders
-  ])
+    setUniqueFullNames([
+      ...new Set(
+        orders
+          .map(({ shippingAddress }) => {
+            return shippingAddress?.fullName;
+          })
+          .filter((name): name is string => !!name && name.trim() !== ""),
+      ),
+    ]);
+  }, [orders]);
 
   const getLastSearch = (): string[] => {
     const data = localStorage.getItem("admin-last-search");
@@ -54,7 +62,10 @@ const SearchBar: FC<Props> = ({
   }, []);
 
   const handleSearchClick = (n: string) => {
-    setSearchOrderByCustomerName((prev) => ({ ...prev, searchOrderByCustomerName: n }));
+    setSearchOrderByCustomerName((prev) => ({
+      ...prev,
+      searchOrderByCustomerName: n,
+    }));
     let lastSearchData = getLastSearch();
     lastSearchData = lastSearchData.filter(
       (s) => s.toLowerCase() !== n.toLowerCase(),
@@ -63,7 +74,6 @@ const SearchBar: FC<Props> = ({
     setLastSearch(lastSearchData);
     localStorage.setItem("admin-last-search", JSON.stringify(lastSearchData));
   };
-
 
   const handleLastSearchRemove = (n: string) => {
     let lastSearchData = getLastSearch();
@@ -80,26 +90,27 @@ const SearchBar: FC<Props> = ({
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchOrderByCustomerName((prev) => ({ ...prev, searchOrderByCustomerName: value }));
+    setSearchOrderByCustomerName((prev) => ({
+      ...prev,
+      searchOrderByCustomerName: value,
+    }));
   };
-  
-
 
   return (
-    <div className='max-w-lg relative w-full'>
+    <div className="relative w-full max-w-lg">
       <Label
-        htmlFor='search-orders'
+        htmlFor="search-orders"
         className="mb-1 flex w-fit cursor-pointer items-center gap-2 text-[14.5px] font-medium text-gray-900 transition-opacity hover:opacity-80 dark:text-gray-300"
       >
-        <SearchIcon className='size-4.5' />
+        <SearchIcon className="size-4.5" />
         Search Orders
       </Label>
       <div className="relative">
         <Input
           ref={inputRef}
-          id='search-orders'
-          placeholder='Search Orders By Customer Name'
-          className='w-full'
+          id="search-orders"
+          placeholder="Search Orders By Customer Name"
+          className="w-full"
           value={searchOrderByCustomerName}
           onChange={handleSearchChange}
           onFocus={() => setIsFocus(true)}
@@ -114,7 +125,10 @@ const SearchBar: FC<Props> = ({
                 if (stored) {
                   const parsed = JSON.parse(stored);
                   delete parsed.customerName;
-                  localStorage.setItem("adminOrdersFilter/Sort", JSON.stringify(parsed));
+                  localStorage.setItem(
+                    "adminOrdersFilter/Sort",
+                    JSON.stringify(parsed),
+                  );
                 }
 
                 const event = new CustomEvent("clearCustomerSearch");
@@ -128,13 +142,11 @@ const SearchBar: FC<Props> = ({
             <X className="size-4.25" />
           </button>
         )}
-
-
       </div>
-      {
-        isFocus && <div className="scrollbar-thin w-full dark:scrollbar-thumb-orange-500 scrollbar-thumb-cyan-500 scrollbar-track-transparent dark:bg-[#18181b] backdrop-blur-xl shadow-xl bg-[#f8f7f7] absolute z-10 mt-2 flex max-h-80 flex-col gap-y-1.5 overflow-y-auto rounded-md border  px-1.5 py-3">
-          {
-            uniqueFullNames.length > 0 ? (uniqueFullNames.map((name) => {
+      {isFocus && (
+        <div className="scrollbar-thin dark:scrollbar-thumb-orange-500 scrollbar-thumb-cyan-500 scrollbar-track-transparent absolute z-10 mt-2 flex max-h-80 w-full flex-col gap-y-1.5 overflow-y-auto rounded-md border bg-[#f8f7f7] px-1.5 py-3 shadow-xl backdrop-blur-xl dark:bg-[#18181b]">
+          {uniqueFullNames.length > 0 ? (
+            uniqueFullNames.map((name) => {
               const isLast = lastSearch.some((s) => s === name);
 
               return (
@@ -143,19 +155,20 @@ const SearchBar: FC<Props> = ({
                   onClick={() => handleSearchClick(name)}
                   className="flex w-full items-center justify-between rounded px-4 text-sm font-medium text-black hover:bg-cyan-500/85 hover:text-white dark:text-white dark:hover:bg-orange-500/85"
                 >
-                  <div
-                    className="flex w-full justify-between cursor-default items-center gap-x-4 py-2"
-                  >
-
-                    <div className='flex items-center gap-x-4'>
-                      {isLast ? <History className="size-5 stroke-1" /> : <SearchIcon className="size-5 stroke-1" />}
+                  <div className="flex w-full cursor-default items-center justify-between gap-x-4 py-2">
+                    <div className="flex items-center gap-x-4">
+                      {isLast ? (
+                        <History className="size-5 stroke-1" />
+                      ) : (
+                        <SearchIcon className="size-5 stroke-1" />
+                      )}
                       <span className="line-clamp-1">{name}</span>
                     </div>
                     {isLast && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleLastSearchRemove(name)
+                          handleLastSearchRemove(name);
                         }}
                         className="cursor-pointer"
                       >
@@ -164,23 +177,26 @@ const SearchBar: FC<Props> = ({
                     )}
                   </div>
                 </button>
-              )
-            }
-            )) : <div className="flex w-full flex-col items-center justify-center gap-y-2 py-6 text-center   text-sm text-gray-600 dark:text-gray-300">
+              );
+            })
+          ) : (
+            <div className="flex w-full flex-col items-center justify-center gap-y-2 py-6 text-center text-sm text-gray-600 dark:text-gray-300">
               <SearchIcon className="size-6 opacity-60" />
               <span>No Customers Found</span>
               {searchOrderByCustomerName && (
-                <p className="text-xs italic text-muted-foreground">
-                  Searched for: <span className="font-medium text-black dark:text-white">{searchOrderByCustomerName}</span>
+                <p className="text-muted-foreground text-xs italic">
+                  Searched for:{" "}
+                  <span className="font-medium text-black dark:text-white">
+                    {searchOrderByCustomerName}
+                  </span>
                 </p>
               )}
             </div>
-
-          }
+          )}
         </div>
-      }
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default SearchBar
+export default SearchBar;

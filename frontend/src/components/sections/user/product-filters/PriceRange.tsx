@@ -1,14 +1,15 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { ProductFilterParams } from "@/types/main.types";
 import { DollarSign } from "lucide-react";
-import React, { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 
 type Props = {
   minPriceValue: string;
-  setMinPriceValue: (value: string) => void;
+  setMinPriceValue: Dispatch<SetStateAction<ProductFilterParams>>;
   maxPriceValue: string;
-  setMaxPriceValue: (value: string) => void;
+  setMaxPriceValue: Dispatch<SetStateAction<ProductFilterParams>>;
 };
 
 const PriceRange: FC<Props> = ({
@@ -41,7 +42,12 @@ const PriceRange: FC<Props> = ({
               placeholder="0"
               type="number"
               min={0}
-              onChange={(e) => setMinPriceValue(e.target.value)}
+              onChange={(e) =>
+                setMinPriceValue((prev) => ({
+                  ...prev,
+                  minPrice: e.target.value,
+                }))
+              }
               value={minPriceValue}
             />
           </div>
@@ -57,7 +63,12 @@ const PriceRange: FC<Props> = ({
               placeholder="5000"
               type="number"
               min={0}
-              onChange={(e) => setMaxPriceValue(e.target.value)}
+              onChange={(e) =>
+                setMaxPriceValue((prev) => ({
+                  ...prev,
+                  maxPrice: e.target.value,
+                }))
+              }
               value={maxPriceValue}
             />
           </div>
@@ -73,8 +84,14 @@ const PriceRange: FC<Props> = ({
             <button
               key={i}
               onClick={() => {
-                setMinPriceValue(preset.min + "");
-                setMaxPriceValue(preset.max + "");
+                setMinPriceValue((prev) => ({
+                  ...prev,
+                  minPrice: preset.min + "",
+                }));
+                setMaxPriceValue((prev) => ({
+                  ...prev,
+                  maxPrice: preset.max + "",
+                }));
               }}
               className="rounded-full border border-cyan-500/50 px-3 py-1.5 text-xs font-medium text-cyan-600 transition-colors hover:bg-cyan-500/10 dark:border-orange-500/50 dark:text-orange-400 hover:dark:bg-orange-500/10"
             >

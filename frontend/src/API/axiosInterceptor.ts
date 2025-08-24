@@ -48,7 +48,7 @@ const userActivityInterceptor = attachInterceptor(
   }),
 );
 
-//* Admin Interceptor Helper 
+//* Admin Interceptor Helper
 const attachAdminInterceptor = (instance: AxiosInstance) => {
   instance.interceptors.response.use(
     (res) => res,
@@ -56,8 +56,8 @@ const attachAdminInterceptor = (instance: AxiosInstance) => {
       const status = err.response?.status;
 
       if ([401, 403].includes(status)) {
-        Cookies.remove('adminToken');
-        localStorage.removeItem('adminToken');
+        Cookies.remove("adminToken");
+        localStorage.removeItem("adminToken");
         errorToast("Login session expired. Please sign in again to continue.");
         setTimeout(() => {
           window.location.href = "/admin/sign-in";
@@ -70,18 +70,17 @@ const attachAdminInterceptor = (instance: AxiosInstance) => {
   return instance;
 };
 
-
 const adminInterceptor = attachAdminInterceptor(
   axios.create({
     baseURL: "http://localhost:3006/admin",
-    withCredentials: true
-  })
-)
+    withCredentials: true,
+  }),
+);
 
 export {
   userInterceptor,
   userProductInterceptor,
   userOrderInterceptor,
   userActivityInterceptor,
-  adminInterceptor
+  adminInterceptor,
 };

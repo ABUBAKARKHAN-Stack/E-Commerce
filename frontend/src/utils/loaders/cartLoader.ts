@@ -30,12 +30,11 @@ const cartLoader = async () => {
               }) => [productId, quantity],
             ),
           );
-          
 
           return {
             productsFromCart: bulkProducts.map((product) => ({
               ...product,
-              cartedProductQunatity: quantityMap.get(product?._id) || 0,
+              cartedProductQuantity: quantityMap.get(product?._id) || 0,
             })),
             totalAmount,
           };

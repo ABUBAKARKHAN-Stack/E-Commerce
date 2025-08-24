@@ -15,9 +15,11 @@ const AdminAddProductMain = () => {
         <Layout>
           <div className="space-y-10 px-4">
             <DashboardMainHeader
-              mainIcon={<BoxIcon className="md:size-8 stroke-3" />}
+              mainIcon={<BoxIcon className="stroke-3 md:size-8" />}
               mainHeading="Add New Product"
-              subIcon={<PackageIcon className="size-5 xsm:block hidden text-cyan-100 dark:text-orange-100" />}
+              subIcon={
+                <PackageIcon className="xsm:block hidden size-5 text-cyan-100 dark:text-orange-100" />
+              }
               subText="Add a new product to your store, set details like category, pricing, stock, and images, and publish it for customers to view."
             />
             <AdminAddProduct />

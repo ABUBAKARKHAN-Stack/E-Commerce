@@ -1,134 +1,27 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { Filter } from "lucide-react";
-import { useProductContext } from "@/context/productContext";
-import { useDebounce } from "@/hooks/useDebounce";
-import { getQueryParams } from "@/utils/getQueryParams";
+import { useProductContext } from "@/context/product.context";
 import SearchBar from "./SearchBar";
 import FilterToggleButton from "./FilterToggleButton";
 import FilterPanel from "./FilterPanel";
+import { IProduct, ProductFilterParams } from "@/types/main.types";
 
 type Props = {
-  limit: number;
-  setLimit: Dispatch<SetStateAction<number>>;
-  page: number;
-  setPage: Dispatch<SetStateAction<number>>;
+  productsData: IProduct[] | undefined;
+  searchFiltersSort: ProductFilterParams;
+  setSearchFiltersSort: Dispatch<SetStateAction<ProductFilterParams>>;
+  filterCount: number;
+  handleFilterRemove: () => void;
 };
 
 const SearchFilterSortProduct: FC<Props> = ({
-  limit,
-  setLimit,
-  page,
-  setPage,
+  productsData,
+  searchFiltersSort,
+  setSearchFiltersSort,
+  filterCount,
+  handleFilterRemove,
 }) => {
-  const [search, setSearch] = useState<string>("");
-  const [category, setCategory] = useState<string>("all");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [sortBy, setSortBy] = useState<string>("");
-  const [filterCount, setFilterCount] = useState<number>(0);
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const debouncedSearch = useDebounce(search, 500);
-  const debouncedMinPrice = useDebounce(minPrice, 500);
-  const debouncedMaxPrice = useDebounce(maxPrice, 500);
-
-  const { getAllProducts, setProductsData, categories, productsData } =
-    useProductContext();
-
-  const filterSort = async (params: any) => {
-    const products = await getAllProducts(params);
-    setProductsData(products);
-  };
-
-  const handleFilterRemove = () => {
-    localStorage.removeItem("filter/sort");
-    setFilterCount(0);
-    setCategory("all");
-    setSortBy("");
-    setMinPrice("");
-    setMaxPrice("");
-  };
-
-  useEffect(() => {
-    const queryParamsLs = localStorage.getItem("filter/sort");
-    const parsedQueryParamsLs = queryParamsLs ? JSON.parse(queryParamsLs) : {};
-    if (Object.keys(parsedQueryParamsLs).length > 0) {
-      filterSort(parsedQueryParamsLs);
-      setSearch(parsedQueryParamsLs.search || "");
-      setCategory(parsedQueryParamsLs.category || "");
-      setSortBy(parsedQueryParamsLs.sortBy || "");
-      setMinPrice(parsedQueryParamsLs.minPrice || 0);
-      setMaxPrice(parsedQueryParamsLs.maxPrice || 0);
-    }
-    setIsInitialized(true);
-  }, []);
-
-  const queryParams = useMemo(() => {
-    return getQueryParams({
-      search: debouncedSearch,
-      category,
-      minPrice: debouncedMinPrice,
-      maxPrice: debouncedMaxPrice,
-      sortBy,
-      limit,
-      page,
-    });
-  }, [
-    debouncedSearch,
-    debouncedMinPrice,
-    debouncedMaxPrice,
-    category,
-    sortBy,
-    limit,
-    page,
-  ]);
-
-  useEffect(() => {
-    if (!isInitialized) return;
-    getActiveFiltersCount();
-    localStorage.setItem(
-      "filter/sort",
-      JSON.stringify({
-        search: queryParams.search,
-        category: queryParams.category,
-        minPrice: queryParams.minPrice,
-        maxPrice: queryParams.maxPrice,
-        sortBy: queryParams.sortBy,
-      }),
-    );
-    filterSort(queryParams);
-  }, [
-    debouncedSearch,
-    debouncedMinPrice,
-    debouncedMaxPrice,
-    category,
-    sortBy,
-    limit,
-    page,
-    isInitialized,
-  ]);
-
-  const getActiveFiltersCount = () => {
-    let count = 0;
-    if (debouncedSearch && debouncedSearch.trim()) count++;
-    if (category && category !== "all") count++;
-    if (sortBy) count++;
-    if (debouncedMinPrice && debouncedMaxPrice) {
-      count++;
-    } else if (debouncedMinPrice) {
-      count++;
-    } else if (debouncedMaxPrice) {
-      count++;
-    } 
-    setFilterCount(count);
-  };
 
   return (
     <div className="w-full space-y-6">
@@ -143,8 +36,8 @@ const SearchFilterSortProduct: FC<Props> = ({
       <div className="flex w-full items-center justify-between gap-x-4">
         {/* Search Component */}
         <SearchBar
-          searchValue={search}
-          setSearchValue={setSearch}
+          searchValue={searchFiltersSort.search}
+          setSearchFiltersSort={setSearchFiltersSort}
           productNames={productsData?.map((p) => p.name)}
         />
 
@@ -160,15 +53,8 @@ const SearchFilterSortProduct: FC<Props> = ({
       <FilterPanel
         isOpen={isOpen}
         setIsOpen={setIsOpen}
-        categories={categories}
-        category={category}
-        setCategory={setCategory}
-        minPrice={minPrice}
-        setMinPrice={setMinPrice}
-        maxPrice={maxPrice}
-        setMaxPrice={setMaxPrice}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
+        searchFiltersSort={searchFiltersSort}
+        setSearchFiltersSort={setSearchFiltersSort}
         filterCount={filterCount}
         onFilterRemove={handleFilterRemove}
       />

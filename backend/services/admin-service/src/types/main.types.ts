@@ -39,7 +39,7 @@ interface LoginAdmin {
 }
 
 interface UpdateAdmin {
-    name?: string;
+    username?: string;
     email?: string;
     phone?: string;
 }

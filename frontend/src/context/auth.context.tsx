@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import {
   IAdmin,
@@ -26,6 +20,7 @@ import {
   updateProfileSchema,
 } from "@/schemas/update-ProfileSchema";
 import { useAuthQuery } from "@/hooks/useAuthQuery";
+import Cookies from "js-cookie";
 
 type AuthContextType = {
   user: IUser | IAdmin | null;
@@ -34,7 +29,7 @@ type AuthContextType = {
     data: z.infer<typeof signinSchema>,
     isAdmin: boolean,
     navigate: (path: string) => void,
-    isUsingInAuthDialog?: boolean
+    isUsingInAuthDialog?: boolean,
   ) => void;
   logout: (navigate: (path: string) => void) => void;
   forgotPassword: (
@@ -61,14 +56,14 @@ type AuthContextType = {
   userLoading: boolean;
 };
 
-
-
 const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | IAdmin | null>(null);
   const [role, setRole] = useState<RoleType>(null);
-  const [loading, setLoading] = useState<AuthLoadingStates>(AuthLoadingStates.idle);
+  const [loading, setLoading] = useState<AuthLoadingStates>(
+    AuthLoadingStates.idle,
+  );
   const {
     useLogin,
     useLogout,
@@ -79,43 +74,33 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     useFetchUserByRole,
   } = useAuthQuery();
 
-  const loginMutation = useLogin(role, setLoading) //* Login Mutation
-  const logoutMutation = useLogout(setLoading) //* Logout Mutation
-  const forgotPasswordMutation = useForgotPassword(setLoading) //* Forgot Password Mutation
-  const resetPasswordMutation = useResetPassword(setLoading) //* Reset Password Mutation
-  const updateProfileMutation = useUpdateProfile(setLoading) //* Update Profile Mutation
-  const updatePasswordMutation = useUpdatePassword(setLoading) //* Update Password Mutation
-
+  const loginMutation = useLogin(role, setLoading); //* Login Mutation
+  const logoutMutation = useLogout(setLoading); //* Logout Mutation
+  const forgotPasswordMutation = useForgotPassword(setLoading); //* Forgot Password Mutation
+  const resetPasswordMutation = useResetPassword(setLoading); //* Reset Password Mutation
+  const updateProfileMutation = useUpdateProfile(setLoading); //* Update Profile Mutation
+  const updatePasswordMutation = useUpdatePassword(setLoading); //* Update Password Mutation
 
   const {
     data: currentUser,
     isLoading: userLoading,
-    isError: userError
+    isError: userError,
+    error: userErrorPayload,
   } = useFetchUserByRole(role); //* Fetch User on role based
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (currentUser) {
-      setUser(currentUser)
+      setUser(currentUser);
     }
-  }, [currentUser])
-
-  useEffect(() => {
-    if (userError) {
-      setUser(null);
-      setRole(null);
-      localStorage.removeItem("userToken");
-      localStorage.removeItem("adminToken");
-    }
-  }, [userError]);
-
+  }, [currentUser]);
 
   const login = (
     data: z.infer<typeof signinSchema>,
     isAdmin: boolean,
     navigate: (path: string) => void,
-    isUsingInAuthDialog = false
+    isUsingInAuthDialog = false,
   ) => {
     const mutation = loginMutation;
     mutation.mutate({
@@ -132,12 +117,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       navigate,
       role,
       setRole,
-      setUser
-    })
+      setUser,
+    });
   };
 
   useEffect(() => {
-    
     const userToken = localStorage.getItem("userToken");
     const adminToken = localStorage.getItem("adminToken");
 
@@ -164,16 +148,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-
-
   const forgotPassword = (
     isAdmin: boolean,
     data: z.infer<typeof forgotPasswordSchema>,
   ) => {
     forgotPasswordMutation.mutate({
       isAdmin,
-      data
-    })
+      data,
+    });
   };
 
   const resetPassword = (
@@ -187,8 +169,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data,
       navigate,
       params,
-      timeoutRef
-    })
+      timeoutRef,
+    });
   };
 
   const updateProfile = async (
@@ -199,9 +181,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const success = await updateProfileMutation.mutateAsync({
       data,
       isAdmin,
-      role
-    })
-    return success ?? false
+      role,
+    });
+    return success ?? false;
   };
 
   const updatePassword = async (
@@ -210,8 +192,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   ) => {
     const success = await updatePasswordMutation.mutateAsync({
       isAdmin,
-      data
-    })
+      data,
+    });
     return success ?? false;
   };
 
@@ -222,8 +204,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
   }, []);
-
-
 
   return (
     <AuthContext.Provider

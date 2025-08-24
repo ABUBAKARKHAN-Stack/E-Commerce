@@ -7,7 +7,7 @@ import {
   PackageSearch,
   Truck,
   PackageCheck,
-  XCircle
+  XCircle,
 } from "lucide-react";
 
 type Props = {
@@ -27,12 +27,12 @@ const statusVariants: Record<
 };
 
 const statusIcons: Record<OrderStatus, JSX.Element> = {
-  [OrderStatus.PENDING]: <Clock className="w-4 h-4 mr-1" />,
-  [OrderStatus.CONFIRMED]: <CheckCircle2 className="w-4 h-4 mr-1" />,
-  [OrderStatus.PROCESSING]: <PackageSearch className="w-4 h-4 mr-1" />,
-  [OrderStatus.SHIPPED]: <Truck className="w-4 h-4 mr-1" />,
-  [OrderStatus.DELIVERED]: <PackageCheck className="w-4 h-4 mr-1" />,
-  [OrderStatus.CANCELLED]: <XCircle className="w-4 h-4 mr-1" />,
+  [OrderStatus.PENDING]: <Clock className="mr-1 h-4 w-4" />,
+  [OrderStatus.CONFIRMED]: <CheckCircle2 className="mr-1 h-4 w-4" />,
+  [OrderStatus.PROCESSING]: <PackageSearch className="mr-1 h-4 w-4" />,
+  [OrderStatus.SHIPPED]: <Truck className="mr-1 h-4 w-4" />,
+  [OrderStatus.DELIVERED]: <PackageCheck className="mr-1 h-4 w-4" />,
+  [OrderStatus.CANCELLED]: <XCircle className="mr-1 h-4 w-4" />,
 };
 
 const OrderStatusBadge: FC<Props> = ({ orderStatus }) => {

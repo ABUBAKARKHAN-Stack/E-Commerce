@@ -1,10 +1,4 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useState,
-  useEffect,
-} from "react";
+import { Dispatch, FC, SetStateAction, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { Input } from "@/components/ui/input";
 import { CircleX, Eye } from "lucide-react";
@@ -45,11 +39,11 @@ const Dropzone: FC<Props> = ({
   const [fileUrls, setFileUrls] = useState<string[]>([]);
 
   useEffect(() => {
-    const urls = files.map(file => URL.createObjectURL(file));
+    const urls = files.map((file) => URL.createObjectURL(file));
     setFileUrls(urls);
 
     return () => {
-      urls.forEach(url => URL.revokeObjectURL(url));
+      urls.forEach((url) => URL.revokeObjectURL(url));
     };
   }, [files]);
 
@@ -57,9 +51,12 @@ const Dropzone: FC<Props> = ({
     validateThumbnails(existingThumbnails, files);
   }, [existingThumbnails, files, form]);
 
-  const updateFieldValue = (updatedExistingThumbnails: string[], updatedFiles: File[]) => {
+  const updateFieldValue = (
+    updatedExistingThumbnails: string[],
+    updatedFiles: File[],
+  ) => {
     const filteredFiles = updatedFiles.filter((file) =>
-      file.type.startsWith("image/")
+      file.type.startsWith("image/"),
     );
     field.onChange(filteredFiles);
   };
@@ -81,11 +78,15 @@ const Dropzone: FC<Props> = ({
     validateThumbnails(existingThumbnails, updatedFiles);
   };
 
-  const validateThumbnails = (updatedExistingThumbnails: string[], updatedFiles: File[]) => {
-    const totalThumbnails = updatedExistingThumbnails.length + updatedFiles.length;
+  const validateThumbnails = (
+    updatedExistingThumbnails: string[],
+    updatedFiles: File[],
+  ) => {
+    const totalThumbnails =
+      updatedExistingThumbnails.length + updatedFiles.length;
     if (totalThumbnails === 0) {
       form.setError("thumbnails", {
-        message: "At least one thumbnail is required"
+        message: "At least one thumbnail is required",
       });
     } else {
       form.clearErrors("thumbnails");
@@ -125,14 +126,18 @@ const Dropzone: FC<Props> = ({
     <div className="rounded-md border border-[#3C3C43] p-4">
       <div
         {...getRootProps()}
-        className="cursor-pointer border-2 border-dashed rounded-2xl border-[#3C3C43] p-6 text-center hover:border-cyan-500 dark:hover:border-orange-500 transition-colors duration-300"
+        className="cursor-pointer rounded-2xl border-2 border-dashed border-[#3C3C43] p-6 text-center transition-colors duration-300 hover:border-cyan-500 dark:hover:border-orange-500"
         role="button"
         tabIndex={0}
         aria-label="Click or drag and drop to upload images"
       >
         <Input {...getInputProps()} />
-        <p className="xsm:text-sm text-xs sm:text-base text-center text-muted-foreground">
-          Drag & drop your images here, or <span className="dark:text-orange-500 dark:hover:text-orange-600 text-cyan-500 hover:text-cyan-600 underline cursor-pointer">click to upload</span> <br />
+        <p className="xsm:text-sm text-muted-foreground text-center text-xs sm:text-base">
+          Drag & drop your images here, or{" "}
+          <span className="cursor-pointer text-cyan-500 underline hover:text-cyan-600 dark:text-orange-500 dark:hover:text-orange-600">
+            click to upload
+          </span>{" "}
+          <br />
           <span>(Up to 5 pictures allowed)</span>
         </p>
       </div>
@@ -143,34 +148,34 @@ const Dropzone: FC<Props> = ({
           return (
             <div
               key={i}
-              className="group relative h-40 overflow-hidden rounded-xl border-2 border-[#3C3C43] shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+              className="group relative h-40 overflow-hidden rounded-xl border-2 border-[#3C3C43] shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
             >
               <img
                 src={url}
                 alt={`Existing product thumbnail ${i + 1}`}
-                className="h-full w-full object-contain drop-shadow-8px shadow-black transition-transform duration-300 group-hover:scale-105"
+                className="drop-shadow-8px h-full w-full object-contain shadow-black transition-transform duration-300 group-hover:scale-105"
               />
 
               {/* Overlay */}
-              <div className="absolute inset-0 bg-black/20 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-black/60">
+              <div className="absolute inset-0 bg-black/20 opacity-0 transition-all duration-300 group-hover:bg-black/60 group-hover:opacity-100">
                 <div className="absolute inset-0 flex items-center justify-center gap-4">
                   {/* Preview Button */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <button
                         onClick={() => setPreviewImage(url)}
-                        className="flex items-center justify-center hover:cursor-pointer size-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 hover:scale-110 transition-all duration-200 shadow-lg"
+                        className="flex size-10 items-center justify-center rounded-full border border-white/30 bg-white/20 text-white shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:cursor-pointer hover:bg-white/30"
                         aria-label="Preview image"
                       >
                         <Eye size={20} />
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="w-full flex justify-center items-center h-96 max-w-[500px]">
+                    <DialogContent className="flex h-96 w-full max-w-[500px] items-center justify-center">
                       <div className="h-84 w-full">
                         <img
                           src={previewImage!}
                           alt="Preview of selected thumbnail"
-                          className="h-full w-full drop-shadow-8px shadow-black object-contain rounded-lg"
+                          className="drop-shadow-8px h-full w-full rounded-lg object-contain shadow-black"
                         />
                       </div>
                     </DialogContent>
@@ -181,7 +186,7 @@ const Dropzone: FC<Props> = ({
                     <button
                       type="button"
                       onClick={() => handleRemoveExistingThumbnail(i)}
-                      className="flex items-center justify-center size-10 rounded-full bg-red-500/20 backdrop-blur-md border border-red-400/50 text-red-300 hover:bg-red-500/30 hover:text-red-200 hover:scale-110 transition-all duration-200 shadow-lg"
+                      className="flex size-10 items-center justify-center rounded-full border border-red-400/50 bg-red-500/20 text-red-300 shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:bg-red-500/30 hover:text-red-200"
                       aria-label="Remove thumbnail"
                     >
                       <CircleX size={20} />
@@ -191,7 +196,7 @@ const Dropzone: FC<Props> = ({
                       <DialogTrigger asChild>
                         <button
                           type="button"
-                          className="flex items-center justify-center size-10 hover:cursor-pointer rounded-full bg-red-500/20 backdrop-blur-md border border-red-400/50 text-red-300 hover:bg-red-500/30 hover:text-red-200 hover:scale-110 transition-all duration-200 shadow-lg"
+                          className="flex size-10 items-center justify-center rounded-full border border-red-400/50 bg-red-500/20 text-red-300 shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:cursor-pointer hover:bg-red-500/30 hover:text-red-200"
                           aria-label="Delete thumbnail"
                         >
                           <CircleX size={20} />
@@ -202,8 +207,10 @@ const Dropzone: FC<Props> = ({
                           <DialogTitle>Delete Thumbnail?</DialogTitle>
                           <DialogDescription className="mt-3">
                             Are you sure you want to delete{" "}
-                            <span className="font-semibold">this thumbnail</span>?
-                            This action cannot be undone.
+                            <span className="font-semibold">
+                              this thumbnail
+                            </span>
+                            ? This action cannot be undone.
                           </DialogDescription>
                         </DialogHeader>
 
@@ -211,7 +218,7 @@ const Dropzone: FC<Props> = ({
                           <img
                             src={url}
                             alt="Thumbnail to be deleted"
-                            className="h-40 rounded-2xl shadow-lg border"
+                            className="h-40 rounded-2xl border shadow-lg"
                           />
                         </div>
 
@@ -225,7 +232,9 @@ const Dropzone: FC<Props> = ({
                             <DialogClose>
                               <Button
                                 type="button"
-                                onClick={() => handleRemoveExistingThumbnailFromServer(i)}
+                                onClick={() =>
+                                  handleRemoveExistingThumbnailFromServer(i)
+                                }
                                 variant="destructive"
                               >
                                 Delete
@@ -240,7 +249,7 @@ const Dropzone: FC<Props> = ({
 
                 {/* Image number badge */}
                 <div className="absolute top-2 left-2">
-                  <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-black/40 backdrop-blur-sm text-white border border-white/20">
+                  <span className="inline-flex items-center rounded-md border border-white/20 bg-black/40 px-2 py-1 text-xs font-medium text-white backdrop-blur-sm">
                     #{i + 1}
                   </span>
                 </div>
@@ -255,7 +264,7 @@ const Dropzone: FC<Props> = ({
           return (
             <div
               key={`new-file-${i}`}
-              className="group relative h-40 w-full overflow-hidden rounded-xl border-2 border-[#3C3C43] shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+              className="group relative h-40 w-full overflow-hidden rounded-xl border-2 border-[#3C3C43] shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg"
             >
               <img
                 src={imageUrl}
@@ -263,14 +272,14 @@ const Dropzone: FC<Props> = ({
                 className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
 
-              <div className="absolute inset-0 bg-black/20 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:bg-black/60">
+              <div className="absolute inset-0 bg-black/20 opacity-0 transition-all duration-300 group-hover:bg-black/60 group-hover:opacity-100">
                 <div className="absolute inset-0 flex items-center justify-center gap-4">
                   {/* Preview Button */}
                   <Dialog>
                     <DialogTrigger asChild>
                       <button
                         onClick={() => setPreviewImage(imageUrl)}
-                        className="flex items-center justify-center hover:cursor-pointer size-10 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 hover:scale-110 transition-all duration-200 shadow-lg"
+                        className="flex size-10 items-center justify-center rounded-full border border-white/30 bg-white/20 text-white shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:cursor-pointer hover:bg-white/30"
                         aria-label="Preview image"
                       >
                         <Eye size={20} />
@@ -289,7 +298,7 @@ const Dropzone: FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => handleRemoveNewFile(i)}
-                    className="flex items-center justify-center hover:cursor-pointer size-10 rounded-full bg-red-500/20 backdrop-blur-md border border-red-400/50 text-red-300 hover:bg-red-500/30 hover:text-red-200 hover:scale-110 transition-all duration-200 shadow-lg"
+                    className="flex size-10 items-center justify-center rounded-full border border-red-400/50 bg-red-500/20 text-red-300 shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:cursor-pointer hover:bg-red-500/30 hover:text-red-200"
                     aria-label="Remove file"
                   >
                     <CircleX size={20} />
@@ -298,14 +307,14 @@ const Dropzone: FC<Props> = ({
 
                 {/* New file badge */}
                 <div className="absolute top-2 left-2">
-                  <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-cyan-500/80 dark:bg-orange-500/80 backdrop-blur-sm text-white border border-cyan-400/50 dark:border-orange-400/50">
+                  <span className="inline-flex items-center rounded-md border border-cyan-400/50 bg-cyan-500/80 px-2 py-1 text-xs font-medium text-white backdrop-blur-sm dark:border-orange-400/50 dark:bg-orange-500/80">
                     New
                   </span>
                 </div>
 
                 {/* File name */}
-                <div className="absolute bottom-2 left-2 right-2">
-                  <p className="text-xs text-white bg-black/50 backdrop-blur-sm rounded px-2 py-1 truncate border border-white/20">
+                <div className="absolute right-2 bottom-2 left-2">
+                  <p className="truncate rounded border border-white/20 bg-black/50 px-2 py-1 text-xs text-white backdrop-blur-sm">
                     {file.name}
                   </p>
                 </div>
@@ -315,7 +324,6 @@ const Dropzone: FC<Props> = ({
         })}
       </div>
     </div>
-
   );
 };
 

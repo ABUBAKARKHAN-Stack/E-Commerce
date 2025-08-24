@@ -14,9 +14,10 @@ import { signinSchema } from "@/schemas";
 import { FC } from "react";
 import { signInFields } from "@/constants/formFields";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { AuthLoadingStates } from "@/types/main.types";
-import { ButtonLoader, PasswordVisibilityToggler } from ".";
+import { PasswordVisibilityToggler } from ".";
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders";
 
 type Props = {
   isAdmin: boolean;
@@ -67,12 +68,18 @@ const SignInForm: FC<Props> = ({ isAdmin, isUsingInAuthDialog = false }) => {
           );
         })}
 
-        <Button disabled={loginLoading} className="xsm:w-fit w-full" type="submit">
-          {loginLoading ? <>
-            <ButtonLoader
-              loaderText="Signing In..."
-            />
-          </> : "Sign In"}
+        <Button
+          disabled={loginLoading}
+          className="xsm:w-fit w-full"
+          type="submit"
+        >
+          {loginLoading ? (
+            <>
+              <ButtonLoader loaderText="Signing In..." />
+            </>
+          ) : (
+            "Sign In"
+          )}
         </Button>
       </form>
     </Form>

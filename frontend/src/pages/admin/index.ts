@@ -23,5 +23,5 @@ export {
   AdminResetPasswordPage,
   AdminProfilePage,
   AdminOrdersPage,
-  AdminOrderDetailsPage
+  AdminOrderDetailsPage,
 };

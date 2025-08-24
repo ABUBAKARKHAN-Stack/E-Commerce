@@ -16,7 +16,7 @@ import { productFields } from "@/constants/formFields";
 import { Input } from "@/components/ui/input";
 import Dropzone from "./Dropzone";
 import { useNavigate, useRevalidator } from "react-router-dom";
-import { useAdminProductContext } from "@/context/adminProductContext";
+import { useAdminProductContext } from "@/context/adminProduct.context";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { AdminProductLoading } from "@/types/main.types";
 import { Select } from "@/components/ui/select";
@@ -39,13 +39,18 @@ type Props = {
 
 const ProductForm: FC<Props> = ({ product }) => {
   const form = useForm<z.infer<typeof productSchema>>({
-    resolver: zodResolver(productSchema.refine((data) => {
-      const totalThumbnails = existingThumbnails.length + files.length;
-      return totalThumbnails > 0;
-    }, {
-      message: "At least one thumbnail is required",
-      path: ["thumbnails"],
-    })),
+    resolver: zodResolver(
+      productSchema.refine(
+        (data) => {
+          const totalThumbnails = existingThumbnails.length + files.length;
+          return totalThumbnails > 0;
+        },
+        {
+          message: "At least one thumbnail is required",
+          path: ["thumbnails"],
+        },
+      ),
+    ),
     defaultValues: {
       name: product?.name || "",
       description: product?.description || "",
@@ -64,7 +69,8 @@ const ProductForm: FC<Props> = ({ product }) => {
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const navigate = useNavigate();
-  const { addProduct, editProduct, removeThumbnail, loading } = useAdminProductContext();
+  const { addProduct, editProduct, removeThumbnail, loading } =
+    useAdminProductContext();
   const { revalidate } = useRevalidator();
 
   useEffect(() => {
@@ -101,7 +107,6 @@ const ProductForm: FC<Props> = ({ product }) => {
     setSubmitError(null);
 
     try {
-
       const submissionData = {
         ...data,
         thumbnails: files,
@@ -121,14 +126,16 @@ const ProductForm: FC<Props> = ({ product }) => {
           thumbnails: [],
         });
         setFiles([]);
-        revalidate()
+        revalidate();
       } else {
         await addProduct(submissionData);
         resetForm();
       }
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "An error occurred while saving the product"
+        error instanceof Error
+          ? error.message
+          : "An error occurred while saving the product",
       );
     } finally {
       setIsSubmitting(false);
@@ -184,20 +191,23 @@ const ProductForm: FC<Props> = ({ product }) => {
                         disabled={isLoading}
                         placeholder={placeholder}
                       />
-                    ) : ((
+                    ) : (
                       <Input
                         {...field}
                         type={type}
                         placeholder={placeholder}
                         disabled={isLoading}
                         onChange={(e) => {
-                          const value = type === "number" ?
-                            (e.target.value === "" ? 0 : Number(e.target.value)) :
-                            e.target.value;
+                          const value =
+                            type === "number"
+                              ? e.target.value === ""
+                                ? 0
+                                : Number(e.target.value)
+                              : e.target.value;
                           field.onChange(value);
                         }}
                       />
-                    ))}
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

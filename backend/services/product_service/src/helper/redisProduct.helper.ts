@@ -1,20 +1,18 @@
+import { IProduct } from "../types/main.types";
 import redisClient from "../config/redis.config";
 
 /*
  * Add a new product to Redis (push to existing array)
  */
-export const addProduct = async (product: any) => {
+export const addProduct = async (product: IProduct) => {
+
     try {
-        const products = await redisClient.get("products");
-        const parsedProducts = products ? JSON.parse(products) : [];
-
-        // Add new product
-        parsedProducts.push(product);
-
-        await redisClient.set("products", JSON.stringify(parsedProducts));
-        console.log("Product added to Redis");
+        const products: IProduct[] | null = await redisClient.get("products");
+        const updatedProducts = products ? [...products, product] : [product];
+        await redisClient.set("products", updatedProducts);
+        console.log("✅ Product added to Redis");
     } catch (error) {
-        console.error("Error adding product to Redis:", error);
+        console.error("❌ Error adding product to Redis:", error);
         throw error;
     }
 };
@@ -24,11 +22,10 @@ export const addProduct = async (product: any) => {
  */
 export const removeProduct = async (productId: string) => {
     try {
-        const products = await redisClient.get("products");
+        const products: IProduct[] | null = await redisClient.get("products");
         if (!products) return;
 
-        const parsedProducts = JSON.parse(products);
-        const updatedProducts = parsedProducts.filter(
+        const updatedProducts = products.filter(
             (product: any) => product._id !== productId
         );
 
@@ -43,33 +40,36 @@ export const removeProduct = async (productId: string) => {
 /*
  * Update a product in Redis by ID
  */
-export const updateProduct = async (productId: string, updatedProduct: any) => {
-
+export const updateProduct = async (productId: string, updatedProduct: IProduct) => {
     try {
-        const products = await redisClient.get("products");
+        let products: IProduct[] | null = await redisClient.get("products");
         if (!products) return;
 
-        let parsedProducts = JSON.parse(products);
-        parsedProducts = parsedProducts.filter((product: any) => product._id !== productId)
-        parsedProducts.push(updatedProduct)
-        await redisClient.set("products", JSON.stringify(parsedProducts));
+        products = products.filter((product) => product._id !== productId);
+        products.push(updatedProduct);
+
+        await redisClient.set("products", products);
+        console.log("✅ Product updated in Redis");
     } catch (error) {
-        console.error("Error updating product in Redis:", error);
+        console.error("❌ Error updating product in Redis:", error);
         throw error;
     }
 };
+
 
 /*
  * Get all products from Redis
  */
 export const getAllRedisProducts = async () => {
-    if (!redisClient || redisClient.status !== 'ready') {
+
+    if (!redisClient) {
         console.log("⚠️ Redis not ready. Skipping getAllRedisProducts.");
         return [];
     }
     try {
-        const products = await redisClient?.get("products");
-        return products ? JSON.parse(products) : [];
+        const products:IProduct[] | null = await redisClient?.get("products");
+        if (!products) return [];
+        return products;
     } catch (error) {
         console.error("Error fetching products from Redis:", error);
         throw error;
@@ -82,10 +82,9 @@ export const getAllRedisProducts = async () => {
  */
 export const getProductbyId = async (productId: string) => {
     try {
-        const product = await redisClient.get(`product:${productId}`);
+        const product: IProduct | null = await redisClient.get(`product:${productId}`);
         if (!product) return;
-        const parsedProduct = JSON.parse(product);
-        return parsedProduct;
+        return product;
     } catch (error) {
         console.error("Error fetching product from Redis:", error);
         throw error;

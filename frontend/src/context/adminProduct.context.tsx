@@ -9,7 +9,11 @@ import {
   deleteProduct as removeProduct,
 } from "@/API/adminApi";
 import { getProducts, getSingleProduct } from "@/API/userApi";
-import { AdminProductLoading, ApiErrorType, IProduct } from "@/types/main.types";
+import {
+  AdminProductLoading,
+  ApiErrorType,
+  IProduct,
+} from "@/types/main.types";
 import { AxiosError } from "axios";
 
 type AdminProductContextType = {
@@ -18,7 +22,7 @@ type AdminProductContextType = {
   getProduct: (productId: string) => Promise<any>;
   getAllProducts: (query?: any) => Promise<any>;
   productsData: IProduct[] | null;
-  editProduct: (productId: string, updatedData: any,) => Promise<boolean>;
+  editProduct: (productId: string, updatedData: any) => Promise<boolean>;
   removeThumbnail: (productId: string, thumbnailIndex: number) => Promise<void>;
   loading: string | null;
 };
@@ -97,7 +101,7 @@ const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const editProduct = async (productId: string, updatedData: any,) => {
+  const editProduct = async (productId: string, updatedData: any) => {
     const formData = new FormData();
     formData.append("name", updatedData.name);
     formData.append("description", updatedData.description);
@@ -120,7 +124,7 @@ const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
         await getAllProducts();
         return true;
       }
-      return false
+      return false;
     } catch (error: any) {
       const err = error as AxiosError<ApiErrorType>;
       const errorMsg = err.response?.data.message || "An error occurred";
@@ -135,7 +139,7 @@ const AdminProductProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const res = await removeProductThumbnail(productId, thumbnailIndex);
       if (res.status === 200) {
-        successToast(res.data.message)
+        successToast(res.data.message);
       }
     } catch (error) {
       const err = error as AxiosError<ApiErrorType>;

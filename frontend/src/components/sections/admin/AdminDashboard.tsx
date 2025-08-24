@@ -1,7 +1,6 @@
 import { Users, DollarSign, Package } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 const AdminDashboard = () => {
-
   const metrics = [
     {
       label: "Total Products",
@@ -24,14 +23,9 @@ const AdminDashboard = () => {
   ];
 
   return (
-
-
     <div className="xsm:grid-cols-2 grid grid-cols-1 gap-6 lg:grid-cols-3">
       {metrics.map(({ label, icon, bg, value }, i) => (
-        <Card
-          key={i}
-          className={`bg-gradient-to-r text-white shadow-lg ${bg}`}
-        >
+        <Card key={i} className={`bg-gradient-to-r text-white shadow-lg ${bg}`}>
           <CardHeader className="flex flex-row items-center gap-x-4">
             <CardTitle>{icon}</CardTitle>
             <CardTitle className="text-xl font-semibold">{label}</CardTitle>

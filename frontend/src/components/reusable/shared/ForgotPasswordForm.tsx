@@ -12,11 +12,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { AuthLoadingStates } from "@/types/main.types";
-import ButtonLoader from "./loaders/ButtonLoader";
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders";
 
 type Props = {
   isAdmin: boolean;
@@ -24,7 +24,8 @@ type Props = {
 
 const ForgotPasswordForm = ({ isAdmin }: Props) => {
   const { forgotPassword, loading } = useAuthContext();
-  const forgotPasswordLoading = loading === AuthLoadingStates.FORGOT_PASSWORD_LOADING;
+  const forgotPasswordLoading =
+    loading === AuthLoadingStates.FORGOT_PASSWORD_LOADING;
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -61,12 +62,16 @@ const ForgotPasswordForm = ({ isAdmin }: Props) => {
           )}
         />
         <div className="flex items-center gap-x-2">
-          <Button type="submit" className="xsm:w-fit w-full" disabled={forgotPasswordLoading}>
-            {
-              forgotPasswordLoading ? <ButtonLoader
-                loaderText="Sending Reset Link..."
-              /> : "Send Reset Link"
-            }
+          <Button
+            type="submit"
+            className="xsm:w-fit w-full"
+            disabled={forgotPasswordLoading}
+          >
+            {forgotPasswordLoading ? (
+              <ButtonLoader loaderText="Sending Reset Link..." />
+            ) : (
+              "Send Reset Link"
+            )}
           </Button>
           <Button
             type="button"

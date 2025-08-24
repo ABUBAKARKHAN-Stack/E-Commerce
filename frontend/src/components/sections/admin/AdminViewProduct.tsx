@@ -11,7 +11,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Eye, CircleX, Pencil } from "lucide-react";
-import { useAdminProductContext } from "@/context/adminProductContext";
+import { useAdminProductContext } from "@/context/adminProduct.context";
 import { Button } from "@/components/ui/button";
 import { IProduct } from "@/types/main.types";
 
@@ -20,16 +20,14 @@ const AdminViewProduct = () => {
   const navigate = useNavigate();
   const { removeThumbnail } = useAdminProductContext();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const product: IProduct = useLoaderData()
+  const product: IProduct = useLoaderData();
 
   const handleRemoveThumbnail = async (i: number) => {
     await removeThumbnail(id!, i);
   };
 
-
   return (
     <div className="space-y-4">
-
       <div className="flex justify-end">
         {/* Edit Button */}
         <Button

@@ -6,5 +6,9 @@ export const env = {
         CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
         API_KEY: process.env.CLOUDINARY_API_KEY,
         API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    },
+    UPSTASH: {
+        REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+        REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN
     }
 }

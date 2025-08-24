@@ -11,7 +11,6 @@ const AdminProductsMian = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-
   return (
     <>
       <AdminHeader setIsOpen={setIsOpen} />
@@ -31,7 +30,8 @@ const AdminProductsMian = () => {
               <div className="max-w-lg">
                 <Label
                   htmlFor="search-products"
-                  className="flex items-center mb-1 justify-start gap-x-1.5">
+                  className="mb-1 flex items-center justify-start gap-x-1.5"
+                >
                   <Search className="size-4.5" />
                   Search Products
                 </Label>
@@ -45,9 +45,7 @@ const AdminProductsMian = () => {
               </div>
             </div>
 
-            <AdminProducts
-              search={search}
-            />
+            <AdminProducts search={search} />
           </div>
         </Layout>
       </div>

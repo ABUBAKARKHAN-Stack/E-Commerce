@@ -1,3 +1,4 @@
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -8,17 +9,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useOrderContext } from "@/context/orderContext";
+import { useOrderContext } from "@/context/order.context";
 import { trackOrderSchema } from "@/schemas/track-orderSchema";
-import { OrderLoading } from "@/types/main.types";
+import { OrderLoadingStates } from "@/types/main.types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderPinwheel } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const TrackOrderForm = () => {
-  const { userTrackOrder, loading } = useOrderContext();
+  const { userTrackOrder, orderLoading } = useOrderContext();
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof trackOrderSchema>>({
     resolver: zodResolver(trackOrderSchema),
@@ -26,9 +26,10 @@ const TrackOrderForm = () => {
       orderId: "",
     },
   });
+  const trackOrderLoading = orderLoading === OrderLoadingStates.TRACK_ORDER;
 
   const onSubmit = async (data: z.infer<typeof trackOrderSchema>) => {
-    await userTrackOrder(data.orderId, navigate);
+    userTrackOrder(data.orderId, navigate);
   };
   return (
     <Form {...form}>
@@ -54,15 +55,14 @@ const TrackOrderForm = () => {
           )}
         />
         <Button
-          disabled={loading === OrderLoading.TRACK_ORDER_LOADING}
+          disabled={trackOrderLoading}
           size="lg"
           type="submit"
           className="w-fit"
         >
-          {loading === OrderLoading.TRACK_ORDER_LOADING ? (
+          {trackOrderLoading ? (
             <>
-              <span>Tracking Your Order</span>
-              <LoaderPinwheel className="animate-spin" />
+              <ButtonLoader loaderText="Tracking Your Order..." />
             </>
           ) : (
             "Track My Order"

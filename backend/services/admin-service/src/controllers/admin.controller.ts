@@ -239,9 +239,9 @@ const getAdmin = asyncHandler(async (req: Request, res: Response) => {
 
 //? Update a Admin
 const updateAdmin = asyncHandler(async (req: Request, res: Response) => {
-    const { name, email, phone }: UpdateAdmin = req.body
+    const { username, email, phone }: UpdateAdmin = req.body
     const adminId = res.locals.admin._id;
-    if (!name && !email && !phone) {
+    if (!username && !email && !phone) {
         throw new ApiError(400, "At least one field is required")
     }
 
@@ -253,7 +253,7 @@ const updateAdmin = asyncHandler(async (req: Request, res: Response) => {
     }
 
     const updatedAdmin = await adminModel.findByIdAndUpdate(adminId, {
-        name,
+        username,
         email,
         phone,
     }, { new: true })
@@ -312,8 +312,8 @@ const logoutAdmin = asyncHandler(async (req: Request, res: Response) => {
     res
         .status(200)
         .clearCookie("adminToken", {
-            httpOnly: true,
-            sameSite: "none",
+            httpOnly: true, 
+            sameSite: "none", 
             secure: true
         })
         .json(new ApiResponse(200, "Admin logged out successfully"))

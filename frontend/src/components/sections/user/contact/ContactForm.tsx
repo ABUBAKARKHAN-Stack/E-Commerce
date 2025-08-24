@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { contactFields } from "@/constants/formFields";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { contactSchema } from "@/schemas/contactSchema";
 import { ApiErrorType, IUser } from "@/types/main.types";
 import { errorToast, successToast } from "@/utils/toastNotifications";

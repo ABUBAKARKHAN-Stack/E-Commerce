@@ -6,7 +6,7 @@ import {
   TrackOrderReceipt,
 } from "@/components/sections/user/TrackOrder";
 import { Button } from "@/components/ui/button";
-import { useAuthContext } from "@/context/authContext";
+import { useAuthContext } from "@/context/auth.context";
 import { ArrowLeft, ArrowLeftCircle } from "lucide-react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 

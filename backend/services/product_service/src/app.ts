@@ -12,6 +12,9 @@ app.use(json({
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 
+import { internetCheck } from './middlewares/interchecker.middlewares';
+app.use(internetCheck)
+
 
 const PORT = process.env.PORT || 3003;
 

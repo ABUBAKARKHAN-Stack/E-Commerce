@@ -5,6 +5,6 @@ import authCheck from "../middlewares/auth.middleware";
 const router = Router();
 
 router.get("/cart/details", authCheck, getCartDetails);
-router.get("/cart/checkout", authCheck, proceedToCheckout);
+router.post("/cart/checkout", authCheck, proceedToCheckout);
 
 export default router;

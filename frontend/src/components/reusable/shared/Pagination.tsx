@@ -6,6 +6,7 @@ type Props = {
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   totalProducts: number;
+  totalPages: number;
   forOrder?: boolean;
 };
 
@@ -14,17 +15,22 @@ const Pagination: FC<Props> = ({
   page,
   setPage,
   totalProducts,
+  totalPages,
   forOrder = false,
 }) => {
   const start = (page - 1) * limit + 1;
   const end = Math.min(start + limit - 1, totalProducts);
+
+  if (totalProducts === 0) {
+    return null;
+  }
 
   return (
     <>
       <div className="z-10 flex w-full flex-col items-center gap-y-3">
         <div className="mt-5 flex shrink items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-cyan-600 p-1.5 shadow-lg dark:bg-gradient-to-r dark:from-orange-500 dark:to-orange-600">
           <button
-            className="flex items-center gap-1 rounded-full !bg-white px-3 py-2.5 text-xs font-medium !text-gray-900 shadow-sm transition-all duration-200 hover:!bg-gray-50 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:!bg-white sm:gap-2 sm:px-6 sm:text-sm"
+            className="flex items-center gap-1 rounded-full bg-white px-3 py-2.5 text-xs font-medium text-gray-900 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:bg-white sm:gap-2 sm:px-6 sm:text-sm"
             onClick={() => {
               if (page <= 1) return;
               setPage((prev) => prev - 1);
@@ -42,10 +48,10 @@ const Pagination: FC<Props> = ({
           {/* Current PAGE */}
           <div className="min-w-[80px] px-2 py-2.5 text-center text-xs font-semibold text-white sm:min-w-[140px] sm:px-6 sm:text-sm">
             <span className="hidden sm:inline">
-              Page {page} of {Math.ceil(totalProducts / limit)}
+              Page {page} of {totalPages}
             </span>
             <span className="sm:hidden">
-              {page}/{Math.ceil(totalProducts / limit)}
+              {page}/{totalPages}
             </span>
           </div>
 
@@ -53,10 +59,10 @@ const Pagination: FC<Props> = ({
           <div className="mx-1 h-4 w-px bg-white/30 sm:mx-2 sm:h-6"></div>
 
           <button
-            className="flex items-center gap-1 rounded-full !bg-white px-3 py-2.5 text-xs font-medium !text-gray-900 shadow-sm transition-all duration-200 hover:!bg-gray-50 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:!bg-white sm:gap-2 sm:px-6 sm:text-sm"
-            disabled={page * limit >= totalProducts}
+            className="flex items-center gap-1 rounded-full bg-white px-3 py-2.5 text-xs font-medium text-gray-900 shadow-sm transition-all duration-200 hover:bg-gray-50 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:bg-white sm:gap-2 sm:px-6 sm:text-sm"
+            disabled={page >= totalPages}
             onClick={() => {
-              if (page * limit >= totalProducts) return;
+              if (page >= totalPages) return;
               setPage((prev) => prev + 1);
             }}
           >

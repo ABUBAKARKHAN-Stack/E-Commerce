@@ -7,29 +7,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  updatePasswordFields,
-} from "@/constants/formFields";
-import { useAuthContext } from "@/context/authContext";
-import { updatePasswordSchema, } from "@/schemas/update-ProfileSchema";
+import { updatePasswordFields } from "@/constants/formFields";
+import { useAuthContext } from "@/context/auth.context";
+import { updatePasswordSchema } from "@/schemas/update-ProfileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import PasswordVisibilityToggler from "./PasswordVisibilityToggler";
 import { AuthLoadingStates } from "@/types/main.types";
-import ButtonLoader from "./loaders/ButtonLoader";
+import { ButtonLoader } from "@/components/Skeleton&Loaders/loaders/";
 
 type Props = {
   isAdmin?: boolean;
 };
 
-
 const UpdatePasswordForm: FC<Props> = ({ isAdmin = false }) => {
-
   const { updatePassword, loading } = useAuthContext();
-  const updatePasswordLoading = loading === AuthLoadingStates.UPDATE_PASSWORD_LOADING;
-
+  const updatePasswordLoading =
+    loading === AuthLoadingStates.UPDATE_PASSWORD_LOADING;
 
   const form = useForm({
     resolver: zodResolver(updatePasswordSchema),
@@ -85,11 +81,11 @@ const UpdatePasswordForm: FC<Props> = ({ isAdmin = false }) => {
             disabled={!form.formState.isDirty || updatePasswordLoading}
             className="w-fit"
           >
-            {
-              updatePasswordLoading ? <ButtonLoader
-                loaderText="Updating Password..."
-              /> : "Update Password"
-            }
+            {updatePasswordLoading ? (
+              <ButtonLoader loaderText="Updating Password..." />
+            ) : (
+              "Update Password"
+            )}
           </Button>
         </div>
       </form>

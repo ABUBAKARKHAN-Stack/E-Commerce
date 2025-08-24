@@ -1,6 +1,7 @@
 import { ProductImageSelector } from "@/components/reusable/user";
 import { FC, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { Lens } from "@/components/magicui/lens";
 
 type Props = {
   thumbnails: string[];
@@ -47,14 +48,21 @@ const ProductImagesGallery: FC<Props> = ({ thumbnails }) => {
             {thumbnails.map((src) => {
               return (
                 <div
-                  className="embla__slide max-h-[500px] min-h-[400px] min-w-72 flex-[0_0_100%] rounded-md bg-gray-200 dark:bg-[#2c2c2e]"
+                  className="embla__slide h-full max-h-[500px] min-h-[400px] w-full min-w-72 flex-[0_0_100%] rounded-md bg-gray-200 dark:bg-[#2c2c2e]"
                   key={src}
                 >
-                  <img
-                    src={src}
-                    alt={src}
-                    className="mx-auto h-full w-[90%] object-contain"
-                  />
+                  <Lens
+                    zoomFactor={2}
+                    lensSize={175}
+                    isStatic={false}
+                    ariaLabel="Product Gallery Zoom Area"
+                  >
+                    <img
+                      src={src}
+                      alt={src}
+                      className="m-auto h-full max-h-[500px] min-h-[400px] w-[90%] object-contain"
+                    />
+                  </Lens>
                 </div>
               );
             })}

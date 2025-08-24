@@ -13,9 +13,6 @@ import DashboardMainHeader from "./DashboardMainHeader";
 import UpdateProfileForm from "./UpdateProfileForm";
 import UpdatePasswordForm from "./UpdatePasswordForm";
 import OrderStatusBadge from "./OrderStatusBadge";
-import ButtonLoader from "./loaders/ButtonLoader";
-
- 
 
 export {
   ForgotPasswordForm,
@@ -33,5 +30,4 @@ export {
   UpdateProfileForm,
   UpdatePasswordForm,
   OrderStatusBadge,
-  ButtonLoader
 };

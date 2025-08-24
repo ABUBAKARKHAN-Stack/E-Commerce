@@ -30,6 +30,10 @@ const errorHandler = (err: Error | UploadApiErrorResponse, req: Request, res: Re
     }
 
 
+    console.log(err);
+
+
+
     // Default error handling
     res
         .status(500)

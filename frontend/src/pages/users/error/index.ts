@@ -4,6 +4,7 @@ import CheckoutErrorPage from "./CheckoutErrorPage";
 import CheckoutSuccessErrorPage from "./CheckoutSuccessErrorPage";
 import TrackOrderErrorPage from "./TrackOrderErrorPage";
 import UserOrderErrorPage from "./UserOrderErrorPage";
+import ProductDetailsErrorPage from "./ProductDetailsErrorPage";
 
 export {
   CartErrorPage,
@@ -12,4 +13,5 @@ export {
   CheckoutSuccessErrorPage,
   TrackOrderErrorPage,
   UserOrderErrorPage,
+  ProductDetailsErrorPage,
 };

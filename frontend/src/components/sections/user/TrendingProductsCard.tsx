@@ -1,3 +1,4 @@
+import { getTopRatedProducts } from "@/API/userApi";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { MagicCard } from "@/components/magicui/magic-card";
 import {
@@ -6,14 +7,17 @@ import {
   ProductCardHeaderButtons,
 } from "@/components/reusable/user";
 import { Button } from "@/components/ui/button";
-import { useProductContext } from "@/context/productContext";
+import { useProductContext } from "@/context/product.context";
 import { staticTrendingProductsData } from "@/data/trendingProducts";
+import { fetchTopRatedProductsHelper } from "@/helpers/user/products.helper";
 import { IProduct } from "@/types/main.types";
 import { ShoppingCart, Star } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useEffect } from "react";
 
 const TrendingProductsCard = () => {
-  const { topRatedProducts } = useProductContext();
+  const { useTopProducts } = useProductContext();
+  const { data: topRatedProducts } = useTopProducts();
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 

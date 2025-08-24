@@ -243,8 +243,6 @@ const deleteProduct = expressAsyncHandler(async (req: Request, res: Response) =>
         .json(new ApiResponse(200, "Product deleted successfully", product))
 })
 
-
-
 export {
     createProduct,
     updateProduct,

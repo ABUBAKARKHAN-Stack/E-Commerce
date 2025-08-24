@@ -2,7 +2,7 @@ import { History, Info } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useActivityContext } from "@/context/activityContext";
+import { useActivityContext } from "@/context/activity.context";
 import { formatDistanceToNow } from "date-fns";
 import { DashboardSectionHeader, ToolTip } from "@/components/reusable/shared";
 import { getActivityIcons } from "@/utils/getActivityIcons";

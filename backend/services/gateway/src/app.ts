@@ -18,6 +18,7 @@ app.use(cors({
 }));
 
 
+
 //* Routes Gatway Proxy
 app.use('/user', proxy(env.USER_SERVICE_URL));
 app.use('/admin', proxy(env.ADMIN_SERVICE_URL));

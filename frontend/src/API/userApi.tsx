@@ -198,7 +198,7 @@ const deleteReview = async (productId: string) => {
 };
 
 const proceedToCheckout = async () => {
-  return await userApi.get("/cart/checkout", {
+  return await userApi.post("/cart/checkout", null, {
     withCredentials: true,
   });
 };
@@ -221,7 +221,7 @@ const userTrackOrder = async (orderId: string) => {
     params: { orderId },
     withCredentials: true,
   });
-}
+};
 
 const getAllOrders = async (params?: any) => {
   return await orderApi.get("/all-orders", {

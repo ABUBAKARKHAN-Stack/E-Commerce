@@ -1,6 +1,6 @@
 import CartQuantitySelector from "./CartQuantitySelector";
-import CartCard from "./CartCard";
+import CartCards from "./CartCards";
 import CartSummary from "./CartSummary";
 import EmptyCart from "./EmptyCart";
 
-export { CartCard, CartQuantitySelector, CartSummary, EmptyCart };
+export { CartCards, CartQuantitySelector, CartSummary, EmptyCart };
