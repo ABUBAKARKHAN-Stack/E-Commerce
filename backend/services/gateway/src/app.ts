@@ -49,4 +49,4 @@ const PORT = env.PORT;
 //     console.log(`Gateway is running on port ${PORT}`);
 // }); 
 
-module.exports = app;
+export default app;
