@@ -16,7 +16,7 @@ const ProductPage = () => {
     <>
       <Header />
       <ScrollProgress className="h-[2px]" />
-      <ProductMain productId={productId} />
+      <ProductMain  />
       <ProductReviewsMain productId={productId} />
       <Footer />
       <ThemeToggler />
