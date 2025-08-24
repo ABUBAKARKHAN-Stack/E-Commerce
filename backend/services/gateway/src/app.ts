@@ -19,7 +19,7 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 }));
 
-app.use('/', expressAsyncHandler((req: Request, res: Response) => {
+app.get('/', expressAsyncHandler((req: Request, res: Response) => {
     res
         .status(200)
         .json(new ApiResponse(200, "GATEWAY IS RUNNING"))
