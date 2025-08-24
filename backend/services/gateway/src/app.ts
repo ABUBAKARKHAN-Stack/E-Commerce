@@ -1,8 +1,10 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import proxy from 'express-http-proxy'
 import { env } from './config/env';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import expressAsyncHandler from 'express-async-handler';
+import { ApiResponse } from './utils';
 
 const app = express();
 
@@ -16,6 +18,12 @@ app.use(cors({
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
 }));
+
+app.use('/', expressAsyncHandler((req: Request, res: Response) => {
+    res
+        .status(200)
+        .json(new ApiResponse(200, "GATEWAY IS RUNNING"))
+}))
 
 
 
