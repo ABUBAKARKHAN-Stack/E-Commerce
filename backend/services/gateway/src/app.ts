@@ -22,7 +22,10 @@ app.use(cors({
 app.get('/', expressAsyncHandler((req: Request, res: Response) => {
     res
         .status(200)
-        .json(new ApiResponse(200, "GATEWAY IS RUNNING"))
+        .json(new ApiResponse(200, "GATEWAY IS RUNNING",{
+            MESSAGE:"GATEWAY IS WORKING",
+            status:200
+        }))
 }))
 
 
